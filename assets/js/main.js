@@ -6,7 +6,7 @@
 * License: https://bootstrapmade.com/license/
 */
 
-(function() {
+(function () {
   "use strict";
 
   /**
@@ -52,7 +52,7 @@
    * Toggle mobile nav dropdowns
    */
   document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
-    navmenu.addEventListener('click', function(e) {
+    navmenu.addEventListener('click', function (e) {
       e.preventDefault();
       this.parentNode.classList.toggle('active');
       this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
@@ -113,7 +113,7 @@
    * Init swiper sliders
    */
   function initSwiper() {
-    document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
+    document.querySelectorAll(".init-swiper").forEach(function (swiperElement) {
       let config = JSON.parse(
         swiperElement.querySelector(".swiper-config").innerHTML.trim()
       );
@@ -147,13 +147,13 @@
   /**
    * Init isotope layout and filters
    */
-  document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
+  document.querySelectorAll('.isotope-layout').forEach(function (isotopeItem) {
     let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
     let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
     let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
 
     let initIsotope;
-    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
+    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function () {
       initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
         itemSelector: '.isotope-item',
         layoutMode: layout,
@@ -162,8 +162,8 @@
       });
     });
 
-    isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
-      filters.addEventListener('click', function() {
+    isotopeItem.querySelectorAll('.isotope-filters li').forEach(function (filters) {
+      filters.addEventListener('click', function () {
         isotopeItem.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
         this.classList.add('filter-active');
         initIsotope.arrange({
@@ -180,7 +180,7 @@
   /**
    * Correct scrolling position upon page load for URLs containing hash links.
    */
-  window.addEventListener('load', function(e) {
+  window.addEventListener('load', function (e) {
     if (window.location.hash) {
       if (document.querySelector(window.location.hash)) {
         setTimeout(() => {
@@ -218,3 +218,36 @@
   document.addEventListener('scroll', navmenuScrollspy);
 
 })();
+
+
+function mostrarContenido(opcion) {
+  // const contenido = document.getElementById("encabeza");
+  const cabeza = document.getElementById("encabeza");
+  let ig = document.getElementById("igContent");
+  let html = "";
+  let htmlIG = "";
+  // let igdata = ""
+  console.log("hola")
+  switch (opcion) {
+    case "casa":
+      html = "<h3>Juntada Argentiny</h3><p>Juntada + Proyecto Argentiny. Presencial y Virtual</p>";
+      htmlIG = "<blockquote class='instagram-media' data-instgrm-version='14' data-instgrm-permalink='https://www.instagram.com/p/DN1Oj9D3uSY/?igsh=MTRhaGRlN2l0dTBieg=='></blockquote>"
+      break;
+    case "pato":
+      html = "<h3>Listening Party In Your Fantasy</h3><p>Festejando In Your Fantasy + SanSang Day </p>";
+      htmlIG = "<blockquote class='instagram-media' data-instgrm-version='14' data-instgrm-permalink='https://www.instagram.com/p/DMqEx-vMMdS/?igsh=MXdidjEwMDA4am96ZQ=='></blockquote>"
+      // document.getElementById("igContent").setAttribute("data-instgrm-permalink", "https://www.instagram.com/p/DMqEx-vMMdS/?igsh=MXdidjEwMDA4am96ZQ==");
+      break;
+    case "auto":
+      html = "<h3>PICNIC - Post Pseudocomeback</h3><p>Picnic en celebracion a el lanzamiento de In Your Fantasy</p>";
+      htmlIG = "<blockquote class='instagram-media' data-instgrm-permalink='https://www.instagram.com/p/DMEidivsnpu/?igsh=MWtxcnp1OTJvZTNoeg=='></blockquote>"
+
+      // document.getElementById("igContent").setAttribute("data-instgrm-permalink", "https://www.instagram.com/p/DMEidivsnpu/?igsh=MWtxcnp1OTJvZTNoeg==");
+      break;
+    default:
+      html = "<p>Contenido no disponible.</p>";
+  }
+
+  cabeza.innerHTML = html;
+  ig.innerHTML = htmlIG;
+}
