@@ -46,7 +46,7 @@
             <div class="top-row d-flex align-items-center justify-content-between">
                 <a href="index.html" class="logo d-flex align-items-center">
                     <!-- Uncomment the line below if you also wish to use an image logo -->
-                    <img src="assets/img/logoATZ.jpeg" alt="ateez argentina logo, StartinyArg" class="logo">
+                    <!-- <img src="assets/img/logoATZ.jpeg" alt="ateez argentina logo, StartinyArg" class="logo"> -->
                     <h1 class="sitename">@StartinyArg</h1>
                     <!-- <p>Bandera: 🇦🇷</p> -->
                 </a>
@@ -58,7 +58,7 @@
                         <a href="https://x.com/StartinyARG" class="twitter"><i class="bi bi-twitter"></i></a>
                         <a href="https://www.instagram.com/startinyarg/" class="instagram"><i
                                 class="bi bi-instagram"></i></a>
-                                <a href="https://tiktok.com/@startinyarg" class="tiktok"><i class="bi bi-tiktok"></i></a>
+                        <a href="https://tiktok.com/@startinyarg" class="tiktok"><i class="bi bi-tiktok"></i></a>
                     </div>
                 </div>
             </div>
@@ -71,7 +71,7 @@
                     <ul>
                         <li><a href="index.html">Quienes Somos</a></li>
                         <li><a href="events-details.html">Eventos</a></li>
-                        <li><a href="#contact">Sedes</a></li>
+                        <li><a href="index.html#sedes">Sedes</a></li>
                         <li><a href="#about">Galeria</a></li>
                         <li class="dropdown"><a href="#"><span>Contenido</span> <i
                                     class="bi bi-chevron-down toggle-dropdown"></i></a>
@@ -90,77 +90,138 @@
         </div>
 
     </header>
-    <main>
 
         <!-- Page Title -->
         <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/bg/bg-2.webp);">
         </div>
 
-        <!-- Portfolio Details Section -->
-        <section id="portfolio-details" class="portfolio-details section portfolio">
+  <!-- Portfolio Section -->
+    <section  class="portfolio section container">
 
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <!-- Section Title -->
+      <div class=" section-title" data-aos="fade-up">
+        <span class="subtitle">Eventos Realizados</span>
+        <h2>Revisa Nuestros Eventos</h2>
+        <p>Como Fanbase nos encargamos de realizar eventos que reflejen el amor que Atiny le tiene a los chicos de
+          ATEEZ, desde festejos de cumpleaños, hasta eventos en celebracion de Comebacks</p>
+      </div><!-- End Section Title -->
 
-                <div class="project-hero">
-                    <div class="section-title" data-aos="fade-up">
-                        <span class="subtitle">Eventos Realizados</span>
-                        <h2>Revisa Nuestros Eventos</h2>
-                        <p>Como Fanbase nos encargamos de realizar eventos que reflejen el amor que Atiny le tiene a los
-                            chicos
-                            de
-                            ATEEZ, desde festejos de cumpleaños, hasta eventos en celebracion de Comebacks</p>
-                    </div><!-- End Section Title -->
-                    <div class="isotope-layout" data-default-filter="*" data-layout="fitRows"
-                        data-sort="original-order">
+      <div data-aos="fade-up" data-aos-delay="100">
 
-                        <div class="portfolio-filters-wrapper" data-aos="fade-up" data-aos-delay="100">
-                            <ul class="portfolio-filters isotope-filters">
-                                <li data-filter="*" class="filter-active">Todos los Eventos</li>
-                                <li data-filter=".filter-branding">Cumpleaños</li>
-                                <li data-filter=".filter-web">Comeback</li>
-                                <li data-filter=".filter-print">Especiales</li>
-                                <li data-filter=".filter-motion">Otros</li>
-                            </ul>
-                        </div>
+        <div class="isotope-layout" data-default-filter="*" data-layout="fitRows" data-sort="original-order">
 
+          <div class="portfolio-filters-wrapper" data-aos="fade-up" data-aos-delay="100">
+            <ul class="portfolio-filters isotope-filters">
+              <li data-filter="*" class="filter-active" onclick="filtro()">Todos los Eventos</li>
+              <li data-filter=".filter-hbd" onclick="filtro('hbd')">Cumpleaños</li>
+              <li data-filter=".filter-cb" onclick="filtro('cb')">Comeback</li>
+              <li data-filter=".filter-esp" onclick="filtro('esp')">Especiales</li>
+              <li data-filter=".filter-other" onclick="filtro('other')">Otros</li>
+            </ul>
+          </div>
 
+          <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200" id="eventosContent">
 
-                    </div>
-                    <div class="row gy-4 portfolio-grid isotope-container" data-aos="fade-up" data-aos-delay="200"
-                        id="eventosContent">
+          </div><!-- End Portfolio Grid -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Portfolio Section -->
 
 
-                    </div><!-- End Portfolio Grid -->
+    <!-- <footer  class="footer dark-background">
 
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-12">
+                    <h4>Mural ATEEZ</h4>
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3285.760355186323!2d-58.45040092488723!3d-34.55962255516975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb5000cb5b0eb%3A0x672dd769a348bab9!2sMural%20ATEEZ!5e0!3m2!1ses-419!2sar!4v1755992014758!5m2!1ses-419!2sar"
+                        height="300" style="border:0; border-radius: 10px;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
 
                 </div>
+                <div class="col-lg-4 col-md-6 col-12">
+                    <h4>Mural Argentiny</h4>
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d205.3607881219956!2d-58.44808776228413!3d-34.55931231975737!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb5001057febb%3A0x9c0919b207b923a!2sMURAL%20ARGENTINY!5e0!3m2!1ses-419!2sar!4v1755992312929!5m2!1ses-419!2sar"
+                        height="300" style="border:0; border-radius: 10px;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
 
+                    
+                <div class="col-lg-4 col-md-12 col-12">
+                    <div class="footer-contact">
+                        <h4>Contacto</h4>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="bi bi-geo-alt"></i>
+                            </div>
+                            <div class="contact-info">
+                                <p>Ciudad Autonoma de Buenos Aires<br>Buenos Aires<br>Argentina</p>
+                            </div>
+                        </div>
 
-                <div class="project-footer" data-aos="fade-up" data-aos-delay="200">
-                    <div class="footer-navigation">
-                        <a href="#" class="nav-link prev-project">
-                            <span class="nav-direction">Previous</span>
-                            <span class="nav-title">Digital Banking App</span>
-                        </a>
-                        <a href="#" class="nav-link all-projects">
-                            <i class="bi bi-grid-3x3-gap"></i>
-                            <span>All Projects</span>
-                        </a>
-                        <a href="#" class="nav-link next-project">
-                            <span class="nav-direction">Next</span>
-                            <span class="nav-title">Healthcare Dashboard</span>
-                        </a>
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="bi bi-telephone"></i>
+                            </div>
+                            <div class="contact-info">
+                                <p>+54 1122-3344</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="bi bi-envelope"></i>
+                            </div>
+                            <div class="contact-info">
+                                <p>startinyargentina@gmail.com</p>
+                            </div>
+                        </div>
+
+                        <div class="social-links">
+                            <a href="https://instagram.com/StartinyARG"><i class="bi bi-instagram"></i></a>
+                            <a href="https://x.com/StartinyARG"><i class="bi bi-twitter-x"></i></a>
+                            <a href="https://www.facebook.com/share/1LuX7TrB8g/"><i class="bi bi-facebook"></i></a>
+                            <a href="https://www.youtube.com/@StartinyArg"><i class="bi bi-youtube"></i></a>
+                            <a href="https://tiktok.com/@startinyarg"><i class="bi bi-tiktok"></i></a>
+                        </div>
                     </div>
                 </div>
 
             </div>
+        </div>
 
-        </section><!-- /Portfolio Details Section -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="copyright">
+                            <p>© <span>Copyright 2025</span> <strong class="px-1 sitename">StartinyARG</strong>
+                                <span>All
+                                    Rights
+                                    Reserved</span> <br> Desarrollo - Janneth Chura Yujra
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="footer-bottom-links">
+                            <a href="#">Privacy Policy</a>
+                            <a href="#">Terms of Service</a>
+                            <a href="#">Cookie Policy</a>
+                        </div>
+                        <div class="credits">
+                            Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-
-    </main>
-
-
+    </footer> -->
 
     <!-- Scroll Top -->
     <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
@@ -181,6 +242,7 @@
 
     <!-- Main JS File -->
     <script src="assets/js/main.js"></script>
+    <script async src="//www.instagram.com/embed.js"></script>
 
 </body>
 
