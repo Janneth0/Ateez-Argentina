@@ -6,6 +6,45 @@
 * License: https://bootstrapmade.com/license/
 */
 
+// console.log (datos);
+// document.addEventListener('DOMContentLoaded', () => {
+//     const xhttp = new XMLHttpRequest();
+
+//     xhttp.open("GET", "../js/data.json", true);
+//     xhttp.send();
+//     xhttp.onreadystatechange = function () {
+//         if (this.readyState == 4 && this.status == 200) {
+//             let x = $("#txtinput").val().toUpperCase();
+//             let datos = JSON.parse(this.response);
+
+
+//             console.log("Hola")
+//             console.log(datos)
+//             for (let item of datos) {
+//                 let cadena = item.clave;
+//                 let posicion = cadena.indexOf(x);
+//                 console.log(posicion);
+
+//                 // if (posicion >= 0) {
+//                 word.innerHTML += `
+//                 <div class="col-lg-10 col-md-10 col-sm-10 col-12  text-white " style=" background-color:${item.color}; margin:5px;">
+//                 <div class="" style=" background-position-y: center; ">  </div>
+//                     <h3 class="" style="font-family: 'Bebas Neue';  text-align: left; padding: 5vh 2vh 2vh 2vh">${item.title}</h3>
+//                     <p class="card-text1" style="font-family: 'Baloo Tammudu 2', cursive; padding: 2vh ;  ">${item.def}</p>
+//               </div>
+//                       `
+//                 posicion = cadena.indexOf(x);
+//                 // }
+
+//             }
+
+//         }
+//     }
+
+// });
+
+// Cargar los datos JSON desde el archivo
+
 (function () {
   "use strict";
 
@@ -219,35 +258,53 @@
 
 })();
 
+console.log("Conectado al js")
+fetch('../assets/js/data.json')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Error al cargar el archivo JSON');
+    }
+    return response.json();
+  })
+  .then(data => {
+    mostrarDatos(data);
+  })
+  .catch(error => {
+    console.error('Hubo un problema:', error);
+  });
 
-function mostrarContenido(opcion) {
-  // const contenido = document.getElementById("encabeza");
-  const cabeza = document.getElementById("encabeza");
-  let ig = document.getElementById("igContent");
-  let html = "";
-  let htmlIG = "";
-  // let igdata = ""
-  console.log("hola")
-  switch (opcion) {
-    case "casa":
-      html = "<h3>Juntada Argentiny</h3><p>Juntada + Proyecto Argentiny. Presencial y Virtual</p>";
-      htmlIG = "<blockquote class='instagram-media' data-instgrm-version='14' data-instgrm-permalink='https://www.instagram.com/p/DN1Oj9D3uSY/?igsh=MTRhaGRlN2l0dTBieg=='></blockquote>"
-      break;
-    case "pato":
-      html = "<h3>Listening Party In Your Fantasy</h3><p>Festejando In Your Fantasy + SanSang Day </p>";
-      htmlIG = "<blockquote class='instagram-media' data-instgrm-version='14' data-instgrm-permalink='https://www.instagram.com/p/DMqEx-vMMdS/?igsh=MXdidjEwMDA4am96ZQ=='></blockquote>"
-      // document.getElementById("igContent").setAttribute("data-instgrm-permalink", "https://www.instagram.com/p/DMqEx-vMMdS/?igsh=MXdidjEwMDA4am96ZQ==");
-      break;
-    case "auto":
-      html = "<h3>PICNIC - Post Pseudocomeback</h3><p>Picnic en celebracion a el lanzamiento de In Your Fantasy</p>";
-      htmlIG = "<blockquote class='instagram-media' data-instgrm-permalink='https://www.instagram.com/p/DMEidivsnpu/?igsh=MWtxcnp1OTJvZTNoeg=='></blockquote>"
 
-      // document.getElementById("igContent").setAttribute("data-instgrm-permalink", "https://www.instagram.com/p/DMEidivsnpu/?igsh=MWtxcnp1OTJvZTNoeg==");
-      break;
-    default:
-      html = "<p>Contenido no disponible.</p>";
-  }
+// Función para mostrar los datos en el HTML
+function mostrarDatos(eventos) {
+  const contenedor = document.getElementById('eventosContent');
 
-  cabeza.innerHTML = html;
-  ig.innerHTML = htmlIG;
+  eventos.forEach(evento => {
+
+    const div = document.createElement('div');
+    div.classList.add('col-lg-4', 'col-md-6', 'portfolio-item', "isotope-item", "filter-branding");
+
+    div.innerHTML = `
+<div class="portfolio-card">
+                                <div class="image-container">
+                                   <blockquote class="instagram-media" data-instgrm-permalink="${evento.link}" data-instgrm-version="14">
+                                    <div class="overlay">
+                                        <div class="overlay-content">
+                                            <a href="${evento.link}" class="details-link"
+                                                title="View Project Details">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <h3>${evento.title}</h3>
+                                    <p>${evento.text}</p>
+                                </div>
+                            </div>
+    `;
+    contenedor.appendChild(div);
+    console.log(div);
+  });
 }
+//  <img src="${evento.link}" class="img-fluid" alt="Motion Graphics"
+//                     loading="lazy"></img>
