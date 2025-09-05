@@ -5,10 +5,12 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Portfolio Details - LeadPage Bootstrap Template</title>
-     <!-- Autor -->
+    <!-- Autor -->
     <meta name="author" content="StartinyArg Ateez Argentina">
-    <meta name="description" content="Ateez Argentina 2025, StartinyARG Fanbase de Ateez en Argentina con el fin de hacer que Ateez pise suelo Argentino en 2026">
-    <meta name="keywords" content="ateez, argentina, ateez argentina, ateez argentina 2026, ateez en argentina, Startinyarg, Startiny, Fanbase de Ateez en Argentina, Fanbase, Ateez, Eventos de ATEEZ EN Argentina, Actividades">
+    <meta name="description"
+        content="Ateez Argentina 2025, StartinyARG Fanbase de Ateez en Argentina con el fin de hacer que Ateez pise suelo Argentino en 2026">
+    <meta name="keywords"
+        content="ateez, argentina, ateez argentina, ateez argentina 2026, ateez en argentina, Startinyarg, Startiny, Fanbase de Ateez en Argentina, Fanbase, Ateez, Eventos de ATEEZ EN Argentina, Actividades">
 
 
     <!-- Favicons -->
@@ -73,7 +75,7 @@
                 <nav id="navmenu" class="navmenu">
                     <ul>
                         <li><a href="index.html">Quienes Somos</a></li>
-                        <li><a href="events-details.html" >Eventos</a></li>
+                        <li><a href="events-details.html">Eventos</a></li>
                         <li><a href="index.html#sedes">Sedes</a></li>
                         <!-- <li><a href="#about">Galeria</a></li> -->
                         <li class="dropdown"><a href="contenido.html"><span>Contenido</span> <i
@@ -94,42 +96,277 @@
 
     </header>
 
-        <!-- Page Title -->
-        <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/bg/bg-2.webp);">
+    <!-- Page Title -->
+    <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/bg/bg-2.webp);">
+    </div>
+
+    <!-- Portfolio Section -->
+    <section class="portfolio section container">
+
+        <!-- Section Title -->
+        <div class=" section-title" data-aos="fade-up">
+            <span class="subtitle">Eventos Realizados</span>
+            <h2>Revisa Nuestros Eventos</h2>
+            <p>Como Fanbase nos encargamos de realizar eventos que reflejen el amor que Atiny le tiene a los chicos de
+                ATEEZ, desde festejos de cumpleaños, hasta eventos en celebracion de Comebacks</p>
+        </div><!-- End Section Title -->
+
+        <div data-aos="fade-up" data-aos-delay="100">
+
+            <div class="isotope-layout" data-default-filter="*" data-layout="fitRows" data-sort="original-order">
+
+                <div class="portfolio-filters-wrapper" data-aos="fade-up" data-aos-delay="100">
+                    <ul class="portfolio-filters isotope-filters">
+                        <li data-filter="*" class="filter-active" onclick="filtro()">Todos los Eventos</li>
+                        <li data-filter=".filter-hbd" onclick="filtro('hbd')">Cumpleaños</li>
+                        <li data-filter=".filter-cb" onclick="filtro('cb')">Comeback</li>
+                        <li data-filter=".filter-esp" onclick="filtro('esp')">Especiales</li>
+                        <li data-filter=".filter-other" onclick="filtro('other')">Otros</li>
+                    </ul>
+                </div>
+
+                <div class="row isotope-container " data-aos="fade-up" data-aos-delay="200" id="event">
+
+                    <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-esp">
+                        <div class="portfolio-card">
+                            <div class="image-container">
+                                <blockquote class="instagram-media"
+                                    data-instgrm-permalink="https://www.instagram.com/reel/DNcABansdDC/?igsh=MTl4N3I1Z2t0aXV3aQ%3D%3D"
+                                    data-instgrm-version="14">
+                                    <div class="overlay">
+                                        <div class="overlay-content">
+                                            <a href="https://www.instagram.com/reel/DNcABansdDC/?igsh=MTl4N3I1Z2t0aXV3aQ=="
+                                                class="details-link" title="View Project Details">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="content">
+                                <h3>ATEEZ en KPOP Revolution</h3>
+                                <p>13 de Septiembre KPOP Revolution, Auditorio San Jose - Azcuenaga 158 CABA</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-esp">
+                        <div class="portfolio-card">
+                            <div class="image-container">
+                                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DN1Oj9D3uSY/?igsh=MTRhaGRlN2l0dTBieg==
+" data-instgrm-version="14">
+                                    <div class="overlay">
+                                        <div class="overlay-content">
+                                            <a href="https://www.instagram.com/p/DN1Oj9D3uSY/?igsh=MTRhaGRlN2l0dTBieg==
+" class="details-link" title="View Project Details">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="content">
+                                <h3>Juntada Argentiny</h3>
+                                <p>14 de Septiembre Juntada Argentiny en Barrio Chino</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-other">
+                        <div class="portfolio-card">
+                            <div class="image-container">
+                                <blockquote class="instagram-media"
+                                    data-instgrm-permalink="https://www.instagram.com/p/DN1VJ92YuTF/?igsh=eGJmeTNwbjI5eGJ3"
+                                    data-instgrm-version="14">
+                                    <div class="overlay">
+                                        <div class="overlay-content">
+                                            <a href="https://www.instagram.com/p/DN1VJ92YuTF/?igsh=eGJmeTNwbjI5eGJ3"
+                                                class="details-link" title="View Project Details">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="content">
+                                <h3>Juntada Marplatiny</h3>
+                                <p>20 de Septiembre Juntada Marplatiny, Puente de los candados, Mar del Plata</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-other">
+                        <div class="portfolio-card">
+                            <div class="image-container">
+                                <blockquote class="instagram-media"
+                                    data-instgrm-permalink="https://www.instagram.com/p/DNzCYa2Ys9b/?igsh=MTRxMGV0Ym81cmR kbw=="
+                                    data-instgrm-version="14">
+                                    <div class="overlay">
+                                        <div class="overlay-content">
+                                            <a href="https://www.instagram.com/p/DNzCYa2Ys9b/?igsh=MTRxMGV0Ym81cmR kbw=="
+                                                class="details-link" title="View Project Details">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="content">
+                                <h3>Juntada Multifandom</h3>
+                                <p>21 de Septiembre Juntada Multifandom, Barrancas de Belgrano, CABA</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-esp">
+                        <div class="portfolio-card">
+                            <div class="image-container">
+                                <blockquote class="instagram-media"
+                                    data-instgrm-permalink="https://www.instagram.com/p/DN6LrKpESkW/?igsh=Zjl0ZHpvNmY0OTBn"
+                                    data-instgrm-version="14">
+                                    <div class="overlay">
+                                        <div class="overlay-content">
+                                            <a href="https://www.instagram.com/p/DN6LrKpESkW/?igsh=Zjl0ZHpvNmY0OTBn"
+                                                class="details-link" title="View Project Details">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="content">
+                                <h3>KPOP FEST Ateez Concert</h3>
+                                <p>4 de Octubre, KFEST, Adolfo Alsina 1475 CABA</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-other">
+                        <div class="portfolio-card">
+                            <div class="image-container">
+                                <blockquote class="instagram-media"
+                                    data-instgrm-permalink="https://www.instagram.com/p/DN16EZH2CG-/?igsh=MW42ajNwc2NvcWJ5Mg=="
+                                    data-instgrm-version="14">
+                                    <div class="overlay">
+                                        <div class="overlay-content">
+                                            <a href="https://www.instagram.com/p/DN16EZH2CG-/?igsh=MW42ajNwc2NvcWJ5Mg=="
+                                                class="details-link" title="View Project Details">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="content">
+                                <h3>𝗠𝗔𝗦𝗜𝗩𝗔 𝗘𝗡 𝗧𝗪𝗜𝗧𝗧𝗘𝗥 - 𝗔𝗧𝗘𝗘𝗭 𝗘𝗡 𝗟𝗔𝗧𝗔𝗠 🔥</h3>
+                                <p>¡Un nuevo empujón para seguir pidiendo por ATEEZ en LATAM!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-other">
+                        <div class="portfolio-card">
+                            <div class="image-container">
+                                <blockquote class="instagram-media"
+                                    data-instgrm-permalink="https://www.instagram.com/p/DNt4kHq3l7y/?igsh=c2t6eWM3em85dDli"
+                                    data-instgrm-version="14">
+                                    <div class="overlay">
+                                        <div class="overlay-content">
+                                            <a href="https://www.instagram.com/p/DNt4kHq3l7y/?igsh=c2t6eWM3em85dDli"
+                                                class="details-link" title="View Project Details">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="content">
+                                <h3>𝗠𝗔𝗦𝗜𝗩𝗔 𝗘𝗡 𝗧𝗪𝗜𝗧𝗧𝗘𝗥 - 𝗔𝗧𝗘𝗘𝗭 𝗘𝗡 𝗟𝗔𝗧𝗔𝗠 🔥</h3>
+                                <p>¡Un nuevo empujón para seguir pidiendo por ATEEZ en LATAM!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-hbd">
+                        <div class="portfolio-card">
+                            <div class="image-container">
+                                <blockquote class="instagram-media"
+                                    data-instgrm-permalink="https://www.instagram.com/p/DL5-6eIP9mA/?igsh=MWQ1MjAxamFjaHA0NA=="
+                                    data-instgrm-version="14">
+                                    <div class="overlay">
+                                        <div class="overlay-content">
+                                            <a href="https://www.instagram.com/p/DL5-6eIP9mA/?igsh=MWQ1MjAxamFjaHA0NA=="
+                                                class="details-link" title="View Project Details">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="content">
+                                <h3>CUMPLEAÑOS DE MINGI</h3>
+                                <p>🐥Vamos a festejar el cumple de nuestro Mingi! NO TE LO PODES PERDER!</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-cb">
+                        <div class="portfolio-card">
+                            <div class="image-container">
+                                <blockquote class="instagram-media"
+                                    data-instgrm-permalink="https://www.instagram.com/p/DMqEx-vMMdS/?igsh=dmttaTZmY2g1Nmo3"
+                                    data-instgrm-version="14">
+                                    <div class="overlay">
+                                        <div class="overlay-content">
+                                            <a href="https://www.instagram.com/p/DMqEx-vMMdS/?igsh=dmttaTZmY2g1Nmo3"
+                                                class="details-link" title="View Project Details">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="content">
+                                <h3>Listening Party - In Your Fantasy</h3>
+                                <p>Lxs invitamos a una tarde de Listening Party inolvidable 🤩
+
+                                    Disfrutaremos de Golden Hour Part 3 con amigxs y la mejor onda 🌟 Este sábado 2 de
+                                    agosto, de 14 a 17hs, nos reuniremos en @herocafe.ar para compartir una tarde de
+                                    buena música, juegos, set fotografico y delicias 🍰 </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-4 col-md-6 portfolio-item isotope-item filter-cb">
+                        <div class="portfolio-card">
+                            <div class="image-container">
+                                <blockquote class="instagram-media"
+                                    data-instgrm-permalink="https://www.instagram.com/p/DMfc6UBs3ZP/?igsh=ZHV3bXYzeWRudzI5"
+                                    data-instgrm-version="14">
+                                    <div class="overlay">
+                                        <div class="overlay-content">
+                                            <a href="https://www.instagram.com/p/DMfc6UBs3ZP/?igsh=ZHV3bXYzeWRudzI5"
+                                                class="details-link" title="View Project Details">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="content">
+                                <h3>STATIONHEAD WEEK PARTY - In Your Fantasy 🎭🎶</h3>
+                                <p>Del 24/07 al 01/08, haremos streaming parties diarias en @Stationhead, celebrando a
+                                    cada integrante de ATEEZ con canciones que los representan 💖</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+
+                </div><!-- End Portfolio Grid -->
+
+            </div>
+
         </div>
-
-  <!-- Portfolio Section -->
-    <section  class="portfolio section container">
-
-      <!-- Section Title -->
-      <div class=" section-title" data-aos="fade-up">
-        <span class="subtitle">Eventos Realizados</span>
-        <h2>Revisa Nuestros Eventos</h2>
-        <p>Como Fanbase nos encargamos de realizar eventos que reflejen el amor que Atiny le tiene a los chicos de
-          ATEEZ, desde festejos de cumpleaños, hasta eventos en celebracion de Comebacks</p>
-      </div><!-- End Section Title -->
-
-      <div data-aos="fade-up" data-aos-delay="100">
-
-        <div class="isotope-layout" data-default-filter="*" data-layout="fitRows" data-sort="original-order">
-
-          <div class="portfolio-filters-wrapper" data-aos="fade-up" data-aos-delay="100">
-            <ul class="portfolio-filters isotope-filters">
-              <li data-filter="*" class="filter-active" onclick="filtro()">Todos los Eventos</li>
-              <li data-filter=".filter-hbd" onclick="filtro('hbd')">Cumpleaños</li>
-              <li data-filter=".filter-cb" onclick="filtro('cb')">Comeback</li>
-              <li data-filter=".filter-esp" onclick="filtro('esp')">Especiales</li>
-              <li data-filter=".filter-other" onclick="filtro('other')">Otros</li>
-            </ul>
-          </div>
-
-          <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200" id="eventosContent">
-
-          </div><!-- End Portfolio Grid -->
-
-        </div>
-
-      </div>
 
     </section><!-- /Portfolio Section -->
 

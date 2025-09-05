@@ -2820,14 +2820,19 @@ section,
   }
 }
 
+/* Tamaño de las card */
 .portfolio .portfolio-card {
   background: var(--surface-color);
   transition: all 0.4s ease-out;
   border: #a9d9f7ad 1px solid;
   margin-bottom: 10px;
   border-radius: 8px;
-  /* overflow: hidden; */
-  /* height: 400px; */
+  overflow: hidden;
+  height: 800px;
+}
+.portfolio{
+  justify-content: center;
+
 }
 
 .portfolio .portfolio-card:hover {
@@ -4418,8 +4423,9 @@ section,
     gap: 1.5rem;
   }
 
+  /* da espacio chico */
   .portfolio-details .visual-showcase .main-visual .swiper-slide img {
-    height: 400px;
+    height: 800px;
   }
 
   .portfolio-details .visual-showcase .main-visual .swiper-button-next,
@@ -4464,6 +4470,11 @@ section,
     font-size: 0.8rem;
     padding: 0.4rem 0.8rem;
   }
+  .portfolio .portfolio-card {
+
+  margin-bottom: 40px;
+
+}
 }
 
 @media (max-width: 576px) {
@@ -4502,9 +4513,10 @@ section,
 }
 }
 
-#eventosContent, #videosYT .row{
+#event, #videosYT .row{
   justify-content: center;
-  align-items: stretch;
+  /* align-items: stretch; */
+  align-items: normal;
 }
 
 #videosYT .row div iframe{
@@ -4532,6 +4544,7 @@ section,
   color: var(--contrast-color);
   transform: translateY(-3px);
 }
-.row{
+.event{
   justify-content: center;
 }
+
