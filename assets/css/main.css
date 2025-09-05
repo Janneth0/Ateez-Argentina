@@ -4532,3 +4532,6 @@ section,
   color: var(--contrast-color);
   transform: translateY(-3px);
 }
+.row{
+  justify-content: center;
+}
