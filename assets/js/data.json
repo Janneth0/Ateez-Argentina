@@ -40,6 +40,22 @@
     },
     
      {
+        "title": "CUMPLE",
+        "clave": "filter-hb",
+        "text": "4 de Octubre, KFEST,  Adolfo Alsina 1475 CABA",
+        "img": "../assets/img/portfolio/portfolio-3.webp",
+        "link":"https://www.instagram.com/p/DN6LrKpESkW/?utm_source=ig_web_button_share_sheet",
+        "date": "04/10/2025"
+    },
+     {
+        "title": "OTRO",
+        "clave": "filter-other",
+        "text": "4 de Octubre, KFEST,  Adolfo Alsina 1475 CABA",
+        "img": "../assets/img/portfolio/portfolio-3.webp",
+        "link":"https://www.instagram.com/p/DN6LrKpESkW/?utm_source=ig_web_button_share_sheet",
+        "date": "04/10/2025"
+    },
+    {
         "title": "comeback",
         "clave": "filter-cb",
         "text": "4 de Octubre, KFEST,  Adolfo Alsina 1475 CABA",
@@ -47,9 +63,18 @@
         "link":"https://www.instagram.com/p/DN6LrKpESkW/?utm_source=ig_web_button_share_sheet",
         "date": "04/10/2025"
     },
+    
      {
-        "title": "comeback",
-        "clave": "filter-cb",
+        "title": "CUMPLE",
+        "clave": "filter-hb",
+        "text": "4 de Octubre, KFEST,  Adolfo Alsina 1475 CABA",
+        "img": "../assets/img/portfolio/portfolio-3.webp",
+        "link":"https://www.instagram.com/p/DN6LrKpESkW/?utm_source=ig_web_button_share_sheet",
+        "date": "04/10/2025"
+    },
+     {
+        "title": "OTRO",
+        "clave": "filter-other",
         "text": "4 de Octubre, KFEST,  Adolfo Alsina 1475 CABA",
         "img": "../assets/img/portfolio/portfolio-3.webp",
         "link":"https://www.instagram.com/p/DN6LrKpESkW/?utm_source=ig_web_button_share_sheet",

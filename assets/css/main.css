@@ -2683,7 +2683,7 @@ section,
 }
 
 .faq .faq-item .faq-content .content-inner {
-  padding: 0 80px 40px 80px;
+  padding: 0 20px 40px 20px;
   overflow: hidden;
 }
 
@@ -4502,7 +4502,33 @@ section,
 }
 }
 
-#eventosContent{
+#eventosContent, #videosYT .row{
   justify-content: center;
   align-items: stretch;
+}
+
+#videosYT .row div iframe{
+  width:100%;
+}
+#videosYT{
+  text-align: center;
+  justify-content: center;
+}
+.nav-link.all-projects{
+  /* display: flex; */
+  /* flex-direction: row; */
+  align-items: center;
+  /* gap: 0.5rem; */
+  padding: 0.75rem 1.5rem;
+  border: 2px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  border-radius: 25px;
+  color: var(--heading-color);
+  font-weight: 500;
+  transition: all 0.3s ease;}
+
+ .nav-link.all-projects:hover {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--contrast-color);
+  transform: translateY(-3px);
 }

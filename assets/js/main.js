@@ -6,46 +6,7 @@
 * License: https://bootstrapmade.com/license/
 */
 
-// console.log (datos);
-// document.addEventListener('DOMContentLoaded', () => {
-//     const xhttp = new XMLHttpRequest();
-
-//     xhttp.open("GET", "../js/data.json", true);
-//     xhttp.send();
-//     xhttp.onreadystatechange = function () {
-//         if (this.readyState == 4 && this.status == 200) {
-//             let x = $("#txtinput").val().toUpperCase();
-//             let datos = JSON.parse(this.response);
-
-
-//             console.log("Hola")
-//             console.log(datos)
-//             for (let item of datos) {
-//                 let cadena = item.clave;
-//                 let posicion = cadena.indexOf(x);
-//                 console.log(posicion);
-
-//                 // if (posicion >= 0) {
-//                 word.innerHTML += `
-//                 <div class="col-lg-10 col-md-10 col-sm-10 col-12  text-white " style=" background-color:${item.color}; margin:5px;">
-//                 <div class="" style=" background-position-y: center; ">  </div>
-//                     <h3 class="" style="font-family: 'Bebas Neue';  text-align: left; padding: 5vh 2vh 2vh 2vh">${item.title}</h3>
-//                     <p class="card-text1" style="font-family: 'Baloo Tammudu 2', cursive; padding: 2vh ;  ">${item.def}</p>
-//               </div>
-//                       `
-//                 posicion = cadena.indexOf(x);
-//                 // }
-
-//             }
-
-//         }
-//     }
-
-// });
-
-// Cargar los datos JSON desde el archivo
-
-// let word = document.querySelector('#word')
+// DATOS FILTRADOS
 
 function filtro(tipofiltro) {
   // conexion
@@ -53,6 +14,7 @@ function filtro(tipofiltro) {
   xhttp.open("GET", "../assets/js/data.json", true);
   xhttp.send();
   const contenedor = document.getElementById('eventosContent');
+  contenedor.innerHTML = "";
   switch (tipofiltro) {
     case "hbd":
       console.log("caso hbd")
@@ -62,7 +24,7 @@ function filtro(tipofiltro) {
           console.log(datos)
           datos.forEach(evento => {
             if (evento.clave == "filter-hb") {
-              contenedor.innerHTML = "";
+              // contenedor.innerHTML = "";
               const div = document.createElement('div');
               div.classList.add('col-lg-4', 'col-md-6', 'portfolio-item', "isotope-item", `${evento.clave}`);
 
@@ -105,7 +67,7 @@ function filtro(tipofiltro) {
           console.log(datos)
           datos.forEach(evento => {
             if (evento.clave == "filter-esp") {
-              contenedor.innerHTML = "";
+              // contenedor.innerHTML = "";
               const div = document.createElement('div');
               div.classList.add('col-lg-4', 'col-md-6', 'portfolio-item', "isotope-item", `${evento.clave}`);
 
@@ -146,7 +108,7 @@ function filtro(tipofiltro) {
           console.log(datos)
           datos.forEach(evento => {
             if (evento.clave == "filter-cb") {
-              contenedor.innerHTML="";
+              // contenedor.innerHTML="";
               const div = document.createElement('div');
               div.classList.add('col-lg-4', 'col-md-6', 'portfolio-item', "isotope-item", `${evento.clave}`);
 
@@ -189,7 +151,7 @@ function filtro(tipofiltro) {
           console.log(datos)
           datos.forEach(evento => {
             if (evento.clave == "filter-other") {
-              contenedor.innerHTML="";
+              // contenedor.innerHTML="";
               const div = document.createElement('div');
               div.classList.add('col-lg-4', 'col-md-6', 'portfolio-item', "isotope-item", `${evento.clave}`);
 
@@ -266,105 +228,60 @@ function filtro(tipofiltro) {
     }
 }
 
-filtro();
+// Primera Muestra de datos
 
-
-// console.log(datos)
-
-
-
-
-
-
-// const xhttp = new XMLHttpRequest();
-
-// xhttp.open("GET", "../assets/js/data.json", true);
-// xhttp.send();
-// xhttp.onreadystatechange = function () {
-
-
-//   word.innerHTML = "";
-//   wordf.innerHTML = "";
-
-//   console.log("ingresa a filtro")
-//   for (let item of datos) {
-//     let cadena = item.clave;
-//     let posicion = cadena.indexOf(x);
-//     console.log(posicion);
-
-//     if (posicion >= 0) {
-//       wordf.innerHTML += `
-
-
-//                   <div class="col-lg-4 col-md-6 col-sm-5 col-12 text-white fir-card " style=" background-color:${item.color};">
-//     <div class="card-body card-fondo" style=" background-position-y: center; ">  
-//         <h3 class="card-title" style="font-family: 'Bebas Neue';  text-align: left;padding: 1vh 2vh 2vh 2vh;">${item.title}</h3>
-//         <p class="card-text1" style="font-family: 'Baloo Tammudu 2', cursive; padding: 2vh ;  ">${item.def}</p>
-//   </div>
-//   </div>
-//                     `
-//       posicion = cadena.indexOf(x);
-//     }
-
-//   }
-
-// }
+let eventosSave = fetch('../assets/js/data.json')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Error al cargar el archivo JSON');
+    }
+    return response.json();
+  })
+  .then(data => {
+    mostrarDatos(data);
+    eventosSave = data;
+  })
+  .catch(error => {
+    console.error('Hubo un problema:', error);
+  });
 
 
 
-
-// let eventosSave = fetch('../assets/js/data.json')
-//   .then(response => {
-//     if (!response.ok) {
-//       throw new Error('Error al cargar el archivo JSON');
-//     }
-//     return response.json();
-//   })
-//   .then(data => {
-//     mostrarDatos(data);
-//     eventosSave = data;
-//   })
-//   .catch(error => {
-//     console.error('Hubo un problema:', error);
-//   });
-
-
-
-// console.log(eventosSave);
+console.log(eventosSave);
 // Función para mostrar los datos en el HTML
-// function mostrarDatos(eventos) {
-//   const contenedor = document.getElementById('eventosContent');
+function mostrarDatos(eventos) {
+  const contenedor = document.getElementById('eventosContent');
 
-//   eventos.forEach(evento => {
+  eventos.forEach(evento => {
 
-//     const div = document.createElement('div');
-//     div.classList.add('col-lg-4', 'col-md-6', 'portfolio-item', "isotope-item", `${evento.clave}`);
+    const div = document.createElement('div');
+    div.classList.add('col-lg-4', 'col-md-6', 'portfolio-item', "isotope-item", `${evento.clave}`);
 
-//     div.innerHTML = `
+    div.innerHTML = `
 
-//               <div class="portfolio-card">
-//                                 <div class="image-container">
-//                                    <blockquote class="instagram-media" data-instgrm-permalink="${evento.link}" data-instgrm-version="14">
-//                                     <div class="overlay">
-//                                         <div class="overlay-content">
-//                                             <a href="${evento.link}" class="details-link"
-//                                                 title="View Project Details">
-//                                                 <i class="bi bi-arrow-right"></i>
-//                                             </a>
-//                                         </div>
-//                                     </div>
-//                                 </div>
-//                                 <div class="content">
-//                                     <h3>${evento.title}</h3>
-//                                     <p>${evento.text}</p>
-//                                 </div>
-//                             </div>
+              <div class="portfolio-card">
+                                <div class="image-container">
+                                   <blockquote class="instagram-media" data-instgrm-permalink="${evento.link}" data-instgrm-version="14">
+                                    <div class="overlay">
+                                        <div class="overlay-content">
+                                            <a href="${evento.link}" class="details-link"
+                                                title="View Project Details">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <h3>${evento.title}</h3>
+                                    <p>${evento.text}</p>
+                                </div>
+                            </div>
 
-//     `;
-//     contenedor.appendChild(div);
-//     // console.log(div);
-//   });
-// }
+    `;
+    contenedor.appendChild(div);
+    // console.log(div);
+  });
+}
 
 (function () {
   "use strict";
