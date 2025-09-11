@@ -1002,7 +1002,7 @@ section,
   background: var(--accent-color);
 }
 
-.section-title p {
+.section-title p, .section-title ul {
   font-size: 1.125rem;
   line-height: 1.8;
   color: color-mix(in srgb, var(--default-color), transparent 25%);
