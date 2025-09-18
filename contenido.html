@@ -74,22 +74,29 @@
 
         <div class="nav-wrap">
             <div class="container d-flex justify-content-center position-relative">
-                <nav id="navmenu" class="navmenu">
+            <nav id="navmenu" class="navmenu">
                     <ul>
-                        <li><a href="index.html">Quienes Somos</a></li>
+                        <!-- <li><a href="#">Inicio</a></li> -->
                         <li><a href="events-details.html">Eventos</a></li>
-                        <li><a href="index.html#sedes">Sedes</a></li>
-                        <!-- <li><a href="index.html">Galeria</a></li> -->
-                        <li class="dropdown"><a href="contenido.html"><span>Contenido</span> <i
+                        <li><a href="Noticias/noticias.html">Noticias</a></li>
+                        <li class="dropdown"><a href="#"><span>Contenido</span> <i
                                     class="bi bi-chevron-down toggle-dropdown"></i></a>
                             <ul>
-                                <li><a href="contenido.html#series">Series</a></li>
-                                <li><a href="contenido.html#Playlists">Playlists</a></li>
-                                <li><a href="contenido.html#danceCovers">Dance Covers</a></li>
-                                <li><a href="contenido.html#contenidoATZ">Más Contenido</a></li>
+                                <li><a href="#series">Series</a></li>
+                                <li><a href="#Playlists">Playlists</a></li>
+                                <li><a href="#danceCovers">Dance Covers</a></li>
+                                <li><a href="#contenidoATZ">Más Contenido</a></li>
                             </ul>
                         </li>
-                        <li><a href="noticias.html">Noticias</a></li>
+                        <li class="dropdown"><a href="index.html#nosotros"><span>Nosotros</span> <i
+                                    class="bi bi-chevron-down toggle-dropdown"></i></a>
+                            <ul>
+                                <li><a href="index.html#sedes">Sedes</a></li>
+                                <!-- <li><a href="contenido.html#Playlists">Playlists</a></li>
+                                <li><a href="contenido.html#danceCovers">Dance Covers</a></li>
+                                <li><a href="contenido.html#contenidoATZ">Más Contenido</a></li> -->
+                            </ul>
+                        </li>
                     </ul>
                     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
                 </nav>
@@ -113,10 +120,7 @@
                 <div class="row ">
                     <div class="col-lg-6 col-12">
                         <h3>In Your Fantasy - ATEEZ</h3>
-                        <iframe height="315" src="https://www.youtube.com/watch?v=JOF2ZTqvzwY"
-                            title="YouTube video player" frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                       <iframe width="560" height="315" src="https://www.youtube.com/embed/JOF2ZTqvzwY?si=ZvY_758jg35nVZ3I" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
                     </div>
                     <div class="col-lg-6 col-12">
@@ -143,7 +147,7 @@
                 </div><!-- End Section Title -->
 
                 <div class="row">
-                    <div class="col-lg-2 col-12"></div>
+                    <!-- <div class="col-lg-2 col-12"></div> -->
                     <div class="col-lg-5 col-12" style="text-align: center;">
                         <h2>Series de Yunho TITULO</h2>
                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima deserunt optio illum
@@ -199,8 +203,7 @@
 
 
     </main>
-
-    <footer id="footer" class="footer dark-background">
+<footer id="footer" class="footer dark-background">
 
         <div class="container">
             <div class="row">
@@ -219,32 +222,7 @@
                         height="300" style="border:0; border-radius: 10px;" allowfullscreen="" loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
-                <!-- <div class="col-lg-4">
-                    <div class="footer-content">
-                        <a href="index.html" class="logo d-flex align-items-center mb-4">
-                            <span class="sitename">MyWebsite</span>
-                        </a>
-                        <p class="mb-4">Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia
-                            curae.
-                            Donec velit neque auctor sit amet aliquam vel ullamcorper sit amet ligula.</p>
 
-                        <div class="newsletter-form">
-                            <h5>Stay Updated</h5>
-                            <form action="forms/newsletter.php" method="post" class="php-email-form">
-                                <div class="input-group">
-                                    <input type="email" name="email" class="form-control" placeholder="Enter your email"
-                                        required="">
-                                    <button type="submit" class="btn-subscribe">
-                                        <i class="bi bi-send"></i>
-                                    </button>
-                                </div>
-                                <div class="loading">Loading</div>
-                                <div class="error-message"></div>
-                                <div class="sent-message">Thank you for subscribing!</div>
-                            </form>
-                        </div>
-                    </div>
-                </div> -->
                 <div class="col-lg-4 col-md-12 col-12">
                     <div class="footer-contact">
                         <h4>Contacto</h4>
@@ -253,7 +231,7 @@
                                 <i class="bi bi-geo-alt"></i>
                             </div>
                             <div class="contact-info">
-                                <p>Ciudad Autonoma de Buenos Aires<br>Buenos Aires<br>Argentina</p>
+                                <p>Ciudad Autonoma de Buenos Aires<br>Argentina</p>
                             </div>
                         </div>
 
@@ -294,18 +272,17 @@
                     <div class="col-lg-6">
                         <div class="copyright">
                             <p>© <span>Copyright 2025</span> <strong class="px-1 sitename">StartinyARG</strong>
-                                <span>All
-                                    Rights
-                                    Reserved</span> <br> Desarrollo - Janneth Chura Yujra
+                                <span>All Rights Reserved</span> <br>
+                                <!-- <span>Desarrollo - Janneth Chura Yujra</span> -->
                             </p>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="footer-bottom-links">
+                        <!-- <div class="footer-bottom-links">
                             <a href="#">Privacy Policy</a>
                             <a href="#">Terms of Service</a>
                             <a href="#">Cookie Policy</a>
-                        </div>
+                        </div> -->
                         <div class="credits">
                             <!-- All the links in the footer should remain intact. -->
                             <!-- You can delete the links only if you've purchased the pro version. -->
