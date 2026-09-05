@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Panel de Administración - ATEEZ Argentina</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Favicons -->
+    <link href="../assets/img/logoATZ.jpeg" rel="icon" class="logo">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900&display=swap"
+        rel="stylesheet">
+
+    <!-- Vendor CSS -->
+    <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Main + Admin CSS -->
+    <link href="../assets/css/main.css" rel="stylesheet">
+    <link href="admin.css" rel="stylesheet">
+</head>
+
+<body class="admin-page">
+
+    <div id="site-header"></div>
+
+    <main class="admin-main">
+        <div class="container">
+
+            <!-- ESTADO: cargando -->
+            <section id="vista-cargando" class="admin-vista text-center">
+                <div class="spinner-border" role="status" aria-hidden="true"></div>
+                <p>Cargando...</p>
+            </section>
+
+            <!-- ESTADO: no logueado (login / registro) -->
+            <section id="vista-auth" class="admin-vista" style="display:none;">
+                <div class="auth-card">
+                    <div class="text-center mb-4">
+                        <img src="../assets/img/logoATZ.jpeg" alt="ATEEZ Argentina" class="auth-logo">
+                        <h2>Panel de Administración</h2>
+                        <p class="subtitle">ATEEZ Argentina</p>
+                    </div>
+
+                    <ul class="nav nav-tabs auth-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab-login-btn" data-bs-toggle="tab"
+                                data-bs-target="#tab-login" type="button" role="tab">Iniciar sesión</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-registro-btn" data-bs-toggle="tab"
+                                data-bs-target="#tab-registro" type="button" role="tab">Registrarme</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content pt-4">
+                        <!-- LOGIN -->
+                        <div class="tab-pane fade show active" id="tab-login" role="tabpanel">
+                            <form id="form-login" novalidate>
+                                <div class="mb-3">
+                                    <label class="form-label" for="login-email">Email</label>
+                                    <input type="email" class="form-control" id="login-email" required autocomplete="email">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="login-password">Contraseña</label>
+                                    <input type="password" class="form-control" id="login-password" required autocomplete="current-password">
+                                </div>
+                                <div id="login-error" class="admin-alert admin-alert-error" style="display:none;"></div>
+                                <div id="login-ok" class="admin-alert admin-alert-ok" style="display:none;"></div>
+                                <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+                                <button type="button" id="btn-olvide-contrasena" class="btn btn-link btn-sm w-100 mt-1">¿Olvidaste tu contraseña?</button>
+                            </form>
+
+                            <div class="divider"><span>o</span></div>
+
+                            <button type="button" id="btn-google" class="btn btn-google w-100">
+                                <i class="bi bi-google"></i> Continuar con Google
+                            </button>
+                        </div>
+
+                        <!-- REGISTRO -->
+                        <div class="tab-pane fade" id="tab-registro" role="tabpanel">
+                            <form id="form-registro" novalidate>
+                                <div class="mb-3">
+                                    <label class="form-label" for="reg-nombre">Nombre completo</label>
+                                    <input type="text" class="form-control" id="reg-nombre" required autocomplete="name">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="reg-email">Email</label>
+                                    <input type="email" class="form-control" id="reg-email" required autocomplete="email">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="reg-password">Contraseña</label>
+                                    <input type="password" class="form-control" id="reg-password" required minlength="6" autocomplete="new-password">
+                                    <div class="form-text">Mínimo 6 caracteres.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="reg-fecha">Fecha de nacimiento</label>
+                                    <input type="date" class="form-control" id="reg-fecha" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="reg-pais">País</label>
+                                    <select class="form-select" id="reg-pais" required></select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="reg-celular">Celular</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text" id="reg-dial">+54</span>
+                                        <input type="tel" class="form-control" id="reg-celular" placeholder="11 2345 6789" required autocomplete="tel-national">
+                                    </div>
+                                </div>
+                                <div id="registro-error" class="admin-alert admin-alert-error" style="display:none;"></div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="reg-terminos" required>
+                                    <label class="form-check-label" for="reg-terminos">
+                                        Leí y acepto los <a href="../terminos.html" target="_blank">Términos y Condiciones</a> y la Política de Privacidad.
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Crear cuenta</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ESTADO: logueado pero sin rol asignado -->
+            <section id="vista-pendiente" class="admin-vista" style="display:none;">
+                <div class="auth-card text-center">
+                    <i class="bi bi-hourglass-split pendiente-icon"></i>
+                    <h2>¡Gracias por querer ayudar!</h2>
+                    <p>
+                        Tu cuenta ya fue creada. Ahora un administrador tiene que asignarte un rol
+                        (colaborador o admin) para que puedas ver el panel.
+                    </p>
+                    <p class="text-muted">Avisale a alguien del equipo que ya te registraste 🏴‍☠️</p>
+                    <button id="btn-logout-pendiente" class="btn btn-outline-secondary mt-2">Cerrar sesión</button>
+                </div>
+            </section>
+
+            <!-- ESTADO: dashboard (admin / colaborador) -->
+            <section id="vista-dashboard" class="admin-vista" style="display:none;">
+                <div class="dashboard-header">
+                    <div>
+                        <h2>Panel de Administración</h2>
+                        <p class="text-muted" id="saludo-usuario"></p>
+                    </div>
+                    <button id="btn-logout" class="btn btn-outline-secondary">
+                        <i class="bi bi-box-arrow-right"></i> Salir
+                    </button>
+                </div>
+
+                <div id="aviso-vencimiento" class="admin-alert admin-alert-warning" style="display:none;"></div>
+
+                <ul class="nav nav-tabs dashboard-tabs" id="dashboard-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#panel-publicaciones"
+                            type="button" role="tab">Eventos</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-noticias"
+                            type="button" role="tab">Noticias</button>
+                    </li>
+                    <li class="nav-item admin-only" role="presentation" style="display:none;">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-fanbases"
+                            type="button" role="tab">Fanbases</button>
+                    </li>
+                    <li class="nav-item admin-only" role="presentation" style="display:none;">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-galeria"
+                            type="button" role="tab">Galería</button>
+                    </li>
+                    <li class="nav-item admin-only" role="presentation" style="display:none;">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-apariencia"
+                            type="button" role="tab">Apariencia</button>
+                    </li>
+                    <li class="nav-item admin-only" role="presentation" style="display:none;">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-usuarios"
+                            type="button" role="tab">Usuarios</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content pt-4">
+                    <!-- EVENTOS (antes "Publicaciones") -->
+                    <div class="tab-pane fade show active" id="panel-publicaciones" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="m-0">Eventos</h4>
+                            <button id="btn-nueva-publicacion" class="btn btn-primary">
+                                <i class="bi bi-plus-lg"></i> Nuevo evento
+                            </button>
+                        </div>
+                        <div id="lista-publicaciones" class="admin-list">
+                            <p class="text-muted">Cargando eventos...</p>
+                        </div>
+                    </div>
+
+                    <!-- NOTICIAS (admin + colaborador) -->
+                    <div class="tab-pane fade" id="panel-noticias" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="m-0">Noticias</h4>
+                            <button id="btn-nueva-noticia" class="btn btn-primary">
+                                <i class="bi bi-plus-lg"></i> Nueva noticia
+                            </button>
+                        </div>
+                        <div id="lista-noticias" class="admin-list">
+                            <p class="text-muted">Cargando noticias...</p>
+                        </div>
+                    </div>
+
+                    <!-- FANBASES (solo admin) -->
+                    <div class="tab-pane fade" id="panel-fanbases" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="m-0">Fanbases / Sedes</h4>
+                            <button id="btn-nueva-fanbase" class="btn btn-primary">
+                                <i class="bi bi-plus-lg"></i> Nueva fanbase
+                            </button>
+                        </div>
+                        <div id="lista-fanbases" class="admin-list">
+                            <p class="text-muted">Cargando fanbases...</p>
+                        </div>
+                    </div>
+
+                    <!-- GALERÍA (solo admin) -->
+                    <div class="tab-pane fade" id="panel-galeria" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="m-0">Galería de fotos</h4>
+                            <button id="btn-nueva-foto" class="btn btn-primary">
+                                <i class="bi bi-plus-lg"></i> Subir foto
+                            </button>
+                        </div>
+                        <p class="text-muted">Se muestran las últimas fotos en la portada. El resto queda disponible en "Ver toda la galería".</p>
+                        <div id="lista-galeria" class="admin-gallery-grid">
+                            <p class="text-muted">Cargando galería...</p>
+                        </div>
+                    </div>
+
+                    <!-- APARIENCIA (solo admin) -->
+                    <div class="tab-pane fade" id="panel-apariencia" role="tabpanel">
+                        <h4 class="mb-3">Apariencia del sitio</h4>
+                        <form id="form-apariencia">
+                            <div class="mb-4">
+                                <label class="form-label d-block">Paleta de colores</label>
+                                <div id="paletas-opciones" class="paletas-grid"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="ap-fondo">Color de fondo</label>
+                                    <input type="color" class="form-control form-control-color" id="ap-fondo">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="ap-superficie">Color de tarjetas</label>
+                                    <input type="color" class="form-control form-control-color" id="ap-superficie">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="ap-accento">Color de acento</label>
+                                    <input type="color" class="form-control form-control-color" id="ap-accento">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="ap-texto">Color de texto</label>
+                                    <input type="color" class="form-control form-control-color" id="ap-texto">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="ap-heading">Color de títulos</label>
+                                    <input type="color" class="form-control form-control-color" id="ap-heading">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="ap-contraste">Color de contraste</label>
+                                    <input type="color" class="form-control form-control-color" id="ap-contraste">
+                                    <div class="form-text">Se usa como color de texto sobre botones/etiquetas de color acento.</div>
+                                </div>
+                            </div>
+                            <div class="admin-alert admin-alert-warning">
+                                <i class="bi bi-info-circle"></i> Si armás una combinación manual (sin usar una
+                                paleta de arriba), elegí un color de acento bien saturado/oscuro cuando el fondo
+                                sea claro, y bien saturado/claro cuando el fondo sea oscuro — así el texto de
+                                acento se sigue viendo bien en los dos casos.
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="ap-logo-url">Logo del sitio (URL de imagen)</label>
+                                <input type="url" class="form-control" id="ap-logo-url" placeholder="https://...">
+                                <div class="form-text">
+                                    Pegá un link directo a la imagen, o un link "para compartir" de Google Drive
+                                    (lo convertimos automáticamente). En Drive: click derecho en el archivo →
+                                    Compartir → "Cualquier persona con el enlace" → copiar enlace, y pegalo acá.
+                                </div>
+                                <div class="preview-imagen-chica mt-2" id="ap-logo-preview-wrap" style="display:none;">
+                                    <img id="ap-logo-preview" src="" alt="Vista previa del logo">
+                                </div>
+                            </div>
+                            <div id="apariencia-error" class="admin-alert admin-alert-error" style="display:none;"></div>
+                            <div id="apariencia-ok" class="admin-alert admin-alert-ok" style="display:none;">Cambios guardados. Ya se ven en todo el sitio.</div>
+                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <h5>SEO: sitemap.xml</h5>
+                        <p class="text-muted">
+                            Genera un <code>sitemap.xml</code> actualizado con todas las noticias y eventos
+                            cargados hasta ahora, para que Google los encuentre e indexe más rápido. Después de
+                            descargarlo, subilo a la raíz del repositorio (reemplazando el <code>sitemap.xml</code>
+                            que ya existe) y hacé commit.
+                        </p>
+                        <button type="button" id="btn-generar-sitemap" class="btn btn-outline-secondary">
+                            <i class="bi bi-download"></i> Descargar sitemap.xml actualizado
+                        </button>
+                    </div>
+
+                    <!-- USUARIOS (solo admin) -->
+                    <div class="tab-pane fade" id="panel-usuarios" role="tabpanel">
+                        <h4 class="mb-3">Usuarios registrados</h4>
+                        <p class="text-muted">Asigná el rol de cada persona para que pueda usar el panel.</p>
+                        <div id="lista-usuarios" class="admin-list">
+                            <p class="text-muted">Cargando usuarios...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- MODAL: crear / editar publicación -->
+    <div class="modal fade" id="modalPublicacion" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="form-publicacion">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalPublicacionTitulo">Nueva publicación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="pub-id">
+                        <div class="mb-3">
+                            <label class="form-label" for="pub-titulo">Título</label>
+                            <input type="text" class="form-control" id="pub-titulo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="pub-descripcion">Descripción</label>
+                            <textarea class="form-control" id="pub-descripcion" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="pub-link">Link (Instagram u otra red social)</label>
+                            <input type="url" class="form-control" id="pub-link" placeholder="https://www.instagram.com/p/..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="pub-fecha">Fecha del evento</label>
+                            <input type="date" class="form-control" id="pub-fecha" required>
+                            <div class="form-text">La fecha en la que ocurrió el evento (no en la que lo cargás). Instagram no permite obtenerla automáticamente desde un link, así que hay que ponerla a mano — fijate la fecha del posteo original. Se usa para ordenar los eventos y para desactivarlos automáticamente al año.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="pub-categoria">Categoría</label>
+                            <select class="form-select" id="pub-categoria">
+                                <option value="especial">Especial</option>
+                                <option value="comeback">Comeback</option>
+                                <option value="cumpleanos">Cumpleaños</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div id="publicacion-error" class="admin-alert admin-alert-error" style="display:none;"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: confirmar eliminación (genérico, reutilizado por eventos/noticias/fanbases/fotos) -->
+    <div class="modal fade" id="modalConfirmarEliminar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConfirmarEliminarTitulo">¿Eliminar?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btn-confirmar-eliminar" class="btn btn-danger">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: crear / editar NOTICIA (grande, con vista previa en vivo) -->
+    <div class="modal fade" id="modalNoticia" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <form id="form-noticia">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalNoticiaTitulo">Nueva noticia</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="not-id">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label class="form-label" for="not-titulo">Título</label>
+                                    <input type="text" class="form-control" id="not-titulo" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="not-resumen">Resumen (se ve en las tarjetas)</label>
+                                    <textarea class="form-control" id="not-resumen" rows="2" maxlength="180" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="not-imagen-url">Imagen destacada (URL)</label>
+                                    <input type="url" class="form-control" id="not-imagen-url" placeholder="https://... o link de Google Drive">
+                                    <div class="form-text">Pegá un link directo, o uno "para compartir" de Google Drive (se convierte solo).</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="not-fecha">Fecha de publicación</label>
+                                    <input type="date" class="form-control" id="not-fecha" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Contenido</label>
+                                    <div class="editor-toolbar">
+                                        <button type="button" data-cmd="bold" title="Negrita"><i class="bi bi-type-bold"></i></button>
+                                        <button type="button" data-cmd="italic" title="Cursiva"><i class="bi bi-type-italic"></i></button>
+                                        <button type="button" data-cmd="insertUnorderedList" title="Lista"><i class="bi bi-list-ul"></i></button>
+                                        <button type="button" data-cmd="createLink" title="Link"><i class="bi bi-link-45deg"></i></button>
+                                        <button type="button" data-cmd="formatBlock" data-valor="h3" title="Subtítulo"><i class="bi bi-type-h3"></i></button>
+                                        <button type="button" data-cmd="formatBlock" data-valor="p" title="Párrafo"><i class="bi bi-paragraph"></i></button>
+                                        <span class="editor-toolbar-separador"></span>
+                                        <button type="button" data-cmd="justifyLeft" title="Alinear a la izquierda"><i class="bi bi-text-left"></i></button>
+                                        <button type="button" data-cmd="justifyCenter" title="Centrar"><i class="bi bi-text-center"></i></button>
+                                        <button type="button" data-cmd="justifyRight" title="Alinear a la derecha"><i class="bi bi-text-right"></i></button>
+                                        <button type="button" data-cmd="justifyFull" title="Justificar"><i class="bi bi-justify"></i></button>
+                                    </div>
+                                    <div id="not-contenido" class="editor-contenido" contenteditable="true"></div>
+                                </div>
+                                <div id="noticia-error" class="admin-alert admin-alert-error" style="display:none;"></div>
+                            </div>
+                            <div class="col-lg-6">
+                                <label class="form-label d-block">Así se va a ver publicada</label>
+                                <div class="noticia-preview">
+                                    <div class="noticia-preview-imagen">
+                                        <img id="preview-imagen" src="../assets/img/logoATZ.jpeg" alt="Vista previa">
+                                    </div>
+                                    <span class="noticia-preview-fecha" id="preview-fecha">Fecha</span>
+                                    <h2 id="preview-titulo">Título de la noticia</h2>
+                                    <div id="preview-contenido" class="noticia-preview-cuerpo"><p>Escribí el contenido para ver la vista previa acá.</p></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Publicar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: crear / editar FANBASE -->
+    <div class="modal fade" id="modalFanbaseAdmin" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="form-fanbase">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalFanbaseTitulo">Nueva fanbase</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="fb-id">
+                        <div class="mb-3">
+                            <label class="form-label" for="fb-nombre">Nombre de la fanbase</label>
+                            <input type="text" class="form-control" id="fb-nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="fb-descripcion">Descripción</label>
+                            <textarea class="form-control" id="fb-descripcion" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="fb-ciudad">Ciudad / Provincia</label>
+                            <input type="text" class="form-control" id="fb-ciudad" placeholder="Ej: Córdoba Capital">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="fb-logo-url">Logo (URL de imagen)</label>
+                            <input type="url" class="form-control" id="fb-logo-url" placeholder="https://... o link de Google Drive">
+                            <div class="form-text">Pegá un link directo, o uno "para compartir" de Google Drive (se convierte solo).</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Redes sociales</label>
+                            <div id="fb-redes-lista"></div>
+                            <button type="button" id="btn-agregar-red" class="btn btn-sm btn-outline-secondary mt-2">
+                                <i class="bi bi-plus-lg"></i> Agregar red social
+                            </button>
+                        </div>
+                        <div id="fanbase-error" class="admin-alert admin-alert-error" style="display:none;"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: subir foto a la GALERÍA -->
+    <div class="modal fade" id="modalFoto" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="form-foto">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Subir foto a la galería</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label" for="foto-url">URL de la imagen</label>
+                            <input type="url" class="form-control" id="foto-url" placeholder="https://... o link de Google Drive" required>
+                            <div class="form-text">Pegá un link directo, o uno "para compartir" de Google Drive (se convierte solo).</div>
+                            <div class="preview-imagen-chica mt-2" id="foto-preview-wrap" style="display:none;">
+                                <img id="foto-preview" src="" alt="Vista previa">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="foto-descripcion">Descripción corta</label>
+                            <input type="text" class="form-control" id="foto-descripcion" placeholder="Ej: Cumple de San, Rosario 2026">
+                        </div>
+                        <div id="foto-error" class="admin-alert admin-alert-error" style="display:none;"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Subir</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="site-footer"></div>
+
+    <!-- Vendor JS -->
+    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Consentimiento de cookies -->
+    <script type="module" src="../assets/js/cookies.js"></script>
+
+    <!-- Admin JS (module) -->
+    <script type="module" src="admin.js"></script>
+</body>
+
+</html>

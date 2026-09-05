@@ -1,0 +1,495 @@
+/* ============================================================
+   ADMIN.CSS - Panel de Administración ATEEZ Argentina
+   ============================================================ */
+
+.admin-main {
+  padding: 140px 0 80px;
+  min-height: 100vh;
+}
+
+.admin-vista {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#vista-cargando {
+  padding-top: 120px;
+  color: var(--default-color);
+}
+
+#vista-cargando .spinner-border {
+  color: var(--accent-color);
+  margin-bottom: 12px;
+}
+
+/* --- Tarjeta de login / registro / pendiente --- */
+.auth-card {
+  max-width: 460px;
+  margin: 0 auto;
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--accent-color), transparent 80%);
+  border-radius: 16px;
+  padding: 32px 28px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.auth-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.auth-card h2 {
+  font-size: 24px;
+  margin-bottom: 2px;
+}
+
+.auth-card .subtitle {
+  color: var(--accent-color);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.auth-tabs {
+  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+}
+
+.auth-tabs .nav-link {
+  color: var(--default-color);
+  opacity: 0.7;
+  border: none;
+  border-bottom: 2px solid transparent;
+}
+
+.auth-tabs .nav-link.active {
+  background: transparent;
+  color: var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
+  opacity: 1;
+}
+
+.admin-page .form-control,
+.admin-page .form-select {
+  background-color: color-mix(in srgb, var(--surface-color), #000 10%);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 75%);
+  color: var(--default-color);
+}
+
+.admin-page .form-control:focus,
+.admin-page .form-select:focus {
+  background-color: color-mix(in srgb, var(--surface-color), #000 10%);
+  color: var(--default-color);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--accent-color), transparent 75%);
+}
+
+.admin-page .form-label {
+  color: var(--default-color);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: var(--default-color);
+  opacity: 0.5;
+  margin: 18px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid currentColor;
+}
+
+.divider span {
+  padding: 0 12px;
+  font-size: 13px;
+}
+
+.btn-google {
+  background: #ffffff;
+  color: #1a1a1a;
+  border: 1px solid #d9d9d9;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-google:hover {
+  background: #f2f2f2;
+}
+
+.admin-alert {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.admin-alert-error {
+  background: color-mix(in srgb, #df1529, transparent 85%);
+  color: #ff8080;
+  border: 1px solid color-mix(in srgb, #df1529, transparent 60%);
+}
+
+.pendiente-icon {
+  font-size: 42px;
+  color: var(--accent-color);
+  margin-bottom: 14px;
+  display: block;
+}
+
+/* --- Dashboard --- */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.dashboard-tabs {
+  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+}
+
+.dashboard-tabs .nav-link {
+  color: var(--default-color);
+  opacity: 0.7;
+  border: none;
+  border-bottom: 2px solid transparent;
+}
+
+.dashboard-tabs .nav-link.active {
+  background: transparent;
+  color: var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
+  opacity: 1;
+}
+
+/* --- Listado (publicaciones / usuarios) --- */
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+
+.admin-list-item .item-info {
+  min-width: 0;
+}
+
+.admin-list-item .item-info h5 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  color: var(--heading-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-list-item .item-info .badge-categoria {
+  display: inline-block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--accent-color), transparent 80%);
+  color: var(--accent-color);
+  margin-right: 8px;
+}
+
+.admin-list-item .item-info p {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 480px;
+}
+
+.admin-list-item .item-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.admin-list-item .item-actions button {
+  border: none;
+  background: transparent;
+  color: var(--default-color);
+  opacity: 0.75;
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.admin-list-item .item-actions button:hover {
+  opacity: 1;
+  background: color-mix(in srgb, var(--accent-color), transparent 85%);
+  color: var(--accent-color);
+}
+
+.admin-list-item .item-actions button.eliminar:hover {
+  background: color-mix(in srgb, #df1529, transparent 82%);
+  color: #ff6b6b;
+}
+
+.admin-list-item select.rol-select {
+  max-width: 170px;
+}
+
+.admin-page .modal-content {
+  background: var(--surface-color);
+  color: var(--default-color);
+  border-radius: 14px;
+}
+
+.admin-page .modal-header,
+.admin-page .modal-footer {
+  border-color: color-mix(in srgb, var(--default-color), transparent 88%);
+}
+
+.admin-alert-warning {
+  background: color-mix(in srgb, var(--accent-color), transparent 82%);
+  color: var(--accent-color);
+  border: 1px solid color-mix(in srgb, var(--accent-color), transparent 55%);
+}
+
+.admin-alert-ok {
+  background: color-mix(in srgb, #2fbf71, transparent 82%);
+  color: #4ee394;
+  border: 1px solid color-mix(in srgb, #2fbf71, transparent 55%);
+}
+
+/* --- Editor simple de noticias --- */
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  background: color-mix(in srgb, var(--surface-color), #000 12%);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
+  border-radius: 8px 8px 0 0;
+  padding: 6px;
+}
+
+.editor-toolbar-separador {
+  width: 1px;
+  height: 22px;
+  background: color-mix(in srgb, var(--default-color), transparent 75%);
+  margin: 0 4px;
+}
+
+.editor-toolbar button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--default-color);
+  border-radius: 6px;
+}
+
+.editor-toolbar button:hover {
+  background: color-mix(in srgb, var(--accent-color), transparent 80%);
+  color: var(--accent-color);
+}
+
+.editor-contenido {
+  min-height: 220px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  background: color-mix(in srgb, var(--surface-color), #000 10%);
+}
+
+.editor-contenido:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+/* --- Vista previa de noticia dentro del modal --- */
+.noticia-preview {
+  background: color-mix(in srgb, var(--surface-color), #000 8%);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  border-radius: 12px;
+  padding: 16px;
+  height: 100%;
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+.noticia-preview-imagen img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.noticia-preview-fecha {
+  font-size: 12px;
+  opacity: .7;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.noticia-preview h2 {
+  font-size: 20px;
+  margin: 6px 0 12px;
+}
+
+.noticia-preview-cuerpo {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* --- Paletas de color --- */
+.paletas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.paleta-opcion {
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  background: color-mix(in srgb, var(--surface-color), #000 10%);
+  transition: 0.2s;
+}
+
+.paleta-opcion.activa {
+  border-color: var(--accent-color);
+}
+
+.paleta-opcion .swatches {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.paleta-opcion .swatches span {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.paleta-opcion small {
+  font-size: 12px;
+}
+
+/* --- Redes sociales dinámicas (form fanbase) --- */
+.fb-red-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.fb-red-row select { max-width: 140px; }
+
+.fb-red-row button {
+  border: none;
+  background: transparent;
+  color: #ff6b6b;
+  width: 38px;
+}
+
+/* --- Galería en el panel --- */
+.admin-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.admin-gallery-grid .foto-item {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 1;
+}
+
+.admin-gallery-grid .foto-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-gallery-grid .foto-item button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+
+/* --- Botón de destacar noticia (estrella) --- */
+.item-actions button.destacar.activa {
+  color: var(--accent-color);
+}
+
+.item-actions .badge-estado {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-left: 6px;
+  text-transform: uppercase;
+}
+
+.item-actions .badge-estado.vencido {
+  background: color-mix(in srgb, #df1529, transparent 80%);
+  color: #ff8080;
+}
+
+.admin-list-item .responsable {
+  font-size: 12px;
+  opacity: .6;
+}
+
+.preview-imagen-chica img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
+}
