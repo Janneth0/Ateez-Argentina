@@ -281,15 +281,16 @@
 
     <!-- Componentes reutilizables (header / footer) -->
     <script type="module">
-        import { montarHeader, montarFooter } from "../assets/js/components.js";
-        montarHeader({ base: "../", activo: "eventos" });
-        montarFooter({ base: "../" });
+        import { iniciarSitio } from "../assets/js/site-boot.js";
+        iniciarSitio({ base: "../", activo: "eventos" });
     </script>
     <script type="module" src="../assets/js/cookies.js"></script>
 
     <!-- Main JS File -->
     <script src="../assets/js/main.js"></script>
     <script async src="//www.instagram.com/embed.js"></script>
+    <script async src="https://www.tiktok.com/embed.js"></script>
+    <script async src="https://platform.twitter.com/widgets.js"></script>
 
     <!-- Publicaciones dinámicas cargadas desde el panel de administración (Firestore) -->
     <script type="module" src="../assets/js/eventos-publicos.js"></script>

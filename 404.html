@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>ATEEZ Argentina</title>
+    <script>
+        // ============================================================
+        // Truco estándar para tener URLs "lindas" en GitHub Pages sin
+        // servidor propio (basado en spa-github-pages). Si alguien entra
+        // directo a /Noticias/<slug>, GitHub Pages no encuentra ese
+        // archivo y sirve este 404.html. Acá redirigimos a
+        // /Noticias/noticias.html?ruta=<slug>, y noticias-app.js se
+        // encarga de "limpiar" la URL de vuelta a /Noticias/<slug>.
+        // ============================================================
+        (function () {
+            var path = window.location.pathname;
+            var partes = path.split("/").filter(Boolean);
+
+            var idx = partes.findIndex(function (p) { return p.toLowerCase() === "noticias"; });
+            if (idx !== -1 && partes.length > idx + 1 && partes[idx + 1] !== "noticias.html") {
+                var slug = partes[idx + 1];
+                var base = "/" + partes.slice(0, idx + 1).join("/") + "/";
+                window.location.replace(base + "noticias.html?ruta=" + encodeURIComponent(slug) + window.location.search.replace("?", "&"));
+                return;
+            }
+
+            window.location.replace("/");
+        })();
+    </script>
+</head>
+<body>
+    <p>Redirigiendo... si no pasa nada, <a href="/">volvé al inicio</a>.</p>
+</body>
+</html>

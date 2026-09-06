@@ -64,31 +64,43 @@
                 </div>
             </section>
 
-            <section id="series">
-                <!-- Section Title -->
-                <div class=" section-title" data-aos="fade-up">
-                    <span class="subtitle">Series Subtituladas</span>
-                </div><!-- End Section Title -->
-
-                <div class="row">
-                    <div class="col-lg-5 col-12" style="text-align: center;">
-                        <h2>Contenido subtitulado por el equipo</h2>
-                        <p>Reality shows, vlives y contenido detras de camara de ATEEZ, subtitulado al espanol por
-                            colaboradores de la comunidad Argentina.</p>
-                        <div data-aos="fade-up" data-aos-delay="200">
-                            <a href="https://drive.google.com/drive/folders/1iJbH9zVO_IiQB3O8DZE3ihJBfsCz7I-V?usp=drive_link"
-                                class="nav-link all-projects footer-navigation">
-                                <i class="bi bi-grid-3x3-gap"></i>
-                                <span>Carpeta Drive</span>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-12">
-                        <blockquote class="instagram-media"
-                            data-instgrm-permalink="https://www.instagram.com/p/DN9m03BDFtb/?utm_source=ig_embed&amp;utm_campaign=loading"
-                            data-instgrm-version="14"></blockquote>
-                    </div>
+            <section id="wanteez" class="section">
+                <div class="section-title" data-aos="fade-up">
+                    <span class="subtitle">Serie Oficial</span>
+                    <h2>WANTEEZ</h2>
+                    <p>Los últimos episodios de WANTEEZ, actualizados automáticamente desde YouTube.</p>
                 </div>
+                <div class="video-compacto-grid" id="grilla-wanteez" data-aos="fade-up" data-aos-delay="100">
+                    <p class="text-center text-muted">Cargando episodios...</p>
+                </div>
+            </section>
+
+            <section id="logbook" class="section">
+                <div class="section-title" data-aos="fade-up">
+                    <span class="subtitle">Serie Oficial</span>
+                    <h2>LOG_LOGBOOK</h2>
+                    <p>Los últimos episodios de LOG_LOGBOOK, actualizados automáticamente desde YouTube.</p>
+                </div>
+                <div class="video-compacto-grid" id="grilla-logbook" data-aos="fade-up" data-aos-delay="100">
+                    <p class="text-center text-muted">Cargando episodios...</p>
+                </div>
+            </section>
+
+            <section id="series" class="section">
+                <div class="section-title" data-aos="fade-up">
+                    <span class="subtitle">Hecho por la comunidad</span>
+                    <h2>Series, Traducciones y Más Contenido</h2>
+                    <p>Contenido cargado por el equipo: series subtituladas, traducciones, dance covers y más.</p>
+                </div>
+                <div class="publicaciones-filtros" id="contenido-filtros" data-aos="fade-up" data-aos-delay="100">
+                    <button type="button" data-filtro="todas" class="filter-active">Todo</button>
+                    <button type="button" data-filtro="serie">Series</button>
+                    <button type="button" data-filtro="traduccion">Traducciones</button>
+                    <button type="button" data-filtro="dancecover">Dance Covers</button>
+                    <button type="button" data-filtro="otro">Otro</button>
+                </div>
+                <div class="row" id="grilla-contenido" data-aos="fade-up" data-aos-delay="150"></div>
+                <p id="contenido-vacio" class="text-center text-muted" style="display:none;">Todavía no hay contenido cargado por el equipo.</p>
             </section>
 
             <section id="Playlists">
@@ -103,22 +115,6 @@
                         src="https://open.spotify.com/embed/artist/68KmkJeZGfwe1OUaivBa2L?utm_source=generator&theme=0"
                         allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                         loading="lazy"></iframe>
-                </div>
-            </section>
-
-            <section id="danceCovers" class="section">
-                <div class="section-title" data-aos="fade-up">
-                    <span class="subtitle">Proximamente</span>
-                    <h2>Dance Covers</h2>
-                    <p>Aca vamos a ir sumando los mejores dance covers hechos por la comunidad Argentina. Tenes uno para compartir? Escribinos.</p>
-                </div>
-            </section>
-
-            <section id="contenidoATZ" class="section">
-                <div class="section-title" data-aos="fade-up">
-                    <span class="subtitle">Proximamente</span>
-                    <h2>Mas Contenido</h2>
-                    <p>Fan arts, fan cams y otros proyectos de la comunidad se van a ir agregando aca.</p>
                 </div>
             </section>
         </div>
@@ -149,18 +145,22 @@
     <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
     <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
 
-    <!-- Componentes reutilizables (header / footer) -->
+    <!-- Arranque del sitio: header, footer, tema de colores y modal de Términos -->
     <script type="module">
-        import { montarHeader, montarFooter } from "./assets/js/components.js";
-        montarHeader({ base: "" });
-        montarFooter({ base: "" });
+        import { iniciarSitio } from "./assets/js/site-boot.js";
+        iniciarSitio({ base: "", activo: "contenido" });
     </script>
     <script type="module" src="./assets/js/cookies.js"></script>
     <script type="module" src="./assets/js/youtube-mvs.js"></script>
+    <script type="module" src="./assets/js/youtube-series.js"></script>
+    <script type="module" src="./assets/js/contenido-publico.js"></script>
 
     <!-- Main JS File -->
     <script src="assets/js/main.js"></script>
+    <!-- Embeds de redes sociales (Instagram / TikTok / Twitter-X), para el contenido cargado desde el panel -->
     <script async src="//www.instagram.com/embed.js"></script>
+    <script async src="https://www.tiktok.com/embed.js"></script>
+    <script async src="https://platform.twitter.com/widgets.js"></script>
 
 </body>
 

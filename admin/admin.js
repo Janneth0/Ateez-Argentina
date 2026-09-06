@@ -2,7 +2,8 @@
 // ADMIN.JS - Panel de Administracion ATEEZ Argentina
 // ============================================================
 
-import { montarHeader, montarFooter } from "../assets/js/components.js";
+import { iniciarSitio } from "../assets/js/site-boot.js";
+import { renderHeader, renderFooter } from "../assets/js/components.js";
 import {
   registrarConEmail, loginConEmail, loginConGoogle, logout, obtenerPerfil,
   escucharAuth, traducirErrorAuth, listarUsuarios, asignarRol, recuperarContrasena
@@ -12,19 +13,21 @@ import {
   escucharNoticias, crearNoticia, editarNoticia, eliminarNoticia, marcarDestacada
 } from "../assets/js/noticias.js";
 import {
+  escucharContenido, crearContenido, editarContenido, eliminarContenido, CATEGORIAS_CONTENIDO
+} from "../assets/js/contenido.js";
+import {
   escucharFanbases, crearFanbase, editarFanbase, eliminarFanbase, REDES_DISPONIBLES
 } from "../assets/js/fanbases.js";
 import { escucharGaleria, agregarFotoGaleria, eliminarFotoGaleria } from "../assets/js/galeria.js";
 import {
-  PALETAS_PREDEFINIDAS, obtenerConfigSitio, actualizarConfigSitio
+  PALETAS_PREDEFINIDAS, obtenerConfigSitio, actualizarConfigSitio, aplicarTemaEnPagina, REDES_SOCIALES_POR_DEFECTO
 } from "../assets/js/config-sitio.js";
 import { normalizarUrlImagen } from "../assets/js/imagenes.js";
 import { generarSitemapXml, descargarSitemap } from "../assets/js/sitemap.js";
 import { paises } from "../assets/js/paises.js";
 import { formatearFechaCorta, eventoVencido, eventoPorVencer, escapeHtml } from "../assets/js/util.js";
 
-montarHeader({ base: "../" });
-montarFooter({ base: "../" });
+iniciarSitio({ base: "../" });
 
 // ------------------------------------------------------------
 // Vistas
@@ -134,7 +137,7 @@ document.getElementById("btn-logout-pendiente")?.addEventListener("click", () =>
 // ------------------------------------------------------------
 let usuarioActual = null;
 let mapaUsuarios = {}; // uid -> perfil, para mostrar "responsable"
-const desuscribir = { posts: null, noticias: null, fanbases: null, galeria: null };
+const desuscribir = { posts: null, noticias: null, contenido: null, fanbases: null, galeria: null };
 
 escucharAuth(async (user) => {
   Object.keys(desuscribir).forEach(k => { if (desuscribir[k]) { desuscribir[k](); desuscribir[k] = null; } });
@@ -177,6 +180,7 @@ async function iniciarDashboard() {
 
   cargarPublicaciones();
   cargarNoticias();
+  cargarContenido();
   if (esAdmin) {
     cargarUsuarios();
     cargarFanbases();
@@ -462,6 +466,102 @@ formNoticia.addEventListener("submit", async (e) => {
 });
 
 // ==============================================================
+// CONTENIDO (admin + colaborador)
+// ==============================================================
+const listaContenidoEl = document.getElementById("lista-contenido");
+const modalContenido = new bootstrap.Modal(document.getElementById("modalContenido"));
+const formContenido = document.getElementById("form-contenido");
+const contenidoError = document.getElementById("contenido-error");
+let cacheContenido = [];
+
+function etiquetaCategoriaContenido(valor) {
+  return CATEGORIAS_CONTENIDO.find(c => c.valor === valor)?.etiqueta || "Otro";
+}
+
+function cargarContenido() {
+  desuscribir.contenido = escucharContenido(
+    (items) => {
+      cacheContenido = items;
+      const visibles = usuarioActual.rol === "admin" ? items : items.filter(c => c.creadoPor === usuarioActual.uid);
+
+      if (visibles.length === 0) {
+        listaContenidoEl.innerHTML = `<p class="text-muted">${usuarioActual.rol === "admin" ? "Todavía no hay contenido cargado." : "Todavía no cargaste ningún contenido."}</p>`;
+        return;
+      }
+      listaContenidoEl.innerHTML = visibles.map(c => `
+        <div class="admin-list-item" data-id="${c.id}">
+            <div class="item-info">
+                <h5><span class="badge-categoria">${etiquetaCategoriaContenido(c.categoria)}</span>${escapeHtml(c.titulo)}</h5>
+                <p>${escapeHtml(c.descripcion)}</p>
+                ${usuarioActual.rol === 'admin' ? `<p class="responsable">Cargado por: ${escapeHtml(nombreResponsable(c.creadoPor))}</p>` : ''}
+            </div>
+            <div class="item-actions">
+                <button type="button" class="editar" title="Editar" data-id="${c.id}"><i class="bi bi-pencil"></i></button>
+                <button type="button" class="eliminar" title="Eliminar" data-id="${c.id}"><i class="bi bi-trash"></i></button>
+            </div>
+        </div>`).join("");
+    },
+    (err) => {
+      listaContenidoEl.innerHTML = `<p class="text-muted">No se pudo cargar el contenido: ${escapeHtml(err.message || String(err))}</p>`;
+      console.error(err);
+    }
+  );
+}
+
+listaContenidoEl.addEventListener("click", (e) => {
+  const btnEditar = e.target.closest(".editar");
+  const btnEliminar = e.target.closest(".eliminar");
+
+  if (btnEditar) {
+    const item = cacheContenido.find(c => c.id === btnEditar.dataset.id);
+    if (!item) return;
+    document.getElementById("modalContenidoTitulo").textContent = "Editar contenido";
+    document.getElementById("cont-id").value = item.id;
+    document.getElementById("cont-titulo").value = item.titulo || "";
+    document.getElementById("cont-descripcion").value = item.descripcion || "";
+    document.getElementById("cont-categoria").value = item.categoria || "otro";
+    document.getElementById("cont-link").value = item.link || "";
+    document.getElementById("cont-adjunto").value = item.adjunto || "";
+    contenidoError.style.display = "none";
+    modalContenido.show();
+  }
+  if (btnEliminar) abrirConfirmarEliminar("contenido", btnEliminar.dataset.id, () => eliminarContenido(btnEliminar.dataset.id));
+});
+
+document.getElementById("btn-nuevo-contenido").addEventListener("click", () => {
+  document.getElementById("modalContenidoTitulo").textContent = "Nuevo contenido";
+  formContenido.reset();
+  document.getElementById("cont-id").value = "";
+  contenidoError.style.display = "none";
+  modalContenido.show();
+});
+
+document.getElementById("cont-adjunto")?.addEventListener("blur", (e) => {
+  e.target.value = normalizarUrlImagen(e.target.value);
+});
+
+formContenido.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  contenidoError.style.display = "none";
+  const id = document.getElementById("cont-id").value;
+  const datos = {
+    titulo: document.getElementById("cont-titulo").value.trim(),
+    descripcion: document.getElementById("cont-descripcion").value.trim(),
+    categoria: document.getElementById("cont-categoria").value,
+    link: document.getElementById("cont-link").value.trim(),
+    adjunto: normalizarUrlImagen(document.getElementById("cont-adjunto").value.trim())
+  };
+  try {
+    if (id) await editarContenido(id, datos); else await crearContenido({ ...datos, uid: usuarioActual.uid });
+    modalContenido.hide();
+  } catch (err) {
+    console.error(err);
+    contenidoError.textContent = `No se pudo guardar: ${err.message || err}`;
+    contenidoError.style.display = "block";
+  }
+});
+
+// ==============================================================
 // FANBASES (solo admin)
 // ==============================================================
 const listaFanbasesEl = document.getElementById("lista-fanbases");
@@ -635,6 +735,8 @@ formFoto?.addEventListener("submit", async (e) => {
 // ==============================================================
 const formApariencia = document.getElementById("form-apariencia");
 const paletasOpcionesEl = document.getElementById("paletas-opciones");
+const previewHeaderFooterEl = document.getElementById("preview-header-footer");
+const apRedesListaEl = document.getElementById("ap-redes-lista");
 let paletaSeleccionada = "pirata-dorado";
 
 async function cargarApariencia() {
@@ -651,17 +753,60 @@ async function cargarApariencia() {
     el.addEventListener("click", () => {
       const paleta = PALETAS_PREDEFINIDAS.find(p => p.id === el.dataset.id);
       aplicarPaletaAFormulario(paleta);
+      previsualizar();
     });
   });
 
   const config = await obtenerConfigSitio();
   const paleta = PALETAS_PREDEFINIDAS.find(p => p.id === config.paletaId) || { ...config, id: null };
   aplicarPaletaAFormulario({ ...paleta, ...config });
+
+  document.getElementById("ap-fondo-hf").value = config.fondoHF;
+  document.getElementById("ap-texto-hf").value = config.textoHF;
+  document.getElementById("ap-accento-hf").value = config.accentoHF;
   document.getElementById("ap-logo-url").value = config.logoUrl || "";
+  document.getElementById("ap-contacto-email").value = config.contactoEmail || "";
+  document.getElementById("ap-contacto-direccion").value = config.contactoDireccion || "";
+  document.getElementById("ap-mapa1-titulo").value = config.mapa1Titulo || "";
+  document.getElementById("ap-mapa1-url").value = config.mapa1Url || "";
+  document.getElementById("ap-mapa2-titulo").value = config.mapa2Titulo || "";
+  document.getElementById("ap-mapa2-url").value = config.mapa2Url || "";
+
   if (config.logoUrl) {
     document.getElementById("ap-logo-preview").src = config.logoUrl;
     document.getElementById("ap-logo-preview-wrap").style.display = "block";
   }
+
+  apRedesListaEl.innerHTML = "";
+  (config.redesSociales?.length ? config.redesSociales : REDES_SOCIALES_POR_DEFECTO).forEach(r => apRedesListaEl.appendChild(filaRedApariencia(r.red, r.url)));
+
+  previsualizar();
+}
+
+function filaRedApariencia(red = "instagram", url = "") {
+  const div = document.createElement("div");
+  div.className = "fb-red-row";
+  div.innerHTML = `
+    <select class="form-select red-tipo">
+      ${REDES_DISPONIBLES.map(r => `<option value="${r}" ${r === red ? "selected" : ""}>${r[0].toUpperCase() + r.slice(1)}</option>`).join("")}
+    </select>
+    <input type="url" class="form-control red-url" placeholder="https://..." value="${url}">
+    <button type="button" class="quitar-red"><i class="bi bi-x-lg"></i></button>`;
+  div.querySelector(".quitar-red").addEventListener("click", () => { div.remove(); previsualizar(); });
+  div.querySelectorAll("select, input").forEach(el => el.addEventListener("input", previsualizar));
+  return div;
+}
+
+document.getElementById("ap-btn-agregar-red")?.addEventListener("click", () => {
+  apRedesListaEl.appendChild(filaRedApariencia());
+  previsualizar();
+});
+
+function leerRedesDelFormulario() {
+  return Array.from(apRedesListaEl.querySelectorAll(".fb-red-row")).map(row => ({
+    red: row.querySelector(".red-tipo").value,
+    url: row.querySelector(".red-url").value.trim()
+  })).filter(r => r.url);
 }
 
 function aplicarPaletaAFormulario(paleta) {
@@ -675,16 +820,62 @@ function aplicarPaletaAFormulario(paleta) {
   paletasOpcionesEl.querySelectorAll(".paleta-opcion").forEach(el => el.classList.toggle("activa", el.dataset.id === paleta.id));
 }
 
-["ap-fondo", "ap-superficie", "ap-accento", "ap-texto", "ap-heading", "ap-contraste"].forEach(id => {
-  document.getElementById(id)?.addEventListener("input", () => { paletaSeleccionada = null; paletasOpcionesEl.querySelectorAll(".paleta-opcion").forEach(el => el.classList.remove("activa")); });
+/** Junta todos los valores actuales del formulario (sin guardar) para previsualizar. */
+function leerConfigDelFormulario() {
+  return {
+    fondo: document.getElementById("ap-fondo").value,
+    superficie: document.getElementById("ap-superficie").value,
+    accento: document.getElementById("ap-accento").value,
+    texto: document.getElementById("ap-texto").value,
+    heading: document.getElementById("ap-heading").value,
+    contraste: document.getElementById("ap-contraste").value,
+    fondoHF: document.getElementById("ap-fondo-hf").value,
+    textoHF: document.getElementById("ap-texto-hf").value,
+    accentoHF: document.getElementById("ap-accento-hf").value,
+    logoUrl: document.getElementById("ap-logo-url").value.trim(),
+    redesSociales: leerRedesDelFormulario(),
+    contactoEmail: document.getElementById("ap-contacto-email").value.trim(),
+    contactoDireccion: document.getElementById("ap-contacto-direccion").value.trim(),
+    mapa1Titulo: document.getElementById("ap-mapa1-titulo").value.trim(),
+    mapa1Url: document.getElementById("ap-mapa1-url").value.trim(),
+    mapa2Titulo: document.getElementById("ap-mapa2-titulo").value.trim(),
+    mapa2Url: document.getElementById("ap-mapa2-url").value.trim()
+  };
+}
+
+/** Aplica los colores del formulario a ESTA MISMA página (para verlos en vivo) y redibuja la mini vista previa. */
+function previsualizar() {
+  const config = leerConfigDelFormulario();
+  aplicarTemaEnPagina(config);
+  if (previewHeaderFooterEl) {
+    previewHeaderFooterEl.innerHTML = `
+      <div class="preview-frame">
+        ${renderHeader({ base: "../", config })}
+        ${renderFooter({ base: "../", config })}
+      </div>`;
+  }
+}
+
+document.querySelectorAll(
+  "#ap-fondo, #ap-superficie, #ap-accento, #ap-texto, #ap-heading, #ap-contraste, #ap-fondo-hf, #ap-texto-hf, #ap-accento-hf, #ap-contacto-email, #ap-contacto-direccion, #ap-mapa1-titulo, #ap-mapa1-url, #ap-mapa2-titulo, #ap-mapa2-url"
+).forEach(el => {
+  el.addEventListener("input", () => {
+    if (el.id.startsWith("ap-fondo") || el.id.startsWith("ap-superficie") || el.id.startsWith("ap-accento") || el.id.startsWith("ap-texto") || el.id.startsWith("ap-heading") || el.id.startsWith("ap-contraste")) {
+      paletaSeleccionada = null;
+      paletasOpcionesEl.querySelectorAll(".paleta-opcion").forEach(o => o.classList.remove("activa"));
+    }
+    previsualizar();
+  });
 });
 
+document.getElementById("ap-logo-url")?.addEventListener("input", previsualizar);
 document.getElementById("ap-logo-url")?.addEventListener("blur", (e) => {
   e.target.value = normalizarUrlImagen(e.target.value);
   const preview = document.getElementById("ap-logo-preview");
   const wrap = document.getElementById("ap-logo-preview-wrap");
   if (e.target.value) { preview.src = e.target.value; wrap.style.display = "block"; }
   else { wrap.style.display = "none"; }
+  previsualizar();
 });
 
 formApariencia?.addEventListener("submit", async (e) => {
@@ -696,20 +887,14 @@ formApariencia?.addEventListener("submit", async (e) => {
   try {
     const paletaBase = PALETAS_PREDEFINIDAS.find(p => p.id === paletaSeleccionada);
     await actualizarConfigSitio({
+      ...leerConfigDelFormulario(),
       paletaId: paletaSeleccionada,
-      modo: paletaBase?.modo || "personalizado",
-      fondo: document.getElementById("ap-fondo").value,
-      superficie: document.getElementById("ap-superficie").value,
-      accento: document.getElementById("ap-accento").value,
-      texto: document.getElementById("ap-texto").value,
-      heading: document.getElementById("ap-heading").value,
-      contraste: document.getElementById("ap-contraste").value,
-      logoUrl: document.getElementById("ap-logo-url").value.trim()
+      modo: paletaBase?.modo || "personalizado"
     });
     okEl.style.display = "block";
   } catch (err) {
     console.error(err);
-    errorEl.textContent = "No se pudieron guardar los cambios.";
+    errorEl.textContent = `No se pudieron guardar los cambios: ${err.message || err}`;
     errorEl.style.display = "block";
   }
 });

@@ -9,7 +9,7 @@
 // ============================================================
 
 import { escucharPosts } from "./posts.js";
-import { renderPostCard, reprocesarEmbedsInstagram } from "./components.js";
+import { renderPostCard, reprocesarEmbedsRedes } from "./components.js";
 import { eventoVencido, formatearFecha } from "./util.js";
 
 const contenedor = document.getElementById("publicaciones-comunidad");
@@ -36,7 +36,7 @@ if (contenedor) {
       ...p,
       descripcion: `${p.descripcion} \u00b7 ${formatearFecha(p.fechaEvento)}`
     })).join("");
-    reprocesarEmbedsInstagram();
+    reprocesarEmbedsRedes();
   }
 
   escucharPosts(

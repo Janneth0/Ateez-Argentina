@@ -86,9 +86,8 @@
     <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
 
     <script type="module">
-        import { montarHeader, montarFooter } from "../assets/js/components.js";
-        montarHeader({ base: "../", activo: "noticias" });
-        montarFooter({ base: "../" });
+        import { iniciarSitio } from "../assets/js/site-boot.js";
+        iniciarSitio({ base: "../", activo: "noticias" });
     </script>
     <script type="module" src="../assets/js/cookies.js"></script>
 

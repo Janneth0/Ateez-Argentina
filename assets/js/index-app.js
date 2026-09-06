@@ -1,18 +1,16 @@
 // ============================================================
 // INDEX-APP.JS
-// Arranque de index.html: aplica el tema del sitio (colores/logo
-// configurados por el admin), pinta las fanbases y la galeria
-// (limitada, para no saturar la home).
+// Arranque de index.html: pinta las fanbases y la galería
+// (limitada, para no saturar la home). El tema de colores y el
+// header/footer ahora los maneja site-boot.js (ver iniciarSitio),
+// compartido por todas las páginas.
 // ============================================================
 
-import { escucharConfigSitio, aplicarTemaEnPagina } from "./config-sitio.js";
 import { escucharFanbases } from "./fanbases.js";
 import { escucharGaleria } from "./galeria.js";
 import { renderFanbaseCard, renderGaleriaItem } from "./components.js";
 
 const GALERIA_LIMITE = 8; // cuantas fotos se muestran en la home antes de "ver todas" via lightbox
-
-escucharConfigSitio((config) => aplicarTemaEnPagina(config));
 
 const fanbasesGrid = document.getElementById("fanbases-grid");
 if (fanbasesGrid) {

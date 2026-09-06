@@ -119,7 +119,7 @@
                                 <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" id="reg-terminos" required>
                                     <label class="form-check-label" for="reg-terminos">
-                                        Leí y acepto los <a href="../terminos.html" target="_blank">Términos y Condiciones</a> y la Política de Privacidad.
+                                        Leí y acepto los <a href="#" data-bs-toggle="modal" data-bs-target="#modalTerminos">Términos y Condiciones</a> y la Política de Privacidad.
                                     </label>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Crear cuenta</button>
@@ -166,6 +166,10 @@
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-noticias"
                             type="button" role="tab">Noticias</button>
                     </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-contenido"
+                            type="button" role="tab">Contenido</button>
+                    </li>
                     <li class="nav-item admin-only" role="presentation" style="display:none;">
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-fanbases"
                             type="button" role="tab">Fanbases</button>
@@ -211,6 +215,20 @@
                         </div>
                     </div>
 
+                    <!-- CONTENIDO (admin + colaborador): series, traducciones, dance covers, etc -->
+                    <div class="tab-pane fade" id="panel-contenido" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="m-0">Contenido</h4>
+                            <button id="btn-nuevo-contenido" class="btn btn-primary">
+                                <i class="bi bi-plus-lg"></i> Nuevo contenido
+                            </button>
+                        </div>
+                        <p class="text-muted">Series subtituladas, traducciones, dance covers y demás contenido de la comunidad (los MVs/WANTEEZ/LOG_LOGBOOK se traen solos desde YouTube, acá no hace falta cargarlos).</p>
+                        <div id="lista-contenido" class="admin-list">
+                            <p class="text-muted">Cargando contenido...</p>
+                        </div>
+                    </div>
+
                     <!-- FANBASES (solo admin) -->
                     <div class="tab-pane fade" id="panel-fanbases" role="tabpanel">
                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -241,7 +259,15 @@
                     <!-- APARIENCIA (solo admin) -->
                     <div class="tab-pane fade" id="panel-apariencia" role="tabpanel">
                         <h4 class="mb-3">Apariencia del sitio</h4>
+                        <p class="text-muted">Los cambios se ven acá abajo al instante (antes de guardar). Recién se aplican a todo el sitio real cuando tocás "Guardar cambios".</p>
+
+                        <div class="vista-previa-apariencia mb-4">
+                            <p class="vista-previa-titulo"><i class="bi bi-eye"></i> Vista previa</p>
+                            <div id="preview-header-footer"></div>
+                        </div>
+
                         <form id="form-apariencia">
+                            <h5>Colores del contenido principal</h5>
                             <div class="mb-4">
                                 <label class="form-label d-block">Paleta de colores</label>
                                 <div id="paletas-opciones" class="paletas-grid"></div>
@@ -279,18 +305,81 @@
                                 sea claro, y bien saturado/claro cuando el fondo sea oscuro — así el texto de
                                 acento se sigue viendo bien en los dos casos.
                             </div>
-                            <div class="mb-3">
+
+                            <hr class="my-4">
+
+                            <h5>Colores del encabezado y pie de página</h5>
+                            <p class="text-muted">El header y el footer siempre comparten estos 3 colores entre sí, y pueden ser distintos a los del resto del sitio (por ejemplo, mantenerlos oscuros aunque el contenido esté en modo claro).</p>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="ap-fondo-hf">Fondo header/footer</label>
+                                    <input type="color" class="form-control form-control-color" id="ap-fondo-hf">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="ap-texto-hf">Texto header/footer</label>
+                                    <input type="color" class="form-control form-control-color" id="ap-texto-hf">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label" for="ap-accento-hf">Acento header/footer</label>
+                                    <input type="color" class="form-control form-control-color" id="ap-accento-hf">
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h5>Logo</h5>
+                            <div class="mb-4">
                                 <label class="form-label" for="ap-logo-url">Logo del sitio (URL de imagen)</label>
                                 <input type="url" class="form-control" id="ap-logo-url" placeholder="https://...">
                                 <div class="form-text">
                                     Pegá un link directo a la imagen, o un link "para compartir" de Google Drive
-                                    (lo convertimos automáticamente). En Drive: click derecho en el archivo →
-                                    Compartir → "Cualquier persona con el enlace" → copiar enlace, y pegalo acá.
+                                    (lo convertimos automáticamente).
                                 </div>
                                 <div class="preview-imagen-chica mt-2" id="ap-logo-preview-wrap" style="display:none;">
                                     <img id="ap-logo-preview" src="" alt="Vista previa del logo">
                                 </div>
                             </div>
+
+                            <hr class="my-4">
+
+                            <h5>Redes sociales</h5>
+                            <p class="text-muted">Se usan tanto en el header como en el footer.</p>
+                            <div id="ap-redes-lista" class="mb-2"></div>
+                            <button type="button" id="ap-btn-agregar-red" class="btn btn-sm btn-outline-secondary mb-4">
+                                <i class="bi bi-plus-lg"></i> Agregar red social
+                            </button>
+
+                            <hr class="my-4">
+
+                            <h5>Datos de contacto (footer)</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label" for="ap-contacto-email">Email</label>
+                                    <input type="email" class="form-control" id="ap-contacto-email">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label" for="ap-contacto-direccion">Dirección / ubicación</label>
+                                    <input type="text" class="form-control" id="ap-contacto-direccion">
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h5>Mapas embebidos (footer)</h5>
+                            <p class="text-muted">En Google Maps: buscá el lugar → Compartir → Insertar un mapa → copiá solo la URL de adentro del <code>src="..."</code> del iframe.</p>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label" for="ap-mapa1-titulo">Título mapa 1</label>
+                                    <input type="text" class="form-control mb-2" id="ap-mapa1-titulo">
+                                    <textarea class="form-control" id="ap-mapa1-url" rows="2" placeholder="URL del iframe de Google Maps"></textarea>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label" for="ap-mapa2-titulo">Título mapa 2</label>
+                                    <input type="text" class="form-control mb-2" id="ap-mapa2-titulo">
+                                    <textarea class="form-control" id="ap-mapa2-url" rows="2" placeholder="URL del iframe de Google Maps"></textarea>
+                                </div>
+                            </div>
+
                             <div id="apariencia-error" class="admin-alert admin-alert-error" style="display:none;"></div>
                             <div id="apariencia-ok" class="admin-alert admin-alert-ok" style="display:none;">Cambios guardados. Ya se ven en todo el sitio.</div>
                             <button type="submit" class="btn btn-primary">Guardar cambios</button>
@@ -344,8 +433,9 @@
                             <textarea class="form-control" id="pub-descripcion" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label" for="pub-link">Link (Instagram u otra red social)</label>
-                            <input type="url" class="form-control" id="pub-link" placeholder="https://www.instagram.com/p/..." required>
+                            <label class="form-label" for="pub-link">Link de la publicación</label>
+                            <input type="url" class="form-control" id="pub-link" placeholder="https://www.instagram.com/p/... , tiktok.com/@.../video/..., x.com/.../status/..." required>
+                            <div class="form-text">Soporta Instagram, TikTok, Twitter/X y Facebook (posts públicos). Cualquier otro link se muestra como una tarjeta con botón "Ver publicación".</div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="pub-fecha">Fecha del evento</label>
@@ -456,6 +546,54 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Publicar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: crear / editar CONTENIDO -->
+    <div class="modal fade" id="modalContenido" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form id="form-contenido">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalContenidoTitulo">Nuevo contenido</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="cont-id">
+                        <div class="mb-3">
+                            <label class="form-label" for="cont-titulo">Título</label>
+                            <input type="text" class="form-control" id="cont-titulo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="cont-descripcion">Descripción</label>
+                            <textarea class="form-control" id="cont-descripcion" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="cont-categoria">Categoría</label>
+                            <select class="form-select" id="cont-categoria">
+                                <option value="serie">Serie subtitulada</option>
+                                <option value="traduccion">Traducción</option>
+                                <option value="dancecover">Dance Cover</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="cont-link">Link (dónde verlo)</label>
+                            <input type="url" class="form-control" id="cont-link" placeholder="https://drive.google.com/... o cualquier link">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="cont-adjunto">Imagen o publicación (opcional)</label>
+                            <input type="url" class="form-control" id="cont-adjunto" placeholder="Imagen, link de Drive, o post de Instagram/TikTok/Twitter/Facebook">
+                            <div class="form-text">Si pegás un post de una red social, se va a embeber igual que en los eventos. Si es un link de Drive, se convierte solo en imagen.</div>
+                        </div>
+                        <div id="contenido-error" class="admin-alert admin-alert-error" style="display:none;"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
                     </div>
                 </form>
             </div>

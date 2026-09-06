@@ -284,11 +284,10 @@
     <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
     <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
 
-    <!-- Componentes reutilizables (header / footer) -->
+    <!-- Arranque del sitio: header, footer, tema de colores y modal de Términos -->
     <script type="module">
-        import { montarHeader, montarFooter } from "./assets/js/components.js";
-        montarHeader({ base: "", activo: "inicio" });
-        montarFooter({ base: "" });
+        import { iniciarSitio } from "./assets/js/site-boot.js";
+        iniciarSitio({ base: "", activo: "inicio" });
     </script>
     <script type="module" src="./assets/js/cookies.js"></script>
     <script type="module" src="./assets/js/index-app.js"></script>

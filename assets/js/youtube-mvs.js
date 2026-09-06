@@ -1,18 +1,12 @@
 // ============================================================
 // YOUTUBE-MVS.JS - ATEEZ ARGENTINA
 // Busca en el canal oficial de ATEEZ los últimos videos cuyo
-// título contenga "Official MV" (la forma en que KQ Entertainment
-// titula los videoclips) y renderiza los 4 más recientes. Se
-// recalcula solo con la YouTube Data API v3 (gratis hasta 10.000
-// unidades/día; esta búsqueda gasta 100 unidades por carga de
-// página, así que alcanza sobra para un sitio de fans).
-//
-// Si todavía no cargaste una API key en youtube-config.js, se
-// muestra automáticamente una lista fija de respaldo para que la
-// sección nunca quede vacía.
+// título contenga "Official MV" y renderiza los 4 más recientes
+// como embeds grandes. Si no hay API key configurada, o la
+// búsqueda falla, muestra una lista fija de respaldo.
 // ============================================================
 
-import { YOUTUBE_CHANNEL_ID, YOUTUBE_API_KEY } from "./youtube-config.js";
+import { apiKeyConfigurada, buscarUltimosVideos } from "./youtube-buscar.js";
 
 const RESPALDO_MANUAL = [
   { id: "-q_S27LbNKU", titulo: "ATEEZ - 'BAD' Official MV" },
@@ -36,19 +30,12 @@ function renderGrilla(videos) {
 }
 
 async function cargarUltimosMVs() {
-  if (!YOUTUBE_API_KEY || YOUTUBE_API_KEY === "TU_YOUTUBE_API_KEY") {
+  if (!apiKeyConfigurada()) {
     renderGrilla(RESPALDO_MANUAL);
     return;
   }
   try {
-    const url = `https://www.googleapis.com/youtube/v3/search?key=${YOUTUBE_API_KEY}&channelId=${YOUTUBE_CHANNEL_ID}&q=${encodeURIComponent('Official MV')}&type=video&order=date&maxResults=4&part=snippet`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("YouTube API respondió " + res.status);
-    const data = await res.json();
-    const videos = (data.items || []).map(item => ({
-      id: item.id.videoId,
-      titulo: item.snippet.title
-    }));
+    const videos = await buscarUltimosVideos("Official MV", 4);
     renderGrilla(videos.length > 0 ? videos : RESPALDO_MANUAL);
   } catch (err) {
     console.warn("No se pudieron traer los últimos MVs desde YouTube, se muestra la lista de respaldo:", err);

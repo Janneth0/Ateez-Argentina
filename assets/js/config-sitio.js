@@ -1,15 +1,15 @@
 // ============================================================
 // CONFIG-SITIO.JS - ATEEZ ARGENTINA
 // Un unico documento en Firestore (configuracion/sitio) guarda
-// la paleta de colores y el logo activos. Lectura publica,
-// escritura solo admin (ver firestore.rules).
-//
-// Se controlan 6 variables (no solo 3): fondo, superficie, acento,
-// texto, encabezados y contraste. Antes solo se exponian fondo/
-// superficie/acento, por eso al elegir un fondo claro el texto
-// (fijo en un tono claro pensado para fondo oscuro) se volvia
-// invisible. Cada paleta predefinida ya viene con los 6 valores
-// probados para tener buen contraste.
+// TODO lo que el admin puede personalizar desde el panel:
+//  - Paleta de colores del contenido principal (6 valores)
+//  - Paleta de colores del header/footer (3 valores, comparten
+//    siempre entre si, pero pueden ser distintos del resto del sitio)
+//  - Logo
+//  - Redes sociales (usadas tanto en el header como en el footer)
+//  - Datos de contacto (email, direccion)
+//  - Los 2 mapas embebidos del footer
+// Lectura publica, escritura solo admin (ver firestore.rules).
 // ============================================================
 
 import { db } from "./firebase-init.js";
@@ -45,21 +45,49 @@ export const PALETAS_PREDEFINIDAS = [
   }
 ];
 
+export const REDES_SOCIALES_POR_DEFECTO = [
+  { red: "facebook", url: "https://www.facebook.com/people/Startinyarg/61569342044743/" },
+  { red: "twitter", url: "https://x.com/StartinyARG" },
+  { red: "instagram", url: "https://www.instagram.com/startinyarg/" },
+  { red: "tiktok", url: "https://tiktok.com/@startinyarg" },
+  { red: "youtube", url: "https://www.youtube.com/@StartinyArg" }
+];
+
 export const CONFIG_POR_DEFECTO = {
   logoUrl: "assets/img/logoATZ.jpeg",
   paletaId: "pirata-dorado",
   modo: "oscuro",
+  // Paleta del contenido principal
   fondo: "#0c0e16",
   superficie: "#161a29",
   accento: "#d4af37",
   texto: "#e9e6df",
   heading: "#ffffff",
-  contraste: "#0c0e16"
+  contraste: "#0c0e16",
+  // Paleta de header/footer (comparten siempre estos 3 entre si)
+  fondoHF: "#0c0e16",
+  textoHF: "#e9e6df",
+  accentoHF: "#d4af37",
+  // Redes sociales (header + footer)
+  redesSociales: REDES_SOCIALES_POR_DEFECTO,
+  // Contacto (footer)
+  contactoEmail: "startinyargentina@gmail.com",
+  contactoDireccion: "Ciudad Autónoma de Buenos Aires, Argentina",
+  // Mapas embebidos (footer)
+  mapa1Titulo: "Mural ATEEZ",
+  mapa1Url: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3285.760355186323!2d-58.45040092488723!3d-34.55962255516975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb5000cb5b0eb%3A0x672dd769a348bab9!2sMural%20ATEEZ!5e0!3m2!1ses-419!2sar!4v1755992014758!5m2!1ses-419!2sar",
+  mapa2Titulo: "Mural Argentiny",
+  mapa2Url: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d205.3607881219956!2d-58.44808776228413!3d-34.55931231975737!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb5001057febb%3A0x9c0919b207b923a!2sMURAL%20ARGENTINY!5e0!3m2!1ses-419!2sar!4v1755992312929!5m2!1ses-419!2sar"
 };
 
 export async function obtenerConfigSitio() {
-  const snap = await getDoc(REF());
-  return snap.exists() ? { ...CONFIG_POR_DEFECTO, ...snap.data() } : CONFIG_POR_DEFECTO;
+  try {
+    const snap = await getDoc(REF());
+    return snap.exists() ? { ...CONFIG_POR_DEFECTO, ...snap.data() } : CONFIG_POR_DEFECTO;
+  } catch (err) {
+    console.warn("No se pudo leer la configuración del sitio, se usan los valores por defecto:", err);
+    return CONFIG_POR_DEFECTO;
+  }
 }
 
 export function escucharConfigSitio(callback) {
@@ -68,17 +96,14 @@ export function escucharConfigSitio(callback) {
   }, () => callback(CONFIG_POR_DEFECTO));
 }
 
-/** Solo deberia llamarse si el usuario es admin (las reglas de Firestore lo exigen igual). */
+/** Solo debería llamarse si el usuario es admin (las reglas de Firestore lo exigen igual). */
 export async function actualizarConfigSitio(datos) {
   return setDoc(REF(), datos, { merge: true });
 }
 
 /**
- * Aplica los 6 colores del tema como variables CSS globales. Se llama en
- * cada pagina. Como main.css ahora hace que el navbar, los dropdowns y
- * los botones deriven de estas mismas variables, cambiar estos 6 valores
- * alcanza para que TODO el sitio (fondo, texto, navbar, tarjetas, botones)
- * cambie de forma coherente.
+ * Aplica los colores del tema (contenido + header/footer) como variables
+ * CSS globales. Se llama en cada página a través de site-boot.js.
  */
 export function aplicarTemaEnPagina(config) {
   const root = document.documentElement.style;
@@ -88,6 +113,10 @@ export function aplicarTemaEnPagina(config) {
   if (config.texto) root.setProperty("--default-color", config.texto);
   if (config.heading) root.setProperty("--heading-color", config.heading);
   if (config.contraste) root.setProperty("--contrast-color", config.contraste);
+
+  if (config.fondoHF) root.setProperty("--hf-background-color", config.fondoHF);
+  if (config.textoHF) root.setProperty("--hf-text-color", config.textoHF);
+  if (config.accentoHF) root.setProperty("--hf-accent-color", config.accentoHF);
 
   document.body?.classList.toggle("tema-claro", config.modo === "claro");
 

@@ -493,3 +493,52 @@
   border-radius: 8px;
   border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
 }
+
+/* --- Vista previa en vivo de Apariencia (header + footer) --- */
+.vista-previa-apariencia {
+  border: 1px dashed color-mix(in srgb, var(--accent-color), transparent 55%);
+  border-radius: 12px;
+  padding: 14px;
+  background: color-mix(in srgb, var(--surface-color), #000 6%);
+}
+
+.vista-previa-titulo {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--accent-color);
+  margin-bottom: 10px;
+}
+
+.preview-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  transform: scale(1);
+  transform-origin: top left;
+}
+
+/* Adentro de la vista previa, el header/footer reales pierden el position:fixed
+   (si no, se irían a pegar arriba de TODA la ventana en vez de quedarse
+   contenidos dentro de este cuadro) */
+.preview-frame .header {
+  position: static !important;
+  padding-top: 0;
+}
+
+.preview-frame .header .mobile-nav-toggle {
+  display: none;
+}
+
+.preview-frame .navmenu ul {
+  position: static !important;
+  display: flex !important;
+  flex-direction: row !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.preview-frame .footer .row iframe {
+  height: 140px;
+}

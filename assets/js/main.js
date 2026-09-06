@@ -28,41 +28,47 @@
   window.addEventListener('load', toggleScrolled);
 
   /**
-   * Mobile nav toggle
+   * Mobile nav toggle, dropdowns y cierre al hacer click en un link.
+   *
+   * IMPORTANTE: el header se inserta de forma ASINCRONA (site-boot.js espera
+   * la configuracion de Firestore antes de montarlo), asi que en el momento
+   * en que este script corre, los elementos de adentro del header (el boton
+   * de hamburguesa, los dropdowns del menu) TODAVIA NO EXISTEN en el DOM.
+   * Buscarlos con querySelector en este punto siempre da null/vacio, y por
+   * eso el boton de menu mobile quedaba sin funcionar. La solucion es
+   * "delegar" los eventos en document (que siempre existe desde el arranque)
+   * y fijarse recien en el momento del click si lo que se toco es el boton,
+   * en vez de buscar el boton de antemano.
    */
-  const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
-
   function mobileNavToogle() {
+    const btn = document.querySelector('.mobile-nav-toggle');
     document.querySelector('body').classList.toggle('mobile-nav-active');
-    mobileNavToggleBtn.classList.toggle('bi-list');
-    mobileNavToggleBtn.classList.toggle('bi-x');
-  }
-  if (mobileNavToggleBtn) {
-    mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
+    if (btn) {
+      btn.classList.toggle('bi-list');
+      btn.classList.toggle('bi-x');
+    }
   }
 
-  /**
-   * Hide mobile nav on same-page/hash links
-   */
-  document.querySelectorAll('#navmenu a').forEach(navmenu => {
-    navmenu.addEventListener('click', () => {
-      if (document.querySelector('.mobile-nav-active')) {
-        mobileNavToogle();
-      }
-    });
-
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.mobile-nav-toggle')) {
+      mobileNavToogle();
+    }
   });
 
-  /**
-   * Toggle mobile nav dropdowns
-   */
-  document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
-    navmenu.addEventListener('click', function (e) {
-      e.preventDefault();
-      this.parentNode.classList.toggle('active');
-      this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
-      e.stopImmediatePropagation();
-    });
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('#navmenu a');
+    if (link && document.querySelector('.mobile-nav-active')) {
+      mobileNavToogle();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    const toggle = e.target.closest('.navmenu .toggle-dropdown');
+    if (!toggle) return;
+    e.preventDefault();
+    toggle.parentNode.classList.toggle('active');
+    toggle.parentNode.nextElementSibling.classList.toggle('dropdown-active');
+    e.stopImmediatePropagation();
   });
 
   /**
@@ -85,13 +91,15 @@
       window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
     }
   }
-  scrollTop.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
+  if (scrollTop) {
+    scrollTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     });
-  });
+  }
 
   window.addEventListener('load', toggleScrollTop);
   document.addEventListener('scroll', toggleScrollTop);
@@ -202,11 +210,12 @@
 
   /**
    * Navmenu Scrollspy
+   * (se buscan los links DENTRO de la función, no una sola vez al cargar el
+   * script, porque el header con el menú se monta después de forma
+   * asincrónica — ver comentario más arriba sobre mobile nav toggle)
    */
-  let navmenulinks = document.querySelectorAll('.navmenu a');
-
   function navmenuScrollspy() {
-    navmenulinks.forEach(navmenulink => {
+    document.querySelectorAll('.navmenu a').forEach(navmenulink => {
       if (!navmenulink.hash) return;
       let section = document.querySelector(navmenulink.hash);
       if (!section) return;
