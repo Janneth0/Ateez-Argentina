@@ -1,19 +1,15 @@
 // ============================================================
 // YOUTUBE-MVS.JS - ATEEZ ARGENTINA
-// Busca en el canal oficial de ATEEZ los últimos videos cuyo
-// título contenga "Official MV" y renderiza los 4 más recientes
-// como embeds grandes. Si no hay API key configurada, o la
-// búsqueda falla, muestra una lista fija de respaldo.
+// Muestra los ultimos 4 "Official MV" del canal de ATEEZ como
+// embeds grandes en contenido.html. La definicion de la serie
+// (query de busqueda + respaldo) vive en youtube-series-config.js,
+// compartida con la vista "ver todos" (videos.html).
 // ============================================================
 
 import { apiKeyConfigurada, buscarUltimosVideos } from "./youtube-buscar.js";
+import { SERIES_YOUTUBE } from "./youtube-series-config.js";
 
-const RESPALDO_MANUAL = [
-  { id: "-q_S27LbNKU", titulo: "ATEEZ - 'BAD' Official MV" },
-  { id: "vqkfEUqjl6Y", titulo: "ATEEZ - 'Adrenaline' Official MV" },
-  { id: "JOF2ZTqvzwY", titulo: "ATEEZ - 'In Your Fantasy' Official MV" },
-  { id: "H4H99b1CjPU", titulo: "ATEEZ - 'Lemon Drop' Official MV" }
-];
+const { query, respaldo } = SERIES_YOUTUBE.mvs;
 
 function renderGrilla(videos) {
   const cont = document.getElementById("grilla-mvs");
@@ -31,16 +27,24 @@ function renderGrilla(videos) {
 
 async function cargarUltimosMVs() {
   if (!apiKeyConfigurada()) {
-    renderGrilla(RESPALDO_MANUAL);
+    renderGrilla(respaldo);
     return;
   }
   try {
-    const videos = await buscarUltimosVideos("Official MV", 4);
-    renderGrilla(videos.length > 0 ? videos : RESPALDO_MANUAL);
+    const videos = await buscarUltimosVideos(query, 4);
+    renderGrilla(videos.length > 0 ? videos : respaldo);
   } catch (err) {
     console.warn("No se pudieron traer los últimos MVs desde YouTube, se muestra la lista de respaldo:", err);
-    renderGrilla(RESPALDO_MANUAL);
+    renderGrilla(respaldo);
   }
 }
 
-cargarUltimosMVs();
+// Si algo revienta ANTES de llegar al try/catch de arriba (por ejemplo un
+// error al importar este mismo archivo), esto asegura que en vez de quedar
+// la sección en "Cargando los últimos videos..." para siempre, se vea el
+// motivo real en la consola y un aviso visible en la página.
+cargarUltimosMVs().catch((err) => {
+  console.error("Error inesperado cargando los MVs:", err);
+  const cont = document.getElementById("grilla-mvs");
+  if (cont) cont.innerHTML = `<p class="text-center text-muted">No se pudieron cargar los videos (${err.message || err}).</p>`;
+});

@@ -6,7 +6,7 @@ import { iniciarSitio } from "../assets/js/site-boot.js";
 import { renderHeader, renderFooter } from "../assets/js/components.js";
 import {
   registrarConEmail, loginConEmail, loginConGoogle, logout, obtenerPerfil,
-  escucharAuth, traducirErrorAuth, listarUsuarios, asignarRol, recuperarContrasena
+  escucharAuth, traducirErrorAuth, listarUsuarios, asignarRol, recuperarContrasena, actualizarMiFanbase
 } from "../assets/js/auth.js";
 import { escucharPosts, crearPost, editarPost, eliminarPost, CATEGORIAS } from "../assets/js/posts.js";
 import {
@@ -16,7 +16,7 @@ import {
   escucharContenido, crearContenido, editarContenido, eliminarContenido, CATEGORIAS_CONTENIDO
 } from "../assets/js/contenido.js";
 import {
-  escucharFanbases, crearFanbase, editarFanbase, eliminarFanbase, REDES_DISPONIBLES
+  escucharFanbases, crearFanbase, editarFanbase, eliminarFanbase, listarFanbases, REDES_DISPONIBLES
 } from "../assets/js/fanbases.js";
 import { escucharGaleria, agregarFotoGaleria, eliminarFotoGaleria } from "../assets/js/galeria.js";
 import {
@@ -58,6 +58,25 @@ if (selectPais) {
 }
 
 // ------------------------------------------------------------
+// Fanbase: se muestra tanto en el registro como en la pantalla de
+// espera (para quienes entran con Google, que no pasan por el form).
+// ------------------------------------------------------------
+let cacheFanbasesRegistro = [];
+async function cargarSelectsDeFanbase() {
+  try {
+    cacheFanbasesRegistro = await listarFanbases();
+    const opciones = cacheFanbasesRegistro.map(f => `<option value="${f.id}">${f.nombre}</option>`).join("");
+    const selectRegistro = document.getElementById("reg-fanbase");
+    const selectPendiente = document.getElementById("pendiente-fanbase");
+    if (selectRegistro) selectRegistro.insertAdjacentHTML("beforeend", opciones);
+    if (selectPendiente) selectPendiente.insertAdjacentHTML("beforeend", opciones);
+  } catch (err) {
+    console.warn("No se pudieron cargar las fanbases para el selector:", err);
+  }
+}
+cargarSelectsDeFanbase();
+
+// ------------------------------------------------------------
 // Login / registro / Google / logout
 // ------------------------------------------------------------
 const formLogin = document.getElementById("form-login");
@@ -92,12 +111,28 @@ formRegistro?.addEventListener("submit", async (e) => {
   const fechaNacimiento = document.getElementById("reg-fecha").value;
   const paisCodigo = selectPais.value;
   const celular = `${spanDial.textContent} ${document.getElementById("reg-celular").value.trim()}`;
+  const fanbase = document.getElementById("reg-fanbase")?.value || null;
 
   try {
-    await registrarConEmail({ email, password, nombreCompleto, fechaNacimiento, celular, pais: paisCodigo });
+    await registrarConEmail({ email, password, nombreCompleto, fechaNacimiento, celular, pais: paisCodigo, fanbase });
   } catch (err) {
     registroError.textContent = traducirErrorAuth(err);
     registroError.style.display = "block";
+  }
+});
+
+document.getElementById("btn-guardar-fanbase-pendiente")?.addEventListener("click", async () => {
+  if (!usuarioActual) return;
+  const valor = document.getElementById("pendiente-fanbase").value || null;
+  const okEl = document.getElementById("pendiente-fanbase-ok");
+  try {
+    await actualizarMiFanbase(usuarioActual.uid, valor);
+    usuarioActual.fanbase = valor;
+    okEl.style.display = "block";
+    setTimeout(() => { okEl.style.display = "none"; }, 2500);
+  } catch (err) {
+    console.error(err);
+    alert("No se pudo guardar: " + (err.message || err));
   }
 });
 
@@ -154,6 +189,8 @@ escucharAuth(async (user) => {
   if (!perfil || !perfil.rol) {
     usuarioActual = perfil ? { uid: user.uid, ...perfil } : { uid: user.uid, rol: null };
     mostrarVista("pendiente");
+    const selectPendiente = document.getElementById("pendiente-fanbase");
+    if (selectPendiente) selectPendiente.value = usuarioActual.fanbase || "";
     return;
   }
 
@@ -849,10 +886,35 @@ function previsualizar() {
   aplicarTemaEnPagina(config);
   if (previewHeaderFooterEl) {
     previewHeaderFooterEl.innerHTML = `
+   
+    
       <div class="preview-frame">
+       <body class="index-page">
+       <div id="site-header"></div>
+       <div style="font-size:10px;">
         ${renderHeader({ base: "../", config })}
+       </div>
+        
+        <main class="main row">
+          <div class=" section-title col" data-aos="fade-up">
+                    <span class="subtitle">Subtitulos</span>
+                    <h2>ATEEZ Argentina</h2>
+                    <p>Lorem impsun</p>
+                    
+          </div><!-- End Section Title -->
+          <div class="col">
+            <div class="fanbase-card" data-bs-toggle="modal" data-bs-target="#modalFanbase-zfvo2tAjCTflGYGocpD5">
+          <img src="assets/img/logoATZ.jpeg" alt="Logo de ATEEZ San Juan Argentina" loading="lazy">
+          <h4>ATEEZ San Juan Argentina</h4>
+          <span class="fanbase-ciudad"><i class="bi bi-geo-alt"></i> Nombre</span>
+      </div>
+          </div>
+        <p> Contenido </p>
+        </main>
         ${renderFooter({ base: "../", config })}
-      </div>`;
+        </body> 
+      </div>
+      `;
   }
 }
 
@@ -860,7 +922,12 @@ document.querySelectorAll(
   "#ap-fondo, #ap-superficie, #ap-accento, #ap-texto, #ap-heading, #ap-contraste, #ap-fondo-hf, #ap-texto-hf, #ap-accento-hf, #ap-contacto-email, #ap-contacto-direccion, #ap-mapa1-titulo, #ap-mapa1-url, #ap-mapa2-titulo, #ap-mapa2-url"
 ).forEach(el => {
   el.addEventListener("input", () => {
-    if (el.id.startsWith("ap-fondo") || el.id.startsWith("ap-superficie") || el.id.startsWith("ap-accento") || el.id.startsWith("ap-texto") || el.id.startsWith("ap-heading") || el.id.startsWith("ap-contraste")) {
+    // Ojo: antes usaba startsWith(), y "ap-fondo-hf".startsWith("ap-fondo") da
+    // true — eso hacía que tocar un color de header/footer deseleccionara la
+    // paleta del contenido principal por error. Con Set + comparación exacta
+    // cada grupo de colores queda realmente independiente del otro.
+    const camposDePaleta = new Set(["ap-fondo", "ap-superficie", "ap-accento", "ap-texto", "ap-heading", "ap-contraste"]);
+    if (camposDePaleta.has(el.id)) {
       paletaSeleccionada = null;
       paletasOpcionesEl.querySelectorAll(".paleta-opcion").forEach(o => o.classList.remove("activa"));
     }
@@ -913,6 +980,9 @@ async function cargarUsuarios() {
   try {
     const usuarios = await listarUsuarios();
     mapaUsuarios = Object.fromEntries(usuarios.map(u => [u.id, u]));
+    if (cacheFanbasesRegistro.length === 0) cacheFanbasesRegistro = await listarFanbases().catch(() => []);
+    const nombreFanbase = (id) => cacheFanbasesRegistro.find(f => f.id === id)?.nombre;
+
     if (usuarios.length === 0) {
       listaUsuariosEl.innerHTML = `<p class="text-muted">No hay usuarios registrados todavía.</p>`;
       return;
@@ -921,7 +991,8 @@ async function cargarUsuarios() {
       <div class="admin-list-item" data-uid="${u.id}">
           <div class="item-info">
               <h5>${escapeHtml(u.nombreCompleto || u.email || "Sin nombre")}</h5>
-              <p>${escapeHtml(u.email || "")}${u.rol ? "" : " · Pendiente de rol"}</p>
+              <p>${escapeHtml(u.email || "")}${u.rol ? "" : " · Pendiente de rol"}
+                 ${u.fanbase ? ` · <span class="badge-categoria">${escapeHtml(nombreFanbase(u.fanbase) || "Fanbase eliminada")}</span>` : " · Fan independiente"}</p>
           </div>
           <div class="item-actions">
               <select class="form-select form-select-sm rol-select" data-uid="${u.id}">

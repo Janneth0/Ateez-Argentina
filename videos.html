@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title id="meta-titulo">Videos - ATEEZ Argentina</title>
+    <meta name="robots" content="noindex, follow">
+    <meta name="author" content="ATEEZ Argentina">
+    <meta id="meta-descripcion" name="description" content="Todos los videos de esta serie de ATEEZ.">
+
+    <link href="assets/img/logoATZ.jpeg" rel="icon">
+
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="assets/css/main.css" rel="stylesheet">
+</head>
+
+<body class="index-page">
+
+    <div id="site-header"></div>
+
+    <main class="main">
+        <section class="container section" style="padding-top:140px;">
+            <a href="contenido.html" class="btn btn-outline-secondary btn-sm mb-4">
+                <i class="bi bi-arrow-left"></i> Volver a Contenido
+            </a>
+
+            <div class="section-title" data-aos="fade-up">
+                <span class="subtitle">Todos los videos</span>
+                <h2 id="titulo-serie">Cargando...</h2>
+                <p id="descripcion-serie"></p>
+            </div>
+
+            <div id="grilla-todos" class="row" data-aos="fade-up" data-aos-delay="100">
+                <p class="text-center text-muted">Cargando videos...</p>
+            </div>
+        </section>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/aos/aos.js"></script>
+
+    <script type="module">
+        import { iniciarSitio } from "./assets/js/site-boot.js";
+        iniciarSitio({ base: "", activo: "contenido" });
+    </script>
+    <script type="module" src="./assets/js/cookies.js"></script>
+    <script type="module" src="./assets/js/videos-app.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+</body>
+
+</html>

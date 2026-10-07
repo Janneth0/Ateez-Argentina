@@ -71,7 +71,7 @@ export const CONFIG_POR_DEFECTO = {
   // Redes sociales (header + footer)
   redesSociales: REDES_SOCIALES_POR_DEFECTO,
   // Contacto (footer)
-  contactoEmail: "startinyargentina@gmail.com",
+  contactoEmail: "ateezargentina.contacto@gmail.com",
   contactoDireccion: "Ciudad Autónoma de Buenos Aires, Argentina",
   // Mapas embebidos (footer)
   mapa1Titulo: "Mural ATEEZ",

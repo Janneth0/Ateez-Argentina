@@ -28,3 +28,41 @@ export async function buscarUltimosVideos(query, maxResults = 4) {
     thumbnail: item.snippet.thumbnails?.medium?.url || item.snippet.thumbnails?.default?.url || ""
   }));
 }
+
+/**
+ * Trae TODOS los videos de una playlist de YouTube (pagina automaticamente
+ * hasta traerlos todos), ordenados del mas nuevo al mas viejo por su fecha
+ * real de publicacion. Se usa para WANTEEZ y LOG_LOGBOOK en vez de buscar
+ * por texto, para no traer Shorts que solo tengan el hashtag en el titulo.
+ */
+export async function buscarVideosDePlaylist(playlistId) {
+  let items = [];
+  let pageToken = "";
+
+  do {
+    const url = `https://www.googleapis.com/youtube/v3/playlistItems?key=${YOUTUBE_API_KEY}&playlistId=${playlistId}&part=snippet,contentDetails&maxResults=50${pageToken ? `&pageToken=${pageToken}` : ""}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("YouTube API respondió " + res.status);
+    const data = await res.json();
+
+    items = items.concat((data.items || []).map(item => ({
+      id: item.snippet.resourceId.videoId,
+      titulo: item.snippet.title,
+      descripcion: item.snippet.description || "",
+      thumbnail: item.snippet.thumbnails?.medium?.url || item.snippet.thumbnails?.default?.url || "",
+      // contentDetails.videoPublishedAt es la fecha real de publicacion del
+      // video; snippet.publishedAt sería la fecha en que se agregó A LA
+      // LISTA, que no es lo mismo.
+      fecha: item.contentDetails?.videoPublishedAt || item.snippet.publishedAt
+    })));
+
+    pageToken = data.nextPageToken || "";
+  } while (pageToken);
+
+  // Filtra videos privados/eliminados (YouTube los deja en la playlist con
+  // título "Private video" o "Deleted video" y sin fecha real)
+  items = items.filter(v => v.id && v.titulo !== "Private video" && v.titulo !== "Deleted video");
+
+  items.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  return items;
+}

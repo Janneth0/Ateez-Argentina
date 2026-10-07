@@ -12,6 +12,7 @@
 // ============================================================
 
 export const YOUTUBE_CHANNEL_ID = "UC2e4Ukj5Pfr7cb3KpJAFBdQ"; // @ateezofficial
-export const YOUTUBE_API_KEY = "TU_YOUTUBE_API_KEY";
+export const YOUTUBE_API_KEY = "AIzaSyDlGihW21eWD7Y0gKXQcVHU1-SLj3_wpyQ";
+// AIzaSyDlGihW21eWD7Y0gKXQcVHU1-SLj3_wpyQ
 
 export const SPOTIFY_ARTIST_ID = "68KmkJeZGfwe1OUaivBa2L"; // ATEEZ en Spotify

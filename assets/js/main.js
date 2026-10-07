@@ -55,20 +55,40 @@
     }
   });
 
+  /**
+   * Clicks en los links del menu.
+   *
+   * ANTES esto estaba en dos listeners separados: uno cerraba el menu mobile
+   * al tocar CUALQUIER link de #navmenu (sin evitar la navegacion), y otro
+   * separado desplegaba el submenu pero SOLO si el toque caia justo sobre el
+   * icono de la flechita (.toggle-dropdown). El problema: si en mobile
+   * tocabas el TEXTO de un link "padre" de dropdown (Contenido, Nosotros) en
+   * vez de la flechita, el primer listener lo trataba como un link comun y
+   * dejaba que el navegador navegara normalmente — o sea, la pagina se
+   * recargaba en vez de desplegar la lista. Ahora es un unico listener que
+   * primero decide si el link clickeado ES el padre de un dropdown; si lo
+   * es (y estamos en mobile), despliega el submenu y cancela la navegacion
+   * sin importar en que parte del link tocaste. Si no es un dropdown, se
+   * comporta como un link normal (navega, y de paso cierra el menu mobile).
+   */
   document.addEventListener('click', (e) => {
     const link = e.target.closest('#navmenu a');
-    if (link && document.querySelector('.mobile-nav-active')) {
-      mobileNavToogle();
-    }
-  });
+    if (!link) return;
+    const menuMobileAbierto = document.querySelector('.mobile-nav-active');
+    if (!menuMobileAbierto) return; // en desktop el dropdown ya se abre solo con hover (CSS)
 
-  document.addEventListener('click', (e) => {
-    const toggle = e.target.closest('.navmenu .toggle-dropdown');
-    if (!toggle) return;
-    e.preventDefault();
-    toggle.parentNode.classList.toggle('active');
-    toggle.parentNode.nextElementSibling.classList.toggle('dropdown-active');
-    e.stopImmediatePropagation();
+    const li = link.parentElement;
+    const submenu = link.nextElementSibling;
+    const esPadreDeDropdown = li.classList.contains('dropdown') && submenu && submenu.tagName === 'UL';
+
+    if (esPadreDeDropdown) {
+      e.preventDefault();
+      li.classList.toggle('active');
+      submenu.classList.toggle('dropdown-active');
+      return;
+    }
+
+    mobileNavToogle();
   });
 
   /**

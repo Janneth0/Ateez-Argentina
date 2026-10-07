@@ -32,8 +32,8 @@ export function renderHeader({ base = "", activo = "", config = {} } = {}) {
 
   return `
   <header id="header" class="header hf-background fixed-top">
-      <div class="container-fluid container-xl position-relative">
-          <div class="top-row d-flex align-items-center justify-content-between">
+      <div class="container-fluid container-xl position-relative ">
+          <div class="top-row d-flex align-items-center justify-content-between ">
               <a href="${base}index.html" class="logo d-flex align-items-center">
                   <img src="${logo}" alt="ATEEZ Argentina - logo oficial de la comunidad" class="logo site-logo-img">
                   <h1 class="sitename">ATEEZ Argentina</h1>
@@ -41,6 +41,7 @@ export function renderHeader({ base = "", activo = "", config = {} } = {}) {
               <div class="d-flex align-items-center">
                   <div class="social-links">${renderIconosSociales(redes)}</div>
               </div>
+               <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
           </div>
       </div>
 
@@ -66,7 +67,7 @@ export function renderHeader({ base = "", activo = "", config = {} } = {}) {
                           </ul>
                       </li>
                   </ul>
-                  <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+                  
               </nav>
           </div>
       </div>
@@ -152,7 +153,7 @@ export function renderModalTerminos() {
                       ahí, nos das tu nombre, email, fecha de nacimiento, celular y país. Estos datos se usan
                       únicamente para identificarte dentro del equipo — nunca se venden ni se comparten con
                       terceros, y no se muestran públicamente. Podés pedir que los eliminemos escribiendo a
-                      startinyargentina@gmail.com.</p>
+                      ateezargentina.contacto@gmail.com.</p>
 
                   <h6>3. Uso por menores de edad</h6>
                   <p>Si sos menor de edad, necesitás el permiso de un padre, madre o tutor para registrarte como
@@ -174,7 +175,7 @@ export function renderModalTerminos() {
 
                   <h6>7. Contacto</h6>
                   <p>Para cualquier consulta escribinos a
-                      <a href="mailto:startinyargentina@gmail.com">startinyargentina@gmail.com</a>.</p>
+                      <a href="mailto:ateezargentina.contacto@gmail.com">ateezargentina.contacto@gmail.com</a>.</p>
               </div>
               <div class="modal-footer">
                   <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Entendido</button>

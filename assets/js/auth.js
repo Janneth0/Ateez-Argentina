@@ -42,6 +42,7 @@ async function crearPerfilSiNoExiste(user, datosExtra = {}) {
       fechaNacimiento: datosExtra.fechaNacimiento || null,
       celular: datosExtra.celular || null,
       pais: datosExtra.pais || null,
+      fanbase: datosExtra.fanbase || null,
       metodo: datosExtra.metodo || "google",
       rol: null, // null = pendiente de asignación por un admin
       creadoEn: serverTimestamp()
@@ -51,7 +52,7 @@ async function crearPerfilSiNoExiste(user, datosExtra = {}) {
 }
 
 /** Registro con email, contraseña y datos adicionales del formulario. */
-export async function registrarConEmail({ email, password, nombreCompleto, fechaNacimiento, celular, pais }) {
+export async function registrarConEmail({ email, password, nombreCompleto, fechaNacimiento, celular, pais, fanbase }) {
   const cred = await createUserWithEmailAndPassword(auth, email, password);
   if (nombreCompleto) {
     await updateProfile(cred.user, { displayName: nombreCompleto });
@@ -62,6 +63,7 @@ export async function registrarConEmail({ email, password, nombreCompleto, fecha
     fechaNacimiento,
     celular,
     pais,
+    fanbase,
     metodo: "password"
   });
   return cred.user;
@@ -113,6 +115,19 @@ export async function listarUsuarios() {
 export async function asignarRol(uid, nuevoRol) {
   const ref = doc(db, USUARIOS_COL, uid);
   return updateDoc(ref, { rol: nuevoRol });
+}
+
+/**
+ * Actualiza la fanbase del propio usuario logueado. Se usa desde la
+ * pantalla de "esperando rol" para quienes entraron con Google (no pasan
+ * por el formulario de registro y por eso no la cargaron todavía).
+ * Las reglas de Firestore permiten que cualquier usuario edite su propio
+ * perfil siempre que no toque el campo "rol", así que esto no necesita
+ * permisos de admin.
+ */
+export async function actualizarMiFanbase(uid, fanbase) {
+  const ref = doc(db, USUARIOS_COL, uid);
+  return updateDoc(ref, { fanbase: fanbase || null });
 }
 
 /** Traduce errores comunes de Firebase Auth a mensajes en español. */

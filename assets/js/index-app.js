@@ -10,7 +10,7 @@ import { escucharFanbases } from "./fanbases.js";
 import { escucharGaleria } from "./galeria.js";
 import { renderFanbaseCard, renderGaleriaItem } from "./components.js";
 
-const GALERIA_LIMITE = 8; // cuantas fotos se muestran en la home antes de "ver todas" via lightbox
+const GALERIA_LIMITE = 6; // cuantas fotos se muestran en la home antes de "ver todas" via lightbox
 
 const fanbasesGrid = document.getElementById("fanbases-grid");
 if (fanbasesGrid) {
