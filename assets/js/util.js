@@ -65,4 +65,14 @@ function escapeHtml(str = "") {
     .replaceAll('"', "&quot;");
 }
 
+/**
+ * Saca el ID de un video de YouTube de cualquier formato de link común:
+ * watch?v=ID, youtu.be/ID, embed/ID, shorts/ID, live/ID. Devuelve null si
+ * el link no es de YouTube (o no tiene un ID válido de 11 caracteres).
+ */
+export function extraerIdYoutube(url = "") {
+  const m = String(url).match(/(?:youtube\.com\/(?:watch\?(?:[^#\s]*&)?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
 export { escapeHtml };

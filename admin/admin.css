@@ -494,7 +494,12 @@
   border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
 }
 
-/* --- Vista previa en vivo de Apariencia (header + footer) --- */
+/* ============================================================
+   Vista previa en vivo de Apariencia (pestañas "Apariencia" y "Datos del sitio")
+   Es un cuadro AISLADO: los colores del borrador se escriben como variables
+   CSS solo sobre .preview-frame (ver aplicarTemaEnElemento), así el resto
+   del panel nunca cambia de colores mientras se prueba una combinación.
+   ============================================================ */
 .vista-previa-apariencia {
   border: 1px dashed color-mix(in srgb, var(--accent-color), transparent 55%);
   border-radius: 12px;
@@ -502,43 +507,205 @@
   background: color-mix(in srgb, var(--surface-color), #000 6%);
 }
 
+.vista-previa-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
 .vista-previa-titulo {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: .5px;
   color: var(--accent-color);
-  margin-bottom: 10px;
+}
+
+.badge-borrador {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--accent-color), transparent 80%);
+  color: var(--accent-color);
+  border: 1px solid color-mix(in srgb, var(--accent-color), transparent 55%);
 }
 
 .preview-frame {
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
-  transform: scale(1);
-  transform-origin: top left;
+  border-radius: 10px;
+  pointer-events: none;           /* es solo para mirar: nada es clickeable */
+  user-select: none;
+  background-color: var(--background-color);
+  color: var(--default-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
+  font-size: 14px;
+  text-align: left;
 }
 
-/* Adentro de la vista previa, el header/footer reales pierden el position:fixed
-   (si no, se irían a pegar arriba de TODA la ventana en vez de quedarse
-   contenidos dentro de este cuadro) */
-.preview-frame .header {
-  position: static !important;
-  padding-top: 0;
+/* --- encabezado de prueba (logo + redes arriba, menú abajo) --- */
+.preview-header {
+  background-color: var(--background-color);
+  color: var(--default-color);
+  padding: 14px 18px 0;
 }
 
-.preview-frame .header .mobile-nav-toggle {
-  display: none;
+.preview-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 12px;
 }
 
-.preview-frame .navmenu ul {
-  position: static !important;
-  display: flex !important;
-  flex-direction: row !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
+.preview-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--heading-font, inherit);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--heading-color);
 }
 
-.preview-frame .footer .row iframe {
+.preview-brand img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.preview-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.preview-social {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--default-color);
+  background: color-mix(in srgb, var(--default-color), transparent 88%);
+}
+
+.preview-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 6px;
+  padding: 8px 0 12px;
+  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+}
+
+.preview-nav span {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--default-color);
+}
+
+.preview-nav span i {
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.preview-nav span.activo {
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color), transparent 88%);
+}
+
+/* --- cuerpo de prueba (tarjetas, botones, textos) --- */
+.preview-cuerpo {
+  background-color: var(--background-color);
+  color: var(--default-color);
+  padding: 26px 22px;
+}
+
+.preview-cuerpo .section-title {
+  padding-bottom: 18px;
+  text-align: center;
+}
+
+.preview-cuerpo a {
+  color: var(--accent-color);
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  min-height: 90px;
+  background: linear-gradient(135deg, var(--accent-color), var(--surface-color));
+}
+
+.preview-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  background: linear-gradient(135deg, var(--accent-color), var(--surface-color));
+}
+
+.preview-col-apilada {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.preview-botones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+/* --- pie de página: mapas reemplazados por un recuadro liviano --- */
+.preview-mapa {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   height: 140px;
+  border-radius: 10px;
+  color: var(--default-color);
+  background: color-mix(in srgb, var(--default-color), transparent 90%);
+}
+
+/* --- video destacado: etiqueta en la lista de Contenido --- */
+.badge-destacado {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color), transparent 82%);
+}
+
+/* --- interruptor de "Puede editar colores" en la lista de Usuarios --- */
+.admin-list-item .item-actions .permiso-colores {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 10px 0 0;
+  padding-left: 2.6em;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.admin-list-item .item-actions:has(.permiso-colores) {
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }

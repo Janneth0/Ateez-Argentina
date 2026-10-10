@@ -5,7 +5,7 @@
 // y la renderiza con filtro por categoría.
 // ============================================================
 
-import { escucharContenido } from "./contenido.js";
+import { escucharContenido, seleccionarDestacados } from "./contenido.js";
 import { renderContenidoCard, reprocesarEmbedsRedes } from "./components.js";
 
 const contenedor = document.getElementById("grilla-contenido");
@@ -32,7 +32,13 @@ if (contenedor) {
   }
 
   escucharContenido(
-    (items) => { todoElContenido = items; pintar(); },
+    (items) => {
+      // Los videos destacados ya se muestran arriba de todo (ver
+      // contenido-destacados.js), así que acá se excluyen para no repetirlos.
+      const idsDestacados = new Set(seleccionarDestacados(items).map(c => c.id));
+      todoElContenido = items.filter(c => !idsDestacados.has(c.id));
+      pintar();
+    },
     (err) => {
       console.warn("No se pudo cargar el contenido:", err);
       if (vacio) { vacio.style.display = "block"; vacio.textContent = "Todavía no hay contenido cargado por el equipo."; }

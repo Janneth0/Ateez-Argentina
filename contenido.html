@@ -52,6 +52,16 @@
     <main class="main ">
         <div class="container">
             <!-- <h1></h1> -->
+
+            <!-- Videos destacados: los elige el admin desde el panel (Contenido). Oculta si no hay ninguno. -->
+            <section id="destacados" class="section" style="display:none;">
+                <div class="section-title">
+                    <span class="subtitle">Recomendado por el equipo</span>
+                    <h2>Destacado</h2>
+                </div>
+                <div class="row justify-content-center" id="grilla-destacados"></div>
+            </section>
+
             <section id="videosYT">
                 <!-- Section Title -->
                 <div class=" section-title" data-aos="fade-up">
@@ -59,7 +69,7 @@
                     <h2>Últimos Comebacks</h2>
                     <p>Los últimos 4 videoclips oficiales de ATEEZ, actualizados automáticamente desde YouTube.</p>
                 </div><!-- End Section Title -->
-                <div class="row" id="grilla-mvs" data-aos="fade-up" data-aos-delay="100">
+                <div class="row" id="grilla-mvs">
                     <p class="text-center text-muted">Cargando los últimos videos...</p>
                 </div>
                 <div class="text-center mt-3">
@@ -73,7 +83,7 @@
                     <h2>WANTEEZ</h2>
                     <p>Los últimos episodios de WANTEEZ, actualizados automáticamente desde YouTube.</p>
                 </div>
-                <div class="video-compacto-grid" id="grilla-wanteez" data-aos="fade-up" data-aos-delay="100">
+                <div class="video-compacto-grid" id="grilla-wanteez">
                     <p class="text-center text-muted">Cargando episodios...</p>
                 </div>
                 <div class="text-center mt-3">
@@ -87,7 +97,7 @@
                     <h2>LOG_LOGBOOK</h2>
                     <p>Los últimos episodios de LOG_LOGBOOK, actualizados automáticamente desde YouTube.</p>
                 </div>
-                <div class="video-compacto-grid" id="grilla-logbook" data-aos="fade-up" data-aos-delay="100">
+                <div class="video-compacto-grid" id="grilla-logbook">
                     <p class="text-center text-muted">Cargando episodios...</p>
                 </div>
                 <div class="text-center mt-3">
@@ -101,14 +111,14 @@
                     <h2>Series, Traducciones y Más Contenido</h2>
                     <p>Contenido cargado por el equipo: series subtituladas, traducciones, dance covers y más.</p>
                 </div>
-                <div class="publicaciones-filtros" id="contenido-filtros" data-aos="fade-up" data-aos-delay="100">
+                <div class="publicaciones-filtros" id="contenido-filtros">
                     <button type="button" data-filtro="todas" class="filter-active">Todo</button>
                     <button type="button" data-filtro="serie">Series</button>
                     <button type="button" data-filtro="traduccion">Traducciones</button>
                     <button type="button" data-filtro="dancecover">Dance Covers</button>
                     <button type="button" data-filtro="otro">Otro</button>
                 </div>
-                <div class="row" id="grilla-contenido" data-aos="fade-up" data-aos-delay="150"></div>
+                <div class="row" id="grilla-contenido"></div>
                 <p id="contenido-vacio" class="text-center text-muted" style="display:none;">Todavía no hay contenido cargado por el equipo.</p>
             </section>
 
@@ -160,6 +170,7 @@
         iniciarSitio({ base: "", activo: "contenido" });
     </script>
     <script type="module" src="./assets/js/cookies.js"></script>
+    <script type="module" src="./assets/js/contenido-destacados.js"></script>
     <script type="module" src="./assets/js/youtube-mvs.js"></script>
     <script type="module" src="./assets/js/youtube-series.js"></script>
     <script type="module" src="./assets/js/contenido-publico.js"></script>

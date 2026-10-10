@@ -15,6 +15,12 @@ export function normalizarUrlImagen(url = "") {
   const limpia = url.trim();
   if (!limpia) return limpia;
 
+  // Solo se tocan links de Google Drive/Docs. Antes el último patrón (?id=)
+  // se aplicaba a CUALQUIER url, y rompía por ejemplo los links de Facebook
+  // del estilo ".../permalink.php?story_fbid=...&id=123", que se convertían
+  // por error en un link de Drive inexistente.
+  if (!/(?:drive|docs)\.google\.com/i.test(limpia)) return limpia;
+
   const patrones = [
     /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/,   // .../file/d/<ID>/view?usp=sharing
     /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/,   // .../open?id=<ID>

@@ -118,6 +118,16 @@ export async function asignarRol(uid, nuevoRol) {
 }
 
 /**
+ * Habilita (o quita) a un colaborador el permiso de usar la pestaña "Colores"
+ * del panel. Solo un admin puede hacerlo: las reglas de Firestore impiden que
+ * un usuario se modifique a sí mismo este campo (ver firestore.rules).
+ */
+export async function actualizarPermisoColores(uid, permitido) {
+  const ref = doc(db, USUARIOS_COL, uid);
+  return updateDoc(ref, { puedeEditarColores: !!permitido });
+}
+
+/**
  * Actualiza la fanbase del propio usuario logueado. Se usa desde la
  * pantalla de "esperando rol" para quienes entraron con Google (no pasan
  * por el formulario de registro y por eso no la cargaron todavía).

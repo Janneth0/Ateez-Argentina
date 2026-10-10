@@ -10,7 +10,7 @@
 
 import { REDES_SOCIALES_POR_DEFECTO, CONFIG_POR_DEFECTO } from "./config-sitio.js";
 
-const ICONO_RED = {
+export const ICONO_RED = {
   instagram: "bi-instagram",
   twitter: "bi-twitter-x",
   tiktok: "bi-tiktok",

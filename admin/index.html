@@ -195,9 +195,13 @@
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-galeria"
                             type="button" role="tab">Galería</button>
                     </li>
-                    <li class="nav-item admin-only" role="presentation" style="display:none;">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-apariencia"
+                    <li class="nav-item colores-only" role="presentation" style="display:none;">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-colores"
                             type="button" role="tab">Apariencia</button>
+                    </li>
+                    <li class="nav-item admin-only" role="presentation" style="display:none;">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-sitio"
+                            type="button" role="tab">Datos del sitio</button>
                     </li>
                     <li class="nav-item admin-only" role="presentation" style="display:none;">
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-usuarios"
@@ -273,17 +277,23 @@
                         </div>
                     </div>
 
-                    <!-- APARIENCIA (solo admin) -->
-                    <div class="tab-pane fade" id="panel-apariencia" role="tabpanel">
-                        <h4 class="mb-3">Apariencia del sitio</h4>
-                        <p class="text-muted">Los cambios se ven acá abajo al instante (antes de guardar). Recién se aplican a todo el sitio real cuando tocás "Guardar cambios".</p>
+                    <!-- APARIENCIA: COLORES (admin, y colaboradores a los que el admin les habilitó este permiso) -->
+                    <div class="tab-pane fade" id="panel-colores" role="tabpanel">
+                        <h4 class="mb-1">Apariencia: colores</h4>
+                        <p class="text-muted">
+                            Probá combinaciones y mirá cómo quedan en la vista previa de abajo (encabezado, contenido y
+                            pie de página). Nada cambia en el sitio real hasta que toques «Guardar colores».
+                        </p>
 
                         <div class="vista-previa-apariencia mb-4">
-                            <p class="vista-previa-titulo"><i class="bi bi-eye"></i> Vista previa</p>
-                            <div id="preview-header-footer"></div>
+                            <div class="vista-previa-barra">
+                                <p class="vista-previa-titulo m-0"><i class="bi bi-eye"></i> Vista previa · componentes de prueba</p>
+                                <span id="colores-borrador" class="badge-borrador" style="display:none;">Cambios sin guardar</span>
+                            </div>
+                            <div id="preview-colores"></div>
                         </div>
 
-                        <form id="form-apariencia">
+                        <form id="form-colores">
                             <h5>Colores del contenido principal</h5>
                             <div class="mb-4">
                                 <label class="form-label d-block">Paleta de colores</label>
@@ -313,7 +323,7 @@
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label" for="ap-contraste">Color de contraste</label>
                                     <input type="color" class="form-control form-control-color" id="ap-contraste">
-                                    <div class="form-text">Se usa como color de texto sobre botones/etiquetas de color acento.</div>
+                                    <div class="form-text">Color del texto que va sobre los botones y etiquetas de color acento.</div>
                                 </div>
                             </div>
                             <div class="admin-alert admin-alert-warning">
@@ -326,24 +336,47 @@
                             <hr class="my-4">
 
                             <h5>Colores del encabezado y pie de página</h5>
-                            <p class="text-muted">El header y el footer siempre comparten estos 3 colores entre sí, y pueden ser distintos a los del resto del sitio (por ejemplo, mantenerlos oscuros aunque el contenido esté en modo claro).</p>
+                            <p class="text-muted">El encabezado y el pie siempre comparten estos 3 colores entre sí, y pueden ser distintos a los del resto del sitio (por ejemplo, mantenerlos oscuros aunque el contenido esté en modo claro).</p>
                             <div class="row">
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="ap-fondo-hf">Fondo header/footer</label>
+                                    <label class="form-label" for="ap-fondo-hf">Fondo encabezado/pie</label>
                                     <input type="color" class="form-control form-control-color" id="ap-fondo-hf">
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="ap-texto-hf">Texto header/footer</label>
+                                    <label class="form-label" for="ap-texto-hf">Texto encabezado/pie</label>
                                     <input type="color" class="form-control form-control-color" id="ap-texto-hf">
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label" for="ap-accento-hf">Acento header/footer</label>
+                                    <label class="form-label" for="ap-accento-hf">Acento encabezado/pie</label>
                                     <input type="color" class="form-control form-control-color" id="ap-accento-hf">
                                 </div>
                             </div>
 
-                            <hr class="my-4">
+                            <div id="colores-error" class="admin-alert admin-alert-error" style="display:none;"></div>
+                            <div id="colores-ok" class="admin-alert admin-alert-ok" style="display:none;">Colores guardados. Ya se ven en todo el sitio.</div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="submit" class="btn btn-primary">Guardar colores</button>
+                                <button type="button" id="btn-descartar-colores" class="btn btn-outline-secondary">Descartar cambios</button>
+                            </div>
+                        </form>
+                    </div>
 
+                    <!-- DATOS DEL SITIO (solo admin): logo, redes, contacto, mapas y SEO -->
+                    <div class="tab-pane fade" id="panel-sitio" role="tabpanel">
+                        <h4 class="mb-1">Datos del sitio</h4>
+                        <p class="text-muted">
+                            Logo, redes sociales, contacto y mapas del encabezado y pie de página, y el sitemap para Google.
+                            Los colores se cambian en la pestaña «Apariencia».
+                        </p>
+
+                        <div class="vista-previa-apariencia mb-4">
+                            <div class="vista-previa-barra">
+                                <p class="vista-previa-titulo m-0"><i class="bi bi-eye"></i> Vista previa · encabezado y pie (con los colores actuales)</p>
+                            </div>
+                            <div id="preview-datos"></div>
+                        </div>
+
+                        <form id="form-sitio">
                             <h5>Logo</h5>
                             <div class="mb-4">
                                 <label class="form-label" for="ap-logo-url">Logo del sitio (URL de imagen)</label>
@@ -360,7 +393,7 @@
                             <hr class="my-4">
 
                             <h5>Redes sociales</h5>
-                            <p class="text-muted">Se usan tanto en el header como en el footer.</p>
+                            <p class="text-muted">Se usan tanto en el encabezado como en el pie de página.</p>
                             <div id="ap-redes-lista" class="mb-2"></div>
                             <button type="button" id="ap-btn-agregar-red" class="btn btn-sm btn-outline-secondary mb-4">
                                 <i class="bi bi-plus-lg"></i> Agregar red social
@@ -368,7 +401,7 @@
 
                             <hr class="my-4">
 
-                            <h5>Datos de contacto (footer)</h5>
+                            <h5>Datos de contacto (pie de página)</h5>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="ap-contacto-email">Email</label>
@@ -382,7 +415,7 @@
 
                             <hr class="my-4">
 
-                            <h5>Mapas embebidos (footer)</h5>
+                            <h5>Mapas embebidos (pie de página)</h5>
                             <p class="text-muted">En Google Maps: buscá el lugar → Compartir → Insertar un mapa → copiá solo la URL de adentro del <code>src="..."</code> del iframe.</p>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
@@ -397,9 +430,9 @@
                                 </div>
                             </div>
 
-                            <div id="apariencia-error" class="admin-alert admin-alert-error" style="display:none;"></div>
-                            <div id="apariencia-ok" class="admin-alert admin-alert-ok" style="display:none;">Cambios guardados. Ya se ven en todo el sitio.</div>
-                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                            <div id="sitio-error" class="admin-alert admin-alert-error" style="display:none;"></div>
+                            <div id="sitio-ok" class="admin-alert admin-alert-ok" style="display:none;">Datos guardados. Ya se ven en todo el sitio.</div>
+                            <button type="submit" class="btn btn-primary">Guardar datos del sitio</button>
                         </form>
 
                         <hr class="my-4">
@@ -605,6 +638,16 @@
                             <label class="form-label" for="cont-adjunto">Imagen o publicación (opcional)</label>
                             <input type="url" class="form-control" id="cont-adjunto" placeholder="Imagen, link de Drive, o post de Instagram/TikTok/Twitter/Facebook">
                             <div class="form-text">Si pegás un post de una red social, se va a embeber igual que en los eventos. Si es un link de Drive, se convierte solo en imagen.</div>
+                        </div>
+                        <div class="mb-3 admin-only" id="cont-destacado-wrap" style="display:none;">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="cont-destacado">
+                                <label class="form-check-label" for="cont-destacado">Video destacado</label>
+                            </div>
+                            <div class="form-text">
+                                Se muestra arriba de «Últimos Comebacks» en la página de Contenido. El link de arriba
+                                tiene que ser de YouTube. Máximo 2 videos destacados a la vez.
+                            </div>
                         </div>
                         <div id="contenido-error" class="admin-alert admin-alert-error" style="display:none;"></div>
                     </div>

@@ -6,10 +6,13 @@
 // compartida con la vista "ver todos" (videos.html).
 // ============================================================
 
-import { apiKeyConfigurada, buscarUltimosVideos } from "./youtube-buscar.js";
+import { apiKeyConfigurada, buscarVideosDePlaylist } from "./youtube-buscar.js";
 import { SERIES_YOUTUBE } from "./youtube-series-config.js";
 
-const { query, respaldo } = SERIES_YOUTUBE.mvs;
+// OJO: "mvs" ahora se define con una playlist (playlistId), ya no con una
+// query de busqueda. Antes este archivo seguia usando "query" (que quedo
+// undefined) y por eso siempre caia en la lista de respaldo.
+const { playlistId, respaldo } = SERIES_YOUTUBE.mvs;
 
 function renderGrilla(videos) {
   const cont = document.getElementById("grilla-mvs");
@@ -31,8 +34,8 @@ async function cargarUltimosMVs() {
     return;
   }
   try {
-    const videos = await buscarUltimosVideos(query, 4);
-    renderGrilla(videos.length > 0 ? videos : respaldo);
+    const videos = await buscarVideosDePlaylist(playlistId);
+    renderGrilla(videos.length > 0 ? videos.slice(0, 4) : respaldo);
   } catch (err) {
     console.warn("No se pudieron traer los últimos MVs desde YouTube, se muestra la lista de respaldo:", err);
     renderGrilla(respaldo);

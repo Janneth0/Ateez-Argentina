@@ -189,7 +189,11 @@ h6 {
   color: var(--default-color);
   transition: all 0.5s;
   z-index: 997;
-  padding: 5px 0 0 0;
+  padding: 20px 0 0 0;
+}
+
+.header .top-row {
+  padding-bottom: 10px;
 }
 
 .header .top-row .logo {
@@ -197,7 +201,7 @@ h6 {
 }
 
 .header .top-row .logo img {
-  max-height: 80px;
+  max-height: 40px;
   margin-right: 10px;
 }
 
@@ -5265,4 +5269,57 @@ section,
   font-size: 18px;
   margin-bottom: 12px;
   color: var(--heading-color);
+}
+
+/* ============================================================
+   Video destacado (contenido.html, arriba de "Últimos Comebacks")
+   ============================================================ */
+.video-destacado h3 {
+  font-size: 20px;
+  margin: 14px 0 6px;
+  color: var(--heading-color);
+}
+
+.video-destacado p {
+  font-size: 14px;
+  opacity: 0.85;
+  margin: 0;
+}
+
+.video-destacado .embed-responsive {
+  border: 1px solid color-mix(in srgb, var(--accent-color), transparent 70%);
+}
+
+/* ============================================================
+   Botones de Bootstrap que siguen la paleta del sitio.
+   Antes .btn-primary era el azul por defecto de Bootstrap sin importar
+   la paleta elegida; ahora usa el color de acento (y el color de
+   contraste para el texto), igual que el resto de los elementos.
+   ============================================================ */
+.btn-primary {
+  --bs-btn-color: var(--contrast-color);
+  --bs-btn-bg: var(--accent-color);
+  --bs-btn-border-color: var(--accent-color);
+  --bs-btn-hover-color: var(--contrast-color);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--accent-color), #000 15%);
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--accent-color), #000 15%);
+  --bs-btn-active-color: var(--contrast-color);
+  --bs-btn-active-bg: color-mix(in srgb, var(--accent-color), #000 25%);
+  --bs-btn-active-border-color: color-mix(in srgb, var(--accent-color), #000 25%);
+  --bs-btn-disabled-color: var(--contrast-color);
+  --bs-btn-disabled-bg: var(--accent-color);
+  --bs-btn-disabled-border-color: var(--accent-color);
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--default-color);
+  --bs-btn-border-color: color-mix(in srgb, var(--default-color), transparent 55%);
+  --bs-btn-hover-color: var(--contrast-color);
+  --bs-btn-hover-bg: var(--accent-color);
+  --bs-btn-hover-border-color: var(--accent-color);
+  --bs-btn-active-color: var(--contrast-color);
+  --bs-btn-active-bg: var(--accent-color);
+  --bs-btn-active-border-color: var(--accent-color);
+  --bs-btn-disabled-color: var(--default-color);
+  --bs-btn-disabled-border-color: color-mix(in srgb, var(--default-color), transparent 70%);
 }

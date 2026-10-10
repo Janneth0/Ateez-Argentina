@@ -102,21 +102,59 @@ export async function actualizarConfigSitio(datos) {
 }
 
 /**
+ * El logo por defecto es una ruta relativa a la raíz ("assets/img/..."). En
+ * páginas que están en una subcarpeta (evento/, Noticias/, admin/) esa ruta
+ * se resolvía desde la subcarpeta y daba 404. Esto la deja relativa a la raíz
+ * usando el "base" de la página ("" o "../"). Los links absolutos (Drive,
+ * Imgur, etc.) no se tocan.
+ */
+export function conLogoResuelto(config, base = "") {
+  const url = config.logoUrl || "";
+  const esAbsoluta = /^(https?:)?\/\//i.test(url) || url.startsWith("data:") || url.startsWith("/");
+  return { ...config, logoUrl: url && !esAbsoluta ? base + url : url };
+}
+
+/**
+ * Campos de la configuración que son "de color". Son los únicos que puede
+ * modificar un colaborador al que el admin le habilitó la sección Colores
+ * (las reglas de Firestore hacen cumplir esta misma lista del lado del
+ * servidor, ver firestore.rules). Todo lo demás (logo, redes, contacto,
+ * mapas) es solo del admin.
+ */
+export const CAMPOS_COLOR = [
+  "paletaId", "modo",
+  "fondo", "superficie", "accento", "texto", "heading", "contraste",
+  "fondoHF", "textoHF", "accentoHF"
+];
+
+/**
+ * Escribe las variables CSS del tema sobre un elemento cualquiera. Con
+ * document.documentElement afecta a toda la página; con otro elemento
+ * (por ejemplo el cuadro de vista previa del panel) afecta SOLO a ese
+ * elemento y a lo que tenga adentro, así se puede probar una paleta sin
+ * que el propio panel cambie de colores (y quede ilegible con una
+ * combinación mala).
+ */
+export function aplicarTemaEnElemento(el, config) {
+  const s = el.style;
+  if (config.fondo) s.setProperty("--background-color", config.fondo);
+  if (config.superficie) s.setProperty("--surface-color", config.superficie);
+  if (config.accento) s.setProperty("--accent-color", config.accento);
+  if (config.texto) s.setProperty("--default-color", config.texto);
+  if (config.heading) s.setProperty("--heading-color", config.heading);
+  if (config.contraste) s.setProperty("--contrast-color", config.contraste);
+
+  if (config.fondoHF) s.setProperty("--hf-background-color", config.fondoHF);
+  if (config.textoHF) s.setProperty("--hf-text-color", config.textoHF);
+  if (config.accentoHF) s.setProperty("--hf-accent-color", config.accentoHF);
+}
+
+/**
  * Aplica los colores del tema (contenido + header/footer) como variables
  * CSS globales. Se llama en cada página a través de site-boot.js.
  */
 export function aplicarTemaEnPagina(config) {
-  const root = document.documentElement.style;
-  if (config.fondo) root.setProperty("--background-color", config.fondo);
-  if (config.superficie) root.setProperty("--surface-color", config.superficie);
-  if (config.accento) root.setProperty("--accent-color", config.accento);
-  if (config.texto) root.setProperty("--default-color", config.texto);
-  if (config.heading) root.setProperty("--heading-color", config.heading);
-  if (config.contraste) root.setProperty("--contrast-color", config.contraste);
-
-  if (config.fondoHF) root.setProperty("--hf-background-color", config.fondoHF);
-  if (config.textoHF) root.setProperty("--hf-text-color", config.textoHF);
-  if (config.accentoHF) root.setProperty("--hf-accent-color", config.accentoHF);
+  aplicarTemaEnElemento(document.documentElement, config);
 
   document.body?.classList.toggle("tema-claro", config.modo === "claro");
 

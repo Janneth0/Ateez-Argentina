@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Eventos - ATEEZ Argentina</title>
+    <!-- Autor -->
+    <meta name="author" content="ATEEZ Argentina">
+    <meta name="description"
+        content="METAS por la comunidad Argentina de ATEEZ: cumpleaños, comebacks, especiales y juntadas de fans en todo el país.GOLDEN HOUR PT6">
+    <meta name="keywords"
+        content="ateez, argentina, ateez argentina, ateez argentina 2026, ateez en argentina, atiny argentina, metas argentina Ateez, golden hour pt6">
+
+
+    <!-- Favicons -->
+    <link href="../assets/img/favicon.png" rel="icon">
+    <link href="../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="../assets/css/main.css" rel="stylesheet">
+
+    <style>
+    /* Estilos Base / Dark Mode Theme ATINY */
+    :root {
+      --bg-color: #0b0b0e;
+      --card-bg: #16161a;
+      --accent-color: #e6005c;
+      --accent-gradient: linear-gradient(90deg, #ff0055, #ff5500);
+      --text-color: #ffffff;
+      --text-muted: #a0a0ab;
+      --btn-spotify: #1db954;
+      --btn-youtube: #ff0000;
+      --btn-shazam: #0088ff;
+    }
+
+    /* body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    } */
+
+    /* .container {
+      max-width: 800px;
+      margin: 0 auto;
+    } */
+
+    /* Estilos Header y Countdown */
+    /* .header-card {
+      background: var(--card-bg);
+      border: 1px solid #23232a;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    } */
+
+    /* .header-card h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.8rem;
+      color: #fff;
+    } */
+
+    /* .header-card p {
+      color: var(--text-muted);
+      margin: 0 0 16px 0;
+    } */
+
+    .countdown-timer {
+      font-size: 2rem;
+      font-weight: bold;
+      background: var(--accent-gradient);
+      /* -webkit-background-clip: text; */
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+    }
+
+    /* Estilos Metas
+    .section-title {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    } */
+
+    .goal-card {
+      background: var(--card-bg);
+      /* width: 60%; */
+      border: 1px solid #23232a;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .goal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .goal-title {
+      font-size: 1.1rem;
+      margin: 0 0 12px 0;
+    }
+
+    /* Barra de Progreso */
+    .progress-bg {
+      background: #25252e;
+      border-radius: 8px;
+      height: 14px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      background: var(--accent-gradient);
+      height: 100%;
+      width: 0%;
+      transition: width 1s ease-in-out;
+    }
+
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* Botones */
+    .goal-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.85; }
+    .btn-yt { background: var(--btn-youtube); color: #fff; }
+    .btn-sp { background: var(--btn-spotify); color: #000; }
+    .btn-sh { background: var(--btn-shazam); color: #fff; }
+
+    .btn-check {
+      background: #25252e;
+      color: #fff;
+      margin-left: auto;
+    }
+
+    .btn-check.completed {
+      background: var(--accent-color);
+    }
+  </style>
+    <!-- =======================================================
+  * Template Name: LeadPage
+  * Template URL: https://bootstrapmade.com/leadpage-bootstrap-landing-page-template/
+  * Updated: Aug 12 2025 with Bootstrap v5.3.7
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body class="portfolio-details-page">
+
+    <div id="site-header"></div>
+
+    <!-- Page Title -->
+    <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/bg/bg-2.webp);">
+    </div>
+
+    <!-- Portfolio Section -->
+    <section class="portfolio section container" id="publicaciones-seccion">
+
+        <!-- Section Title -->
+        <div class=" section-title header-card" data-aos="fade-up">
+            <span class="subtitle">ATEEZ Comeback Countdown </span>
+            <h2>GOLDEN HOUR: PART.6</h2>
+            <p>13 de Noviembre - 02:00 AM (Hora Argentina)</p>
+            <div id="countdown" class="countdown-timer">Cargando reloj...</div>
+        </div><!-- End Section Title -->
+        <!-- Sección de Metas -->
+        <div class="container section-title">
+            <!-- SECCIÓN METAS DE STREAMING -->
+            <h2 class="subtitle">Metas de Streaming - Argentina</h2>
+            <div id="goals-container"></div>
+        </div>
+
+    </section><!-- /Portfolio Section -->
+
+    <div id="site-footer"></div>
+
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/vendor/php-email-form/validate.js"></script>
+    <script src="../assets/vendor/aos/aos.js"></script>
+    <script src="../assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="../assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+    <script src="../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
+
+    <!-- Componentes reutilizables (header / footer) -->
+    <script type="module">
+        import { iniciarSitio } from "../assets/js/site-boot.js";
+        iniciarSitio({ base: "../", activo: "metas" });
+    </script>
+    <script type="module" src="../assets/js/cookies.js"></script>
+
+    <!-- Main JS File -->
+    <script src="../assets/js/main.js"></script>
+    <script async src="//www.instagram.com/embed.js"></script>
+    <script async src="https://www.tiktok.com/embed.js"></script>
+    <script async src="https://platform.twitter.com/widgets.js"></script>
+
+    <!-- Publicaciones dinámicas cargadas desde el panel de administración (Firestore) -->
+    <script type="module" src="../assets/js/eventos-publicos.js"></script>
+    <script src="metas.js"></script>
+</body>
+
+</html>

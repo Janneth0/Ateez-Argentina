@@ -16,12 +16,12 @@
 //   </script>
 // ============================================================
 
-import { obtenerConfigSitio, escucharConfigSitio, aplicarTemaEnPagina } from "./config-sitio.js";
+import { obtenerConfigSitio, escucharConfigSitio, aplicarTemaEnPagina, conLogoResuelto } from "./config-sitio.js";
 import { montarHeader, montarFooter, montarModalTerminos } from "./components.js";
 
 export async function iniciarSitio({ base = "", activo = "" } = {}) {
   // Primer valor: se resuelve rápido si Firestore tiene cache local.
-  const config = await obtenerConfigSitio();
+  const config = conLogoResuelto(await obtenerConfigSitio(), base);
   montarHeader({ base, activo, config });
   montarFooter({ base, config });
   montarModalTerminos();
@@ -29,7 +29,8 @@ export async function iniciarSitio({ base = "", activo = "" } = {}) {
 
   // Si el admin cambia algo mientras alguien está navegando, se actualiza
   // en vivo sin que la persona tenga que recargar la página.
-  escucharConfigSitio((configNuevo) => {
+  escucharConfigSitio((configRecibida) => {
+    const configNuevo = conLogoResuelto(configRecibida, base);
     aplicarTemaEnPagina(configNuevo);
     montarHeader({ base, activo, config: configNuevo });
     montarFooter({ base, config: configNuevo });

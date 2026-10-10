@@ -25,4 +25,10 @@
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
+  <url>
+    <loc>https://ateezargentina.com.ar/Noticias/como-apoyar-al-pedido-nacional-de-ateez-en-argentina-ateezinargentina</loc>
+    <lastmod>2025-09-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>

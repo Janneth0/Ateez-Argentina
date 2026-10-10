@@ -15,6 +15,8 @@
 //   link: string,        // donde verlo (puede ser un Drive, un sitio, un video)
 //   adjunto: string,      // opcional: imagen, link de Drive, o post de red social
 //   categoria: "serie" | "traduccion" | "dancecover" | "otro",
+//   destacado: boolean,   // solo admin: si es un video de YouTube, se muestra
+//                         // arriba de todo en contenido.html (máximo 2)
 //   creadoPor: uid,
 //   creadoEn: timestamp,
 //   actualizadoEn: timestamp
@@ -22,6 +24,7 @@
 // ============================================================
 
 import { db } from "./firebase-init.js";
+import { extraerIdYoutube } from "./util.js";
 import {
   collection, addDoc, updateDoc, deleteDoc, doc, getDocs, onSnapshot, query, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
@@ -62,28 +65,49 @@ export function escucharContenido(callback, onError) {
   );
 }
 
-export async function crearContenido({ titulo, descripcion, link, adjunto, categoria, uid }) {
+export async function crearContenido({ titulo, descripcion, link, adjunto, categoria, destacado, uid }) {
   return addDoc(collection(db, COL), {
     titulo,
     descripcion,
     link: link || "",
     adjunto: adjunto || "",
     categoria: categoria || "otro",
+    destacado: !!destacado,
     creadoPor: uid,
     creadoEn: serverTimestamp(),
     actualizadoEn: serverTimestamp()
   });
 }
 
-export async function editarContenido(id, { titulo, descripcion, link, adjunto, categoria }) {
-  return updateDoc(doc(db, COL, id), {
+export async function editarContenido(id, { titulo, descripcion, link, adjunto, categoria, destacado }) {
+  const cambios = {
     titulo,
     descripcion,
     link: link || "",
     adjunto: adjunto || "",
     categoria: categoria || "otro",
     actualizadoEn: serverTimestamp()
-  });
+  };
+  // "destacado" solo se incluye si viene explícito (el admin). Un colaborador
+  // no lo manda, así su edición no toca ese campo — y las reglas de Firestore
+  // además le impedirían cambiarlo aunque lo intentara.
+  if (typeof destacado === "boolean") cambios.destacado = destacado;
+  return updateDoc(doc(db, COL, id), cambios);
+}
+
+/**
+ * Devuelve los videos que se muestran como "destacados" arriba de todo en
+ * contenido.html: los marcados con destacado=true que además tengan un link
+ * de YouTube válido, máximo 2 (los más nuevos). Lo usan tanto la sección de
+ * destacados como la grilla general (que los excluye para no repetirlos),
+ * así las dos siempre coinciden en cuáles son.
+ */
+export function seleccionarDestacados(items = []) {
+  return items
+    .filter(c => c.destacado === true)
+    .map(c => ({ ...c, videoId: extraerIdYoutube(c.link) }))
+    .filter(c => c.videoId)
+    .slice(0, 2);
 }
 
 export async function eliminarContenido(id) {

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "yt_24h_views",
+    "platform": "YouTube",
+    "category": "MV Oficial",
+    "title": "Vistas en las primeras 24 horas",
+    "target": "15.000.000",
+    "current": 45,
+    "link": "https://youtube.com"
+  },
+  {
+    "id": "spotify_ar_top50",
+    "platform": "Spotify",
+    "category": "Argentina Daily",
+    "title": "Entrar al Top 50 Daily Argentina",
+    "target": "Puesto #30",
+    "current": 70,
+    "link": "https://spotify.com"
+  },
+  {
+    "id": "shazam_ar_top100",
+    "platform": "Shazam",
+    "category": "Shazam Argentina",
+    "title": "10.000 Shazams en Argentina",
+    "target": "10.000",
+    "current": 20,
+    "link": "https://shazam.com"
+  }
+]

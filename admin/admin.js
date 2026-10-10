@@ -3,10 +3,11 @@
 // ============================================================
 
 import { iniciarSitio } from "../assets/js/site-boot.js";
-import { renderHeader, renderFooter } from "../assets/js/components.js";
+import { renderFooter, ICONO_RED } from "../assets/js/components.js";
 import {
   registrarConEmail, loginConEmail, loginConGoogle, logout, obtenerPerfil,
-  escucharAuth, traducirErrorAuth, listarUsuarios, asignarRol, recuperarContrasena, actualizarMiFanbase
+  escucharAuth, traducirErrorAuth, listarUsuarios, asignarRol, recuperarContrasena, actualizarMiFanbase,
+  actualizarPermisoColores
 } from "../assets/js/auth.js";
 import { escucharPosts, crearPost, editarPost, eliminarPost, CATEGORIAS } from "../assets/js/posts.js";
 import {
@@ -20,12 +21,13 @@ import {
 } from "../assets/js/fanbases.js";
 import { escucharGaleria, agregarFotoGaleria, eliminarFotoGaleria } from "../assets/js/galeria.js";
 import {
-  PALETAS_PREDEFINIDAS, obtenerConfigSitio, actualizarConfigSitio, aplicarTemaEnPagina, REDES_SOCIALES_POR_DEFECTO
+  PALETAS_PREDEFINIDAS, obtenerConfigSitio, actualizarConfigSitio, aplicarTemaEnElemento, conLogoResuelto,
+  REDES_SOCIALES_POR_DEFECTO
 } from "../assets/js/config-sitio.js";
 import { normalizarUrlImagen } from "../assets/js/imagenes.js";
 import { generarSitemapXml, descargarSitemap } from "../assets/js/sitemap.js";
 import { paises } from "../assets/js/paises.js";
-import { formatearFechaCorta, eventoVencido, eventoPorVencer, escapeHtml } from "../assets/js/util.js";
+import { formatearFechaCorta, eventoVencido, eventoPorVencer, escapeHtml, extraerIdYoutube } from "../assets/js/util.js";
 
 iniciarSitio({ base: "../" });
 
@@ -201,10 +203,15 @@ escucharAuth(async (user) => {
 async function iniciarDashboard() {
   mostrarVista("dashboard");
   const esAdmin = usuarioActual.rol === "admin";
+  // El admin siempre puede usar la pestaña Apariencia (colores). Un colaborador
+  // solo si el admin se lo habilitó desde la pestaña Usuarios.
+  const puedeColores = esAdmin || usuarioActual.puedeEditarColores === true;
 
   document.getElementById("saludo-usuario").textContent =
-    `Hola, ${usuarioActual.nombreCompleto || usuarioActual.email} \u00b7 Rol: ${esAdmin ? "Administrador" : "Colaborador"}`;
+    `Hola, ${usuarioActual.nombreCompleto || usuarioActual.email} \u00b7 Rol: ${esAdmin ? "Administrador" : "Colaborador"}` +
+    (!esAdmin && puedeColores ? " \u00b7 Colores habilitados" : "");
   document.querySelectorAll(".admin-only").forEach(el => { el.style.display = esAdmin ? "" : "none"; });
+  document.querySelectorAll(".colores-only").forEach(el => { el.style.display = puedeColores ? "" : "none"; });
 
   if (esAdmin) {
     try {
@@ -218,11 +225,11 @@ async function iniciarDashboard() {
   cargarPublicaciones();
   cargarNoticias();
   cargarContenido();
+  if (puedeColores) cargarApariencia(esAdmin);
   if (esAdmin) {
     cargarUsuarios();
     cargarFanbases();
     cargarGaleria();
-    cargarApariencia();
   }
 }
 
@@ -528,7 +535,8 @@ function cargarContenido() {
       listaContenidoEl.innerHTML = visibles.map(c => `
         <div class="admin-list-item" data-id="${c.id}">
             <div class="item-info">
-                <h5><span class="badge-categoria">${etiquetaCategoriaContenido(c.categoria)}</span>${escapeHtml(c.titulo)}</h5>
+                <h5><span class="badge-categoria">${etiquetaCategoriaContenido(c.categoria)}</span>${escapeHtml(c.titulo)}
+                    ${c.destacado ? '<span class="badge-destacado"><i class="bi bi-star-fill"></i> Destacado</span>' : ''}</h5>
                 <p>${escapeHtml(c.descripcion)}</p>
                 ${usuarioActual.rol === 'admin' ? `<p class="responsable">Cargado por: ${escapeHtml(nombreResponsable(c.creadoPor))}</p>` : ''}
             </div>
@@ -559,6 +567,7 @@ listaContenidoEl.addEventListener("click", (e) => {
     document.getElementById("cont-categoria").value = item.categoria || "otro";
     document.getElementById("cont-link").value = item.link || "";
     document.getElementById("cont-adjunto").value = item.adjunto || "";
+    document.getElementById("cont-destacado").checked = item.destacado === true;
     contenidoError.style.display = "none";
     modalContenido.show();
   }
@@ -588,6 +597,27 @@ formContenido.addEventListener("submit", async (e) => {
     link: document.getElementById("cont-link").value.trim(),
     adjunto: normalizarUrlImagen(document.getElementById("cont-adjunto").value.trim())
   };
+
+  // "Video destacado": solo lo puede tocar el admin (el interruptor ni se ve
+  // para un colaborador, y las reglas de Firestore también lo impiden).
+  if (usuarioActual.rol === "admin") {
+    const destacado = document.getElementById("cont-destacado").checked;
+    datos.destacado = destacado;
+    if (destacado) {
+      if (!extraerIdYoutube(datos.link)) {
+        contenidoError.textContent = "Para destacarlo, el campo «Link» tiene que ser un link de YouTube (youtube.com/watch?v=… o youtu.be/…).";
+        contenidoError.style.display = "block";
+        return;
+      }
+      const otros = cacheContenido.filter(c => c.id !== id && c.destacado === true && extraerIdYoutube(c.link));
+      if (otros.length >= 2) {
+        contenidoError.textContent = `Ya hay 2 videos destacados (${otros.slice(0, 2).map(o => `«${o.titulo}»`).join(" y ")}). Sacale el destacado a uno antes de sumar otro.`;
+        contenidoError.style.display = "block";
+        return;
+      }
+    }
+  }
+
   try {
     if (id) await editarContenido(id, datos); else await crearContenido({ ...datos, uid: usuarioActual.uid });
     modalContenido.hide();
@@ -768,58 +798,73 @@ formFoto?.addEventListener("submit", async (e) => {
 });
 
 // ==============================================================
-// APARIENCIA (solo admin)
+// APARIENCIA: COLORES (admin + colaboradores habilitados)
+// y DATOS DEL SITIO (solo admin)
+//
+// Las dos pestañas guardan en el mismo documento (configuracion/sitio) pero
+// cada una escribe SOLO sus propios campos. Así las reglas de Firestore
+// pueden dejar que un colaborador habilitado toque los colores sin poder
+// tocar logo, redes, contacto ni mapas.
 // ==============================================================
-const formApariencia = document.getElementById("form-apariencia");
+const formColores = document.getElementById("form-colores");
+const formSitio = document.getElementById("form-sitio");
 const paletasOpcionesEl = document.getElementById("paletas-opciones");
-const previewHeaderFooterEl = document.getElementById("preview-header-footer");
+const previewColoresEl = document.getElementById("preview-colores");
+const previewDatosEl = document.getElementById("preview-datos");
 const apRedesListaEl = document.getElementById("ap-redes-lista");
+const badgeBorradorEl = document.getElementById("colores-borrador");
+
 let paletaSeleccionada = "pirata-dorado";
+let configGuardada = null; // lo último que hay guardado en Firestore: base de la vista previa y de "Descartar"
 
-async function cargarApariencia() {
-  if (!formApariencia) return;
-  paletasOpcionesEl.innerHTML = PALETAS_PREDEFINIDAS.map(p => `
-    <div class="paleta-opcion" data-id="${p.id}">
-        <div class="swatches">
-            <span style="background:${p.fondo}"></span><span style="background:${p.superficie}"></span><span style="background:${p.accento}"></span><span style="background:${p.texto}"></span>
-        </div>
-        <small>${p.nombre}</small>
-    </div>`).join("");
+// campo de la config -> id del <input type="color">
+const IDS_COLOR = {
+  fondo: "ap-fondo", superficie: "ap-superficie", accento: "ap-accento",
+  texto: "ap-texto", heading: "ap-heading", contraste: "ap-contraste",
+  fondoHF: "ap-fondo-hf", textoHF: "ap-texto-hf", accentoHF: "ap-accento-hf"
+};
+// Solo estos 6 pertenecen a "la paleta" del contenido. Se compara por id EXACTO
+// (con startsWith, "ap-fondo-hf" se confundía con "ap-fondo").
+const IDS_PALETA_CONTENIDO = new Set(["ap-fondo", "ap-superficie", "ap-accento", "ap-texto", "ap-heading", "ap-contraste"]);
 
-  paletasOpcionesEl.querySelectorAll(".paleta-opcion").forEach(el => {
-    el.addEventListener("click", () => {
-      const paleta = PALETAS_PREDEFINIDAS.find(p => p.id === el.dataset.id);
-      aplicarPaletaAFormulario(paleta);
-      previsualizar();
-    });
-  });
-
-  const config = await obtenerConfigSitio();
-  const paleta = PALETAS_PREDEFINIDAS.find(p => p.id === config.paletaId) || { ...config, id: null };
-  aplicarPaletaAFormulario({ ...paleta, ...config });
-
-  document.getElementById("ap-fondo-hf").value = config.fondoHF;
-  document.getElementById("ap-texto-hf").value = config.textoHF;
-  document.getElementById("ap-accento-hf").value = config.accentoHF;
-  document.getElementById("ap-logo-url").value = config.logoUrl || "";
-  document.getElementById("ap-contacto-email").value = config.contactoEmail || "";
-  document.getElementById("ap-contacto-direccion").value = config.contactoDireccion || "";
-  document.getElementById("ap-mapa1-titulo").value = config.mapa1Titulo || "";
-  document.getElementById("ap-mapa1-url").value = config.mapa1Url || "";
-  document.getElementById("ap-mapa2-titulo").value = config.mapa2Titulo || "";
-  document.getElementById("ap-mapa2-url").value = config.mapa2Url || "";
-
-  if (config.logoUrl) {
-    document.getElementById("ap-logo-preview").src = config.logoUrl;
-    document.getElementById("ap-logo-preview-wrap").style.display = "block";
-  }
-
-  apRedesListaEl.innerHTML = "";
-  (config.redesSociales?.length ? config.redesSociales : REDES_SOCIALES_POR_DEFECTO).forEach(r => apRedesListaEl.appendChild(filaRedApariencia(r.red, r.url)));
-
-  previsualizar();
+// ---------------------------------------------------------------- COLORES
+function leerColoresDelFormulario() {
+  return Object.fromEntries(Object.entries(IDS_COLOR).map(([campo, id]) => [campo, document.getElementById(id).value]));
 }
 
+function llenarFormColores(config) {
+  const base = PALETAS_PREDEFINIDAS.find(p => p.id === config.paletaId);
+  paletaSeleccionada = base ? base.id : null;
+  Object.entries(IDS_COLOR).forEach(([campo, id]) => { document.getElementById(id).value = config[campo]; });
+  marcarPaletaActiva();
+}
+
+function marcarPaletaActiva() {
+  paletasOpcionesEl.querySelectorAll(".paleta-opcion")
+    .forEach(el => el.classList.toggle("activa", el.dataset.id === paletaSeleccionada));
+}
+
+/** Al elegir una paleta predefinida solo cambian los 6 colores del contenido (los de encabezado/pie quedan como están). */
+function aplicarPaleta(paleta) {
+  paletaSeleccionada = paleta.id;
+  ["fondo", "superficie", "accento", "texto", "heading", "contraste"]
+    .forEach(campo => { document.getElementById(IDS_COLOR[campo]).value = paleta[campo]; });
+  marcarPaletaActiva();
+}
+
+function hayCambiosDeColor() {
+  if (!configGuardada) return false;
+  const actual = leerColoresDelFormulario();
+  return Object.keys(actual).some(k => String(actual[k]).toLowerCase() !== String(configGuardada[k] ?? "").toLowerCase());
+}
+
+function refrescarPreviewColores() {
+  if (!configGuardada) return;
+  dibujarVistaPrevia(previewColoresEl, { ...configGuardada, ...leerColoresDelFormulario() }, { conCuerpo: true });
+  if (badgeBorradorEl) badgeBorradorEl.style.display = hayCambiosDeColor() ? "" : "none";
+}
+
+// ----------------------------------------------------------- DATOS DEL SITIO
 function filaRedApariencia(red = "instagram", url = "") {
   const div = document.createElement("div");
   div.className = "fb-red-row";
@@ -827,17 +872,11 @@ function filaRedApariencia(red = "instagram", url = "") {
     <select class="form-select red-tipo">
       ${REDES_DISPONIBLES.map(r => `<option value="${r}" ${r === red ? "selected" : ""}>${r[0].toUpperCase() + r.slice(1)}</option>`).join("")}
     </select>
-    <input type="url" class="form-control red-url" placeholder="https://..." value="${url}">
+    <input type="url" class="form-control red-url" placeholder="https://..." value="${escapeHtml(url)}">
     <button type="button" class="quitar-red"><i class="bi bi-x-lg"></i></button>`;
-  div.querySelector(".quitar-red").addEventListener("click", () => { div.remove(); previsualizar(); });
-  div.querySelectorAll("select, input").forEach(el => el.addEventListener("input", previsualizar));
+  div.querySelector(".quitar-red").addEventListener("click", () => { div.remove(); refrescarPreviewDatos(); });
   return div;
 }
-
-document.getElementById("ap-btn-agregar-red")?.addEventListener("click", () => {
-  apRedesListaEl.appendChild(filaRedApariencia());
-  previsualizar();
-});
 
 function leerRedesDelFormulario() {
   return Array.from(apRedesListaEl.querySelectorAll(".fb-red-row")).map(row => ({
@@ -846,29 +885,8 @@ function leerRedesDelFormulario() {
   })).filter(r => r.url);
 }
 
-function aplicarPaletaAFormulario(paleta) {
-  paletaSeleccionada = paleta.id;
-  document.getElementById("ap-fondo").value = paleta.fondo;
-  document.getElementById("ap-superficie").value = paleta.superficie;
-  document.getElementById("ap-accento").value = paleta.accento;
-  document.getElementById("ap-texto").value = paleta.texto;
-  document.getElementById("ap-heading").value = paleta.heading;
-  document.getElementById("ap-contraste").value = paleta.contraste;
-  paletasOpcionesEl.querySelectorAll(".paleta-opcion").forEach(el => el.classList.toggle("activa", el.dataset.id === paleta.id));
-}
-
-/** Junta todos los valores actuales del formulario (sin guardar) para previsualizar. */
-function leerConfigDelFormulario() {
+function leerDatosDelSitioDelFormulario() {
   return {
-    fondo: document.getElementById("ap-fondo").value,
-    superficie: document.getElementById("ap-superficie").value,
-    accento: document.getElementById("ap-accento").value,
-    texto: document.getElementById("ap-texto").value,
-    heading: document.getElementById("ap-heading").value,
-    contraste: document.getElementById("ap-contraste").value,
-    fondoHF: document.getElementById("ap-fondo-hf").value,
-    textoHF: document.getElementById("ap-texto-hf").value,
-    accentoHF: document.getElementById("ap-accento-hf").value,
     logoUrl: document.getElementById("ap-logo-url").value.trim(),
     redesSociales: leerRedesDelFormulario(),
     contactoEmail: document.getElementById("ap-contacto-email").value.trim(),
@@ -880,88 +898,243 @@ function leerConfigDelFormulario() {
   };
 }
 
-/** Aplica los colores del formulario a ESTA MISMA página (para verlos en vivo) y redibuja la mini vista previa. */
-function previsualizar() {
-  const config = leerConfigDelFormulario();
-  aplicarTemaEnPagina(config);
-  if (previewHeaderFooterEl) {
-    previewHeaderFooterEl.innerHTML = `
-   
-    
-      <div class="preview-frame">
-       <body class="index-page">
-       <div id="site-header"></div>
-       <div style="font-size:10px;">
-        ${renderHeader({ base: "../", config })}
-       </div>
-        
-        <main class="main row">
-          <div class=" section-title col" data-aos="fade-up">
-                    <span class="subtitle">Subtitulos</span>
-                    <h2>ATEEZ Argentina</h2>
-                    <p>Lorem impsun</p>
-                    
-          </div><!-- End Section Title -->
-          <div class="col">
-            <div class="fanbase-card" data-bs-toggle="modal" data-bs-target="#modalFanbase-zfvo2tAjCTflGYGocpD5">
-          <img src="assets/img/logoATZ.jpeg" alt="Logo de ATEEZ San Juan Argentina" loading="lazy">
-          <h4>ATEEZ San Juan Argentina</h4>
-          <span class="fanbase-ciudad"><i class="bi bi-geo-alt"></i> Nombre</span>
-      </div>
-          </div>
-        <p> Contenido </p>
-        </main>
-        ${renderFooter({ base: "../", config })}
-        </body> 
-      </div>
-      `;
+function mostrarLogoChico(url) {
+  const preview = document.getElementById("ap-logo-preview");
+  const wrap = document.getElementById("ap-logo-preview-wrap");
+  if (url) { preview.src = url; wrap.style.display = "block"; } else { wrap.style.display = "none"; }
+}
+
+function llenarFormSitio(config) {
+  document.getElementById("ap-logo-url").value = config.logoUrl || "";
+  document.getElementById("ap-contacto-email").value = config.contactoEmail || "";
+  document.getElementById("ap-contacto-direccion").value = config.contactoDireccion || "";
+  document.getElementById("ap-mapa1-titulo").value = config.mapa1Titulo || "";
+  document.getElementById("ap-mapa1-url").value = config.mapa1Url || "";
+  document.getElementById("ap-mapa2-titulo").value = config.mapa2Titulo || "";
+  document.getElementById("ap-mapa2-url").value = config.mapa2Url || "";
+  mostrarLogoChico(config.logoUrl ? conLogoResuelto(config, "../").logoUrl : "");
+
+  apRedesListaEl.innerHTML = "";
+  (config.redesSociales?.length ? config.redesSociales : REDES_SOCIALES_POR_DEFECTO)
+    .forEach(r => apRedesListaEl.appendChild(filaRedApariencia(r.red, r.url)));
+}
+
+function refrescarPreviewDatos() {
+  if (!configGuardada || !previewDatosEl) return;
+  dibujarVistaPrevia(previewDatosEl, { ...configGuardada, ...leerDatosDelSitioDelFormulario() }, { conCuerpo: false });
+}
+
+// ------------------------------------------------------------------- CARGA
+async function cargarApariencia(conSitio) {
+  paletasOpcionesEl.innerHTML = PALETAS_PREDEFINIDAS.map(p => `
+    <div class="paleta-opcion" data-id="${p.id}">
+        <div class="swatches">
+            <span style="background:${p.fondo}"></span><span style="background:${p.superficie}"></span><span style="background:${p.accento}"></span><span style="background:${p.texto}"></span>
+        </div>
+        <small>${p.nombre}</small>
+    </div>`).join("");
+
+  paletasOpcionesEl.querySelectorAll(".paleta-opcion").forEach(el => {
+    el.addEventListener("click", () => {
+      aplicarPaleta(PALETAS_PREDEFINIDAS.find(p => p.id === el.dataset.id));
+      refrescarPreviewColores();
+    });
+  });
+
+  configGuardada = await obtenerConfigSitio();
+  llenarFormColores(configGuardada);
+  refrescarPreviewColores();
+
+  if (conSitio) {
+    llenarFormSitio(configGuardada);
+    refrescarPreviewDatos();
   }
 }
 
-document.querySelectorAll(
-  "#ap-fondo, #ap-superficie, #ap-accento, #ap-texto, #ap-heading, #ap-contraste, #ap-fondo-hf, #ap-texto-hf, #ap-accento-hf, #ap-contacto-email, #ap-contacto-direccion, #ap-mapa1-titulo, #ap-mapa1-url, #ap-mapa2-titulo, #ap-mapa2-url"
-).forEach(el => {
-  el.addEventListener("input", () => {
-    // Ojo: antes usaba startsWith(), y "ap-fondo-hf".startsWith("ap-fondo") da
-    // true — eso hacía que tocar un color de header/footer deseleccionara la
-    // paleta del contenido principal por error. Con Set + comparación exacta
-    // cada grupo de colores queda realmente independiente del otro.
-    const camposDePaleta = new Set(["ap-fondo", "ap-superficie", "ap-accento", "ap-texto", "ap-heading", "ap-contraste"]);
-    if (camposDePaleta.has(el.id)) {
-      paletaSeleccionada = null;
-      paletasOpcionesEl.querySelectorAll(".paleta-opcion").forEach(o => o.classList.remove("activa"));
-    }
-    previsualizar();
-  });
+// ---------------------------------------------------------- VISTA PREVIA
+/**
+ * Dibuja la vista previa dentro de `contenedor`. Es un cuadro AISLADO: los
+ * colores del borrador se aplican solo a ese cuadro (no a la página del
+ * panel), así una combinación mala no deja el propio panel ilegible. Son
+ * componentes de prueba con las MISMAS clases CSS que usa el sitio real, así
+ * que lo que se ve acá es lo que va a ver el público.
+ */
+function dibujarVistaPrevia(contenedor, config, { conCuerpo = false } = {}) {
+  if (!contenedor) return;
+  const cfg = conLogoResuelto({ ...config, logoUrl: normalizarUrlImagen(config.logoUrl || "") }, "../");
+  contenedor.innerHTML = `
+    <div class="preview-frame" aria-hidden="true">
+      ${renderHeaderPreview(cfg)}
+      ${conCuerpo ? renderCuerpoPreview() : ""}
+      ${renderFooterPreview(cfg)}
+    </div>`;
+  aplicarTemaEnElemento(contenedor.firstElementChild, cfg);
+}
+
+/** Encabezado simplificado y ordenado, solo para visualizar colores (no es navegable). */
+function renderHeaderPreview(config) {
+  const redes = config.redesSociales?.length ? config.redesSociales : REDES_SOCIALES_POR_DEFECTO;
+  const iconos = redes.map(r => `<span class="preview-social"><i class="bi ${ICONO_RED[r.red] || ICONO_RED.otro}"></i></span>`).join("");
+  return `
+    <div class="preview-header hf-background">
+      <div class="preview-header-top">
+        <div class="preview-brand">
+          <img src="${escapeHtml(config.logoUrl || "../assets/img/logoATZ.jpeg")}" alt="">
+          <span>ATEEZ Argentina</span>
+        </div>
+        <div class="preview-socials">${iconos}</div>
+      </div>
+      <nav class="preview-nav">
+        <span class="activo">Inicio</span>
+        <span>Eventos</span>
+        <span>Noticias</span>
+        <span>Contenido <i class="bi bi-chevron-down"></i></span>
+        <span>Nosotros <i class="bi bi-chevron-down"></i></span>
+      </nav>
+    </div>`;
+}
+
+/** Pie real del sitio, pero sin ids duplicados y con los mapas reemplazados por un recuadro liviano (no recargar 2 iframes en cada cambio). */
+function renderFooterPreview(config) {
+  return renderFooter({ base: "../", config })
+    .replace(/ id="(?:header|footer|navmenu)"/g, "")
+    .replace(/<iframe[\s\S]*?<\/iframe>/g,
+      `<div class="preview-mapa"><i class="bi bi-geo-alt-fill"></i><span>Mapa</span></div>`);
+}
+
+/** Componentes de prueba del cuerpo de la página: títulos, texto, filtros, tarjetas, video, fanbase y botones. */
+function renderCuerpoPreview() {
+  return `
+    <div class="preview-cuerpo">
+      <div class="section-title">
+        <span class="subtitle">Subtítulo de sección</span>
+        <h2>Título de sección</h2>
+        <p>Así se ven los textos corridos, <a href="#">los links</a> y el <strong>texto resaltado</strong> sobre el color de fondo del sitio.</p>
+      </div>
+
+      <div class="publicaciones-filtros">
+        <button type="button" class="filter-active">Todas</button>
+        <button type="button">Cumpleaños</button>
+        <button type="button">Comeback</button>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="noticia-card">
+            <span class="noticia-destacada"><i class="bi bi-star-fill"></i> Destacada</span>
+            <div class="noticia-imagen"><div class="preview-img"></div></div>
+            <div class="noticia-contenido">
+              <span class="noticia-fecha">12 sep 2026</span>
+              <h3>Título de una noticia</h3>
+              <p>Resumen de ejemplo para ver el texto de las tarjetas.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="contenido-card">
+            <div class="contenido-media"><div class="preview-img"></div></div>
+            <div class="contenido-card-body">
+              <h4>Título de contenido</h4>
+              <p>Descripción breve de un contenido cargado por el equipo.</p>
+              <a href="#" class="contenido-card-link">Ver <i class="bi bi-box-arrow-up-right"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 preview-col-apilada">
+          <div class="fanbase-card">
+            <div class="preview-avatar"></div>
+            <h4>Nombre de la fanbase</h4>
+            <span class="fanbase-ciudad"><i class="bi bi-geo-alt"></i> Ciudad</span>
+          </div>
+          <div class="video-compacto">
+            <div class="video-compacto-thumb"><div class="preview-img"></div><i class="bi bi-play-circle-fill"></i></div>
+            <div class="video-compacto-info">
+              <h5>Episodio de ejemplo</h5>
+              <p>Resumen corto del video.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-botones">
+        <button type="button" class="btn btn-primary btn-sm">Botón principal</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm">Botón secundario</button>
+      </div>
+    </div>`;
+}
+
+// ----------------------------------------------------------- EVENTOS: COLORES
+formColores?.addEventListener("input", (e) => {
+  if (IDS_PALETA_CONTENIDO.has(e.target.id)) {
+    paletaSeleccionada = null; // se movió un color a mano: ya no es una paleta predefinida
+    marcarPaletaActiva();
+  }
+  refrescarPreviewColores();
 });
 
-document.getElementById("ap-logo-url")?.addEventListener("input", previsualizar);
-document.getElementById("ap-logo-url")?.addEventListener("blur", (e) => {
-  e.target.value = normalizarUrlImagen(e.target.value);
-  const preview = document.getElementById("ap-logo-preview");
-  const wrap = document.getElementById("ap-logo-preview-wrap");
-  if (e.target.value) { preview.src = e.target.value; wrap.style.display = "block"; }
-  else { wrap.style.display = "none"; }
-  previsualizar();
+document.getElementById("btn-descartar-colores")?.addEventListener("click", () => {
+  if (!configGuardada) return;
+  llenarFormColores(configGuardada);
+  refrescarPreviewColores();
+  document.getElementById("colores-error").style.display = "none";
+  document.getElementById("colores-ok").style.display = "none";
 });
 
-formApariencia?.addEventListener("submit", async (e) => {
+formColores?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const errorEl = document.getElementById("apariencia-error");
-  const okEl = document.getElementById("apariencia-ok");
+  const errorEl = document.getElementById("colores-error");
+  const okEl = document.getElementById("colores-ok");
   errorEl.style.display = "none";
   okEl.style.display = "none";
   try {
     const paletaBase = PALETAS_PREDEFINIDAS.find(p => p.id === paletaSeleccionada);
-    await actualizarConfigSitio({
-      ...leerConfigDelFormulario(),
+    // Se manda SOLO lo que son colores (ver CAMPOS_COLOR en config-sitio.js):
+    // las reglas de Firestore rechazan cualquier otro campo si quien guarda es
+    // un colaborador habilitado.
+    const payload = {
+      ...leerColoresDelFormulario(),
       paletaId: paletaSeleccionada,
       modo: paletaBase?.modo || "personalizado"
-    });
+    };
+    await actualizarConfigSitio(payload);
+    configGuardada = { ...configGuardada, ...payload };
+    okEl.style.display = "block";
+    refrescarPreviewColores();
+  } catch (err) {
+    console.error(err);
+    errorEl.textContent = `No se pudieron guardar los colores: ${err.message || err}`;
+    errorEl.style.display = "block";
+  }
+});
+
+// ------------------------------------------------------ EVENTOS: DATOS DEL SITIO
+formSitio?.addEventListener("input", refrescarPreviewDatos);
+
+document.getElementById("ap-btn-agregar-red")?.addEventListener("click", () => {
+  apRedesListaEl.appendChild(filaRedApariencia());
+  refrescarPreviewDatos();
+});
+
+document.getElementById("ap-logo-url")?.addEventListener("blur", (e) => {
+  e.target.value = normalizarUrlImagen(e.target.value);
+  mostrarLogoChico(e.target.value ? conLogoResuelto({ logoUrl: e.target.value }, "../").logoUrl : "");
+  refrescarPreviewDatos();
+});
+
+formSitio?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorEl = document.getElementById("sitio-error");
+  const okEl = document.getElementById("sitio-ok");
+  errorEl.style.display = "none";
+  okEl.style.display = "none";
+  try {
+    const payload = leerDatosDelSitioDelFormulario();
+    await actualizarConfigSitio(payload);
+    configGuardada = { ...configGuardada, ...payload };
     okEl.style.display = "block";
   } catch (err) {
     console.error(err);
-    errorEl.textContent = `No se pudieron guardar los cambios: ${err.message || err}`;
+    errorEl.textContent = `No se pudieron guardar los datos: ${err.message || err}`;
     errorEl.style.display = "block";
   }
 });
@@ -995,6 +1168,11 @@ async function cargarUsuarios() {
                  ${u.fanbase ? ` · <span class="badge-categoria">${escapeHtml(nombreFanbase(u.fanbase) || "Fanbase eliminada")}</span>` : " · Fan independiente"}</p>
           </div>
           <div class="item-actions">
+              ${u.rol === "colaborador" ? `
+              <div class="form-check form-switch permiso-colores" title="Permite que esta persona use la pestaña Apariencia (solo los colores)">
+                  <input class="form-check-input permiso-colores-check" type="checkbox" role="switch" id="pc-${u.id}" data-uid="${u.id}" ${u.puedeEditarColores ? "checked" : ""}>
+                  <label class="form-check-label" for="pc-${u.id}">Puede editar colores</label>
+              </div>` : ""}
               <select class="form-select form-select-sm rol-select" data-uid="${u.id}">
                   <option value="" ${!u.rol ? "selected" : ""}>Sin rol</option>
                   <option value="colaborador" ${u.rol === "colaborador" ? "selected" : ""}>Colaborador</option>
@@ -1009,8 +1187,24 @@ async function cargarUsuarios() {
 }
 
 listaUsuariosEl.addEventListener("change", async (e) => {
+  const permiso = e.target.closest(".permiso-colores-check");
+  if (permiso) {
+    const uid = permiso.dataset.uid;
+    try {
+      await actualizarPermisoColores(uid, permiso.checked);
+      if (mapaUsuarios[uid]) mapaUsuarios[uid].puedeEditarColores = permiso.checked;
+    } catch (err) {
+      console.error(err);
+      permiso.checked = !permiso.checked; // vuelve al estado anterior
+      alert("No se pudo actualizar el permiso: " + (err.message || err));
+    }
+    return;
+  }
+
   const select = e.target.closest(".rol-select");
   if (!select) return;
-  try { await asignarRol(select.dataset.uid, select.value || null); }
-  catch (err) { console.error(err); alert("No se pudo actualizar el rol. Revisá los permisos en Firestore."); }
+  try {
+    await asignarRol(select.dataset.uid, select.value || null);
+    cargarUsuarios(); // se vuelve a dibujar: el interruptor de colores solo aplica a colaboradores
+  } catch (err) { console.error(err); alert("No se pudo actualizar el rol. Revisá los permisos en Firestore."); }
 });
