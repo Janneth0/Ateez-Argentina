@@ -54,7 +54,7 @@ export const REDES_SOCIALES_POR_DEFECTO = [
 ];
 
 export const CONFIG_POR_DEFECTO = {
-  logoUrl: "assets/img/logoATZ.jpeg",
+  logoUrl: "assets/img/logoATZnew.jpeg",
   paletaId: "pirata-dorado",
   modo: "oscuro",
   // Paleta del contenido principal

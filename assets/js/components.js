@@ -27,7 +27,7 @@ function renderIconosSociales(redes = []) {
 /** Genera el HTML del header. `base` es la ruta relativa hacia la raíz ("" o "../"). `config` trae logo/redes. */
 export function renderHeader({ base = "", activo = "", config = {} } = {}) {
   const activa = (clave) => (activo === clave ? "active" : "");
-  const logo = config.logoUrl || `${base}assets/img/logoATZ.jpeg`;
+  const logo = config.logoUrl || `${base}assets/img/logoATZnew.jpeg`;
   const redes = config.redesSociales || REDES_SOCIALES_POR_DEFECTO;
 
   return `
@@ -302,7 +302,7 @@ export function escapeHtml(str = "") {
 
 /** Tarjeta de una fanbase/sede (usada en index.html, cargada desde Firestore). */
 export function renderFanbaseCard({ id, nombre, descripcion, logoUrl, redes = [], ciudad = "" } = {}) {
-  const logo = logoUrl || "assets/img/logoATZ.jpeg";
+  const logo = logoUrl || "assets/img/logoATZnew.jpeg";
   const enlaces = redes.map(r => `
       <a href="${r.url}" target="_blank" rel="noopener" aria-label="${escapeHtml(r.red)}">
           <i class="bi ${ICONO_RED[r.red] || ICONO_RED.otro}"></i>
@@ -340,7 +340,7 @@ function fechaNoticiaTexto(fechaPublicacion) {
 
 /** Tarjeta de noticia para la grilla/listado. */
 export function renderNoticiaCard({ slug, titulo, resumen, imagenUrl, fechaPublicacion, destacada, base = "" } = {}) {
-  const img = imagenUrl || `${base}assets/img/logoATZ.jpeg`;
+  const img = imagenUrl || `${base}assets/img/logoATZnew.jpeg`;
   return `
   <article class="col-lg-4 col-md-6 noticia-item">
       <a href="${base}Noticias/${slug}" class="noticia-card" data-slug="${slug}">
@@ -357,7 +357,7 @@ export function renderNoticiaCard({ slug, titulo, resumen, imagenUrl, fechaPubli
 
 /** Bloque grande de la noticia principal (ver Noticias/noticias.html). */
 export function renderNoticiaDestacado({ slug, titulo, resumen, imagenUrl, fechaPublicacion, base = "" } = {}) {
-  const img = imagenUrl || `${base}assets/img/logoATZ.jpeg`;
+  const img = imagenUrl || `${base}assets/img/logoATZnew.jpeg`;
   return `
   <div class="col-lg-6">
       <a href="${base}Noticias/${slug}" class="noticia-destacado" data-slug="${slug}">
@@ -372,7 +372,7 @@ export function renderNoticiaDestacado({ slug, titulo, resumen, imagenUrl, fecha
 
 /** Tarjeta chica (se usan varias juntas al lado de la destacada). */
 export function renderNoticiaMini({ slug, titulo, imagenUrl, fechaPublicacion, base = "" } = {}) {
-  const img = imagenUrl || `${base}assets/img/logoATZ.jpeg`;
+  const img = imagenUrl || `${base}assets/img/logoATZnew.jpeg`;
   return `
   <div class="col-6">
       <a href="${base}Noticias/${slug}" class="noticia-mini" data-slug="${slug}">

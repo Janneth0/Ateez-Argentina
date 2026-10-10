@@ -475,7 +475,7 @@ function actualizarPreviewNoticia() {
   const fecha = document.getElementById("not-fecha").value;
   document.getElementById("preview-fecha").textContent = fecha ? formatearFechaCorta(fecha) : "Fecha";
   const img = document.getElementById("not-imagen-url").value;
-  document.getElementById("preview-imagen").src = img || "../assets/img/logoATZ.jpeg";
+  document.getElementById("preview-imagen").src = img || "../assets/img/logoATZnew.jpeg";
 }
 
 document.getElementById("not-imagen-url").addEventListener("blur", (e) => {
@@ -979,7 +979,7 @@ function renderHeaderPreview(config) {
     <div class="preview-header hf-background">
       <div class="preview-header-top">
         <div class="preview-brand">
-          <img src="${escapeHtml(config.logoUrl || "../assets/img/logoATZ.jpeg")}" alt="">
+          <img src="${escapeHtml(config.logoUrl || "../assets/img/logoATZnew.jpeg")}" alt="">
           <span>ATEEZ Argentina</span>
         </div>
         <div class="preview-socials">${iconos}</div>

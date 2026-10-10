@@ -113,7 +113,7 @@ function renderDetalle(slug) {
 
   document.getElementById("detalle-titulo").textContent = noticia.titulo;
   document.getElementById("detalle-fecha").textContent = formatearFecha(noticia.fechaPublicacion);
-  document.getElementById("detalle-imagen").src = noticia.imagenUrl || "../assets/img/logoATZ.jpeg";
+  document.getElementById("detalle-imagen").src = noticia.imagenUrl || "../assets/img/logoATZnew.jpeg";
   document.getElementById("detalle-imagen").alt = noticia.titulo;
   document.getElementById("detalle-contenido").innerHTML = noticia.contenidoHtml || "";
   document.getElementById("detalle-destacada").style.display = noticia.destacada ? "inline-flex" : "none";
@@ -123,7 +123,7 @@ function renderDetalle(slug) {
   const asideEl = document.getElementById("aside-recomendadas");
   asideEl.innerHTML = recomendadas.map(n => `
     <a href="./${n.slug}" data-slug="${n.slug}" class="aside-noticia">
-        <img src="${n.imagenUrl || '../assets/img/logoATZ.jpeg'}" alt="${escapeHtml(n.titulo)}" loading="lazy">
+        <img src="${n.imagenUrl || '../assets/img/logoATZnew.jpeg'}" alt="${escapeHtml(n.titulo)}" loading="lazy">
         <div>
             <span>${formatearFecha(n.fechaPublicacion)}</span>
             <h6>${escapeHtml(n.titulo)}</h6>
@@ -159,7 +159,7 @@ function actualizarSeo(noticia) {
     "publisher": {
       "@type": "Organization",
       "name": "ATEEZ Argentina",
-      "logo": { "@type": "ImageObject", "url": "https://ateezargentina.com.ar/assets/img/logoATZ.jpeg" }
+      "logo": { "@type": "ImageObject", "url": "https://ateezargentina.com.ar/assets/img/logoATZnew.jpeg" }
     },
     "mainEntityOfPage": { "@type": "WebPage", "@id": url }
   };
