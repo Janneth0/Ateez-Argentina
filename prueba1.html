@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATEEZ 8th Anniversary Special - ATEEZ Argentina</title>
+
+  <!-- Librerías desde CDN (html2canvas y canvas-confetti) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #0b0b0e;
+      --card-bg: #141419;
+      --card-border: #23232a;
+      --accent-color: #ff0055;
+      --accent-gradient: linear-gradient(135deg, #ff0055, #ff5500);
+      --text-color: #ffffff;
+      --text-muted: #a0a0ab;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* SECCIONES ESTANDARIZADAS */
+    section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .section-header h2 {
+      margin: 0 0 8px 0;
+      font-size: 1.8rem;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .section-header p {
+      color: var(--text-muted);
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    /* BOTONES GENERALES */
+    .btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #fff;
+      background: var(--accent-gradient);
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.9; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* ==========================================
+       SECTION 1: GENERADOR DE CREDENCIALES
+       ========================================== */
+    .generator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 768px) { .generator-grid { grid-template-columns: 1fr; } }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 600; }
+    .form-group input { width: 100%; padding: 10px; background: #1c1c24; border: 1px solid #2e2e3a; border-radius: 8px; color: #fff; box-sizing: border-box; }
+    
+    .bias-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
+      background: #1c1c24; padding: 10px; border-radius: 8px; border: 1px solid #2e2e3a; max-height: 120px; overflow-y: auto;
+    }
+    .bias-checkbox { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #ccc; cursor: pointer; }
+    .bias-checkbox input { accent-color: var(--accent-color); }
+
+    .preview-container { display: flex; flex-direction: column; align-items: center; }
+    
+    .id-card {
+      width: 350px; height: 215px; background: linear-gradient(135deg, #181820 0%, #0d0d12 100%);
+      border: 2px solid #ff0055; border-radius: 14px; padding: 16px; box-sizing: border-box; position: relative; overflow: hidden;
+    }
+    .card-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px; margin-bottom: 10px; }
+    .card-header-title { font-size: 0.7rem; font-weight: bold; color: var(--accent-color); letter-spacing: 1px; }
+    .card-header-badge { font-size: 0.6rem; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; }
+    .card-body { display: flex; gap: 12px; }
+    .avatar-box { width: 80px; height: 100px; border: 1px dashed var(--accent-color); border-radius: 8px; background: #121216; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+    .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
+    .info-box { flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .info-field label { display: block; font-size: 0.5rem; color: var(--text-muted); text-transform: uppercase; }
+    .info-field span { font-size: 0.8rem; font-weight: bold; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 190px; display: block; }
+    
+    .stamp-overlay {
+      display: none; position: absolute; bottom: 20px; right: 15px; width: 70px; height: 70px;
+      border: 3px double #ff0055; border-radius: 50%; color: #ff0055; text-align: center; font-weight: 900; font-size: 0.5rem;
+      padding: 8px 2px; box-sizing: border-box; transform: rotate(-15deg); background: rgba(255,0,85,0.08); pointer-events: none;
+    }
+    .stamp-overlay.active { display: flex; flex-direction: column; align-items: center; justify-content: center; animation: stampAnim 0.35s forwards; }
+    @keyframes stampAnim { 0% { opacity: 0; transform: scale(3) rotate(-30deg); } 100% { opacity: 0.9; transform: scale(1) rotate(-15deg); } }
+
+    /* ==========================================
+       SECTION 2: TRIVIA / QUIZ DE ANIVERSARIO
+       ========================================== */
+    .quiz-box { max-width: 600px; margin: 0 auto; background: #181820; border-radius: 12px; padding: 20px; border: 1px solid #282835; }
+    .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 16px; }
+    .option-btn { background: #22222e; border: 1px solid #333345; color: #fff; padding: 12px; border-radius: 8px; text-align: left; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; }
+    .option-btn:hover { background: var(--accent-color); }
+    .quiz-result { text-align: center; display: none; }
+
+    /* ==========================================
+       SECTION 3: MURO DE CARTAS / DESEOS
+       ========================================== */
+    .wall-form { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .wall-form input, .wall-form textarea { background: #1c1c24; border: 1px solid #2e2e3a; border-radius: 8px; color: #fff; padding: 10px; font-family: inherit; }
+    .wall-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+    .sticky-note { background: #1f1f2b; border-left: 4px solid var(--accent-color); padding: 14px; border-radius: 8px; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .sticky-note strong { color: #ff0055; font-size: 0.85rem; display: block; margin-bottom: 6px; }
+    .sticky-note p { font-size: 0.85rem; margin: 0; color: #ddd; word-break: break-word; }
+
+    /* ==========================================
+       SECTION 4: TIMELINE / MEMORY LANE
+       ========================================== */
+    .timeline-wrapper { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 12px; scroll-snap-type: x mandatory; }
+    .timeline-card { flex: 0 0 240px; background: #181820; border: 1px solid #2e2e3a; border-radius: 12px; padding: 16px; scroll-snap-align: start; }
+    .timeline-year { font-weight: 900; color: var(--accent-color); font-size: 1.2rem; }
+    .timeline-card h4 { margin: 6px 0; font-size: 1rem; }
+    .timeline-card p { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+
+    /* ==========================================
+       SECTION 5: TIER LIST INTERACTIVO
+       ========================================== */
+    .tier-row { display: flex; align-items: center; background: #181820; border-radius: 8px; margin-bottom: 8px; min-height: 70px; border: 1px solid #2a2a38; }
+    .tier-label { width: 60px; height: 100%; font-weight: bold; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; border-radius: 8px 0 0 8px; color: #000; flex-shrink: 0; }
+    .tier-s { background: #ff7f7f; }
+    .tier-a { background: #ffbf7f; }
+    .tier-b { background: #ffdf7f; }
+    .tier-dropzone { flex-grow: 1; display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; min-height: 50px; }
+    .album-item { width: 50px; height: 50px; background: #ff0055; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: bold; cursor: grab; text-align: center; user-select: none; }
+    .tier-pool { background: #121216; border: 1px dashed #333; padding: 12px; border-radius: 8px; margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- HEADER PRINCIPAL DEL ESPECIAL -->
+    <div style="text-align: center; margin-bottom: 30px; padding-top: 20px;">
+      <h1 style="font-size: 2.5rem; margin: 0; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        🏴‍☠️ ATEEZ 8th Anniversary Special
+      </h1>
+      <p style="color: var(--text-muted); margin-top: 6px;">24 de Octubre - Celebrando 8 años de historia junto a ATINY Argentina</p>
+    </div>
+
+    <!-- ==========================================
+         SECCIÓN 1: GENERADOR DE CREDENCIALES
+         ========================================== -->
+    <section id="credencial">
+      <div class="section-header">
+        <h2>🪪 ATINY Official ID Card Generator</h2>
+        <p>Crea tu pasaporte oficial verificado para celebrar el aniversario en redes sociales</p>
+      </div>
+
+      <div class="generator-grid">
+        <div class="form-container">
+          <div class="form-group">
+            <label>Nombre / Apodo</label>
+            <input type="text" id="input-name" placeholder="Ej: Lucía" maxlength="20" oninput="updateCard()">
+          </div>
+
+          <div class="form-group">
+            <label>Bias (Selecciona uno o varios)</label>
+            <div class="bias-grid">
+              <label class="bias-checkbox"><input type="checkbox" value="Hongjoong" onchange="updateCard()"> Hongjoong</label>
+              <label class="bias-checkbox"><input type="checkbox" value="Seonghwa" onchange="updateCard()"> Seonghwa</label>
+              <label class="bias-checkbox"><input type="checkbox" value="Yunho" onchange="updateCard()"> Yunho</label>
+              <label class="bias-checkbox"><input type="checkbox" value="Yeosang" onchange="updateCard()"> Yeosang</label>
+              <label class="bias-checkbox"><input type="checkbox" value="San" onchange="updateCard()"> San</label>
+              <label class="bias-checkbox"><input type="checkbox" value="Mingi" onchange="updateCard()"> Mingi</label>
+              <label class="bias-checkbox"><input type="checkbox" value="Wooyoung" onchange="updateCard()"> Wooyoung</label>
+              <label class="bias-checkbox"><input type="checkbox" value="Jongho" onchange="updateCard()"> Jongho</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Provincia / Ciudad</label>
+            <input type="text" id="input-location" placeholder="Ej: Buenos Aires" maxlength="20" oninput="updateCard()">
+          </div>
+
+          <div class="form-group">
+            <label>Canción Favorita / Era</label>
+            <input type="text" id="input-song" placeholder="Ej: HALA HALA / NASA" maxlength="22" oninput="updateCard()">
+          </div>
+
+          <div class="form-group">
+            <label>Foto de Perfil</label>
+            <input type="file" id="input-photo" accept="image/*" onchange="previewPhoto(event)">
+          </div>
+        </div>
+
+        <div class="preview-container">
+          <div id="atiny-card" class="id-card">
+            <div class="card-header">
+              <span class="card-header-title">ATINY ARGENTINA PASSPORT</span>
+              <span class="card-header-badge">8TH ANNIVERSARY</span>
+            </div>
+            <div class="card-body">
+              <div class="avatar-box">
+                <span id="avatar-text" style="font-size: 0.6rem; color: #777;">Sin foto</span>
+                <img id="avatar-img" src="" alt="Foto" style="display: none;">
+              </div>
+              <div class="info-box">
+                <div class="info-field"><label>Nombre</label><span id="card-name">TU NOMBRE</span></div>
+                <div class="info-field"><label>Bias</label><span id="card-bias">OT8 (Todos)</span></div>
+                <div class="info-field"><label>Ubicación</label><span id="card-location">Buenos Aires, AR</span></div>
+                <div class="info-field"><label>Era / Song</label><span id="card-song">Crazy Form</span></div>
+              </div>
+            </div>
+            <div id="card-stamp" class="stamp-overlay">
+              <span>OFFICIAL</span><span>ATINY</span><span style="font-size:0.4rem;">VERIFIED</span>
+            </div>
+            <div style="position: absolute; bottom: 8px; right: 14px; font-size: 0.5rem; color: rgba(255,255,255,0.3);">ATEEZARGENTINA.COM.AR</div>
+          </div>
+
+          <div style="margin-top: 16px; width: 100%; max-width: 350px;">
+            <button id="btn-share-native" class="btn" style="width: 100%;" onclick="triggerStampAndShare()">Compartir Credencial 📲</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 2: TRIVIA / QUIZ DE ANIVERSARIO
+         ========================================== -->
+    <section id="quiz">
+      <div class="section-header">
+        <h2>🧠 Trivia: 8 Años, 8 Preguntas</h2>
+        <p>¿Qué tanto sabes sobre la historia y logros de ATEEZ?</p>
+      </div>
+
+      <div class="quiz-box">
+        <div id="quiz-screen">
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">
+            <span id="quiz-progress">Pregunta 1 de 8</span>
+            <span id="quiz-score-live">Puntos: 0</span>
+          </div>
+          <h3 id="quiz-question" style="margin: 0 0 16px 0;">Cargando pregunta...</h3>
+          <div id="quiz-options" class="options-grid"></div>
+        </div>
+
+        <div id="quiz-result" class="quiz-result">
+          <span style="font-size: 3rem;">🏆</span>
+          <h3 id="quiz-result-title">¡Trivia Completada!</h3>
+          <p id="quiz-result-desc" style="color: var(--text-muted);"></p>
+          <a id="quiz-share-btn" href="#" target="_blank" class="btn" style="margin-top: 12px;">Compartir Puntaje en 𝕏</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 3: MURO DE CARTAS Y DESEOS
+         ========================================== -->
+    <section id="muro">
+      <div class="section-header">
+        <h2>💌 Muro de Cartas de Aniversario</h2>
+        <p>Deja un mensaje de felicitación o deseo para ATEEZ en sus 8 años</p>
+      </div>
+
+      <div class="wall-form">
+        <input type="text" id="wall-name" placeholder="Tu Apodo / Nombre" style="flex: 1; min-width: 150px;">
+        <input type="text" id="wall-msg" placeholder="Escribe un mensaje corto para ATEEZ..." style="flex: 2; min-width: 250px;" maxlength="150">
+        <button class="btn" onclick="addWallNote()">Publicar Carta ✉️</button>
+      </div>
+
+      <div id="wall-grid" class="wall-grid">
+        <div class="sticky-note">
+          <strong>@ATINY_ARGENTINA</strong>
+          <p>¡Felices 8 años a los 8 chicos que iluminan nuestras vidas! Gracias por existir y darlo todo siempre. 🏴‍☠️🇦🇷</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 4: TIMELINE (MEMORY LANE 2018-2026)
+         ========================================== -->
+    <section id="timeline">
+      <div class="section-header">
+        <h2>📜 Memory Lane: 8 Años de Historia</h2>
+        <p>Desliza horizontalmente para revivir los grandes hitos en la carrera de ATEEZ</p>
+      </div>
+
+      <div class="timeline-wrapper">
+        <div class="timeline-card">
+          <div class="timeline-year">2018</div>
+          <h4>Debut Oficial</h4>
+          <p>Lanzamiento del EP debut "Treasure EP.1: All to Zero" con Pirate King y Treasure.</p>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-year">2019</div>
+          <h4>First Win</h4>
+          <p>Consiguen su primer premio en un programa de televisión con "WAVE".</p>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-year">2021</div>
+          <h4>Kingdom & Growth</h4>
+          <p>Impactan al mundo con sus presentaciones teatrales en Kingdom: Legendary War.</p>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-year">2023</div>
+          <h4>Crazy Form Era</h4>
+          <p>Dominan los charts globales y alcanzan el puesto #1 en Billboard 200 con THE WORLD EP.FIN.</p>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-year">2024</div>
+          <h4>Coachella & World Tour</h4>
+          <p>Se convierten en el primer grupo masculino de K-Pop en cantar en Coachella.</p>
+        </div>
+        <div class="timeline-card">
+          <div class="timeline-year">2026</div>
+          <h4>8th Anniversary</h4>
+          <p>Celebrando 8 años de vigencia global junto a ATINY de todo el mundo.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 5: TIER LIST DE ERAS Y ÁLBUMES
+         ========================================== -->
+    <section id="tierlist">
+      <div class="section-header">
+        <h2>📊 ATINY Tier List: Clasifica las Eras</h2>
+        <p>Arrastra las eras a la categoría que corresponda y guarda tu ranking</p>
+      </div>
+
+      <div id="tierlist-container">
+        <div class="tier-row"><div class="tier-label tier-s">S</div><div class="tier-dropzone" ondrop="drop(event)" ondragover="allowDrop(event)"></div></div>
+        <div class="tier-row"><div class="tier-label tier-a">A</div><div class="tier-dropzone" ondrop="drop(event)" ondragover="allowDrop(event)"></div></div>
+        <div class="tier-row"><div class="tier-label tier-b">B</div><div class="tier-dropzone" ondrop="drop(event)" ondragover="allowDrop(event)"></div></div>
+      </div>
+
+      <div class="tier-pool" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="album-item" draggable="true" ondragstart="drag(event)" id="album1">TREASURE</div>
+        <div class="album-item" draggable="true" ondragstart="drag(event)" id="album2">FEVER</div>
+        <div class="album-item" draggable="true" ondragstart="drag(event)" id="album3">THE WORLD</div>
+        <div class="album-item" draggable="true" ondragstart="drag(event)" id="album4">GOLDEN HOUR</div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- SCRIPT GENERAL Y LÓGICA DE CADA SECCIÓN -->
+  <script>
+    /* ==========================================
+       1. LOGICA DE CREDENCIALES
+       ========================================== */
+    function getSelectedBiases() {
+      const checkboxes = document.querySelectorAll('.bias-checkbox input:checked');
+      const selected = Array.from(checkboxes).map(cb => cb.value);
+      if (selected.length === 0 || selected.length === 8) return 'OT8 (Todos)';
+      return selected.join(', ');
+    }
+
+    function resetStamp() {
+      document.getElementById('card-stamp').classList.remove('active');
+    }
+
+    function updateCard() {
+      resetStamp();
+      document.getElementById('card-name').innerText = document.getElementById('input-name').value.trim() || 'TU NOMBRE';
+      document.getElementById('card-bias').innerText = getSelectedBiases();
+      document.getElementById('card-location').innerText = document.getElementById('input-location').value.trim() ? `${document.getElementById('input-location').value.trim()}, AR` : 'Buenos Aires, AR';
+      document.getElementById('card-song').innerText = document.getElementById('input-song').value.trim() || 'Crazy Form';
+    }
+
+    function previewPhoto(event) {
+      resetStamp();
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById('avatar-img');
+          img.src = e.target.result;
+          img.style.display = 'block';
+          document.getElementById('avatar-text').style.display = 'none';
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function triggerStampAndShare() {
+      const stamp = document.getElementById('card-stamp');
+      const btn = document.getElementById('btn-share-native');
+      btn.disabled = true;
+      btn.innerText = 'Verificando... ✍️';
+
+      stamp.classList.add('active');
+      if (typeof confetti === 'function') confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+
+      setTimeout(async () => {
+        const cardElement = document.getElementById('atiny-card');
+        const canvas = await html2canvas(cardElement, { scale: 3, backgroundColor: null, useCORS: true });
+
+        canvas.toBlob(async (blob) => {
+          const file = new File([blob], `ATINY_Passport_8th.png`, { type: 'image/png' });
+          const shareData = { title: 'ATINY Passport', text: '¡Conseguí mi credencial para los 8 años de ATEEZ en ateezargentina.com.ar! 🏴‍☠️🇦🇷 #8YearsWithATEEZ #ATEEZ', files: [file] };
+
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            try { await navigator.share(shareData); } catch (e) {}
+          } else {
+            const link = document.createElement('a');
+            link.download = `ATINY_Passport_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+          }
+          btn.disabled = false;
+          btn.innerText = 'Compartir Credencial 📲';
+        }, 'image/png');
+      }, 450);
+    }
+
+    /* ==========================================
+       2. LÓGICA DE QUIZ / TRIVIA
+       ========================================== */
+    const questions = [
+      { q: "¿En qué año debutó ATEEZ oficialmente?", options: ["2017", "2018", "2019", "2020"], correct: 1 },
+      { q: "¿Con qué canción obtuvieron su 'First Win' en televisión?", options: ["Pirate King", "SAY MY NAME", "WAVE", "WONDERLAND"], correct: 2 },
+      { q: "¿Quién es el líder y compositor principal del grupo?", options: ["Hongjoong", "Seonghwa", "Mingi", "San"], correct: 0 },
+      { q: "¿Cuál fue el álbum que alcanzó el #1 en Billboard 200?", options: ["TREASURE EP.3", "THE WORLD EP.FIN: WILL", "ZERO: FEVER Part.1", "GOLDEN HOUR: Part.1"], correct: 1 }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+
+    function renderQuiz() {
+      if (currentQ >= questions.length) {
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('quiz-result').style.display = 'block';
+        document.getElementById('quiz-result-desc').innerText = `Acertaste ${score} de ${questions.length} preguntas. ¡Gracias por apoyar a ATEEZ en sus 8 años!`;
+        const text = encodeURIComponent(`¡Logré ${score}/${questions.length} puntos en la Trivia del 8° Aniversario de ATEEZ en ateezargentina.com.ar! 🏴‍☠️🇦🇷 #8YearsWithATEEZ #ATEEZ`);
+        document.getElementById('quiz-share-btn').href = `https://twitter.com/intent/tweet?text=${text}`;
+        return;
+      }
+
+      const qData = questions[currentQ];
+      document.getElementById('quiz-progress').innerText = `Pregunta ${currentQ + 1} de ${questions.length}`;
+      document.getElementById('quiz-score-live').innerText = `Puntos: ${score}`;
+      document.getElementById('quiz-question').innerText = qData.q;
+
+      const optsContainer = document.getElementById('quiz-options');
+      optsContainer.innerHTML = '';
+
+      qData.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => {
+          if (idx === qData.correct) score++;
+          currentQ++;
+          renderQuiz();
+        };
+        optsContainer.appendChild(btn);
+      });
+    }
+
+    renderQuiz();
+
+    /* ==========================================
+       3. LÓGICA DE MURO DE CARTAS
+       ========================================== */
+    function addWallNote() {
+      const name = document.getElementById('wall-name').value.trim() || 'ATINY Anónimo';
+      const msg = document.getElementById('wall-msg').value.trim();
+
+      if (!msg) { alert('Por favor escribe un mensaje.'); return; }
+
+      const grid = document.getElementById('wall-grid');
+      const note = document.createElement('div');
+      note.className = 'sticky-note';
+      note.innerHTML = `<strong>@${name}</strong><p>${msg}</p>`;
+      grid.prepend(note);
+
+      document.getElementById('wall-name').value = '';
+      document.getElementById('wall-msg').value = '';
+      if (typeof confetti === 'function') confetti({ particleCount: 30, spread: 50 });
+    }
+
+    /* ==========================================
+       4. LÓGICA DE TIER LIST (DRAG & DROP)
+       ========================================== */
+    function allowDrop(ev) { ev.preventDefault(); }
+    function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+    function drop(ev) {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("text");
+      var target = ev.target;
+      if (target.classList.contains('tier-dropzone') || target.classList.contains('tier-pool')) {
+        target.appendChild(document.getElementById(data));
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa de Faros ATINY Argentina - ATEEZ 8th Anniversary</title>
+
+  <!-- Librería para el confeti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #0b0b0e;
+      --card-bg: #121217;
+      --card-border: #23232f;
+      --accent-color: #ff0055;
+      --accent-gold: #ffcc00;
+      --accent-gradient: linear-gradient(135deg, #ff0055, #ff5500);
+      --text-color: #ffffff;
+      --text-muted: #a0a0ab;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .map-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+    }
+
+    .map-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .map-header h2 {
+      margin: 0 0 8px 0;
+      font-size: 2.2rem;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .map-header p {
+      color: var(--text-muted);
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    /* COUNTER GLOBAL SUPERIOR */
+    .global-stats {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 0, 85, 0.2);
+      border-radius: 14px;
+      padding: 16px 24px;
+      text-align: center;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .stat-item span {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 4px;
+    }
+
+    .stat-item strong {
+      font-size: 1.8rem;
+      color: #fff;
+      font-weight: 900;
+    }
+
+    /* CONTENEDOR DEL MAPA */
+    .map-container {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .svg-map {
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0px 0px 15px rgba(0,0,0,0.8));
+    }
+
+    /* ESTILOS DE PROVINCIAS (SVG) */
+    .province-path {
+      fill: #1c1c26;
+      stroke: #333345;
+      stroke-width: 1.5;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .province-path:hover:not(.disabled) {
+      fill: var(--accent-color);
+      stroke: #ffffff;
+      filter: drop-shadow(0 0 10px rgba(255, 0, 85, 0.9));
+    }
+
+    /* PROVINCIA SELECCIONADA / ACTIVA */
+    .province-path.active {
+      fill: var(--accent-color) !important;
+      stroke: var(--accent-gold) !important;
+      stroke-width: 2.5;
+      animation: neonPulse 1.8s infinite ease-in-out;
+    }
+
+    @keyframes neonPulse {
+      0% { filter: drop-shadow(0 0 5px #ff0055); }
+      50% { filter: drop-shadow(0 0 20px #ffcc00); }
+      100% { filter: drop-shadow(0 0 5px #ff0055); }
+    }
+
+    /* PROVINCIAS BLOQUEADAS TRAS VOTAR */
+    .province-path.disabled:not(.active) {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+
+    /* TOOLTIP FLOTANTE MEJORADO */
+    .map-tooltip {
+      position: absolute;
+      display: none;
+      background: rgba(15, 15, 20, 0.95);
+      border: 1px solid var(--accent-color);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      pointer-events: none;
+      z-index: 100;
+      box-shadow: 0 5px 15px rgba(255, 0, 85, 0.3);
+      transform: translate(-50%, -120%);
+      white-space: nowrap;
+    }
+
+    /* PANEL INFORMATIVO */
+    .province-info-panel {
+      display: none;
+      margin-top: 28px;
+      background: #181822;
+      border: 1px solid var(--accent-color);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      animation: fadeInUp 0.3s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .province-info-panel h3 {
+      margin: 0 0 8px 0;
+      color: #fff;
+      font-size: 1.25rem;
+    }
+
+    .province-info-panel p {
+      margin: 0 0 16px 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .btn-share {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      cursor: pointer;
+      background: var(--accent-gradient);
+      color: #fff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-share:hover { opacity: 0.9; }
+
+    /* CONTROLES DE ADMIN/RESPALDO (OPCIONAL) */
+    .admin-controls {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    .admin-btn {
+      background: transparent;
+      border: 1px solid #333;
+      color: #777;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <section class="map-section">
+      
+      <div class="map-header">
+        <h2>🇦🇷 Mapa de Faros ATINY Argentina</h2>
+        <p>Seleccioná tu provincia para encender tu faro pirata. <b>(Solo 1 registro por usuario)</b></p>
+      </div>
+
+      <!-- COUNTER GLOBAL -->
+      <div class="global-stats">
+        <div class="stat-item">
+          <span>Total Faros Registrados</span>
+          <strong id="total-beacons">0</strong>
+        </div>
+        <div class="stat-item">
+          <span>Provincia con más ATINYs</span>
+          <strong id="top-province" style="color: var(--accent-gold);">-</strong>
+        </div>
+      </div>
+
+      <!-- CONTENEDOR DEL MAPA SVG -->
+      <div class="map-container">
+        <div id="tooltip" class="map-tooltip"></div>
+        
+        <svg class="svg-map" viewBox="0 0 320 600" xmlns="http://www.w3.org/2000/svg">
+          <!-- Jujuy -->
+          <path id="path-jujuy" data-name="Jujuy" class="province-path" d="M 120 40 L 140 30 L 155 50 L 135 70 L 115 60 Z" />
+          <!-- Salta -->
+          <path id="path-salta" data-name="Salta" class="province-path" d="M 100 60 L 115 60 L 135 70 L 155 50 L 175 65 L 160 90 L 120 85 L 90 75 Z" />
+          <!-- Formosa -->
+          <path id="path-formosa" data-name="Formosa" class="province-path" d="M 175 65 L 225 75 L 210 95 L 160 90 Z" />
+          <!-- Tucumán -->
+          <path id="path-tucuman" data-name="Tucumán" class="province-path" d="M 115 85 L 130 85 L 135 105 L 115 105 Z" />
+          <!-- Catamarca -->
+          <path id="path-catamarca" data-name="Catamarca" class="province-path" d="M 80 80 L 115 85 L 115 110 L 95 125 L 75 105 Z" />
+          <!-- Chaco -->
+          <path id="path-chaco" data-name="Chaco" class="province-path" d="M 160 90 L 210 95 L 220 120 L 165 115 Z" />
+          <!-- Misiones -->
+          <path id="path-misiones" data-name="Misiones" class="province-path" d="M 260 90 L 285 80 L 280 110 L 255 105 Z" />
+          <!-- Corrientes -->
+          <path id="path-corrientes" data-name="Corrientes" class="province-path" d="M 210 115 L 255 105 L 240 145 L 205 135 Z" />
+          <!-- Santiago del Estero -->
+          <path id="path-santiago" data-name="Santiago del Estero" class="province-path" d="M 130 90 L 165 95 L 160 130 L 125 125 Z" />
+          <!-- La Rioja -->
+          <path id="path-larioja" data-name="La Rioja" class="province-path" d="M 70 105 L 95 125 L 105 150 L 70 140 Z" />
+          <!-- San Juan -->
+          <path id="path-sanjuan" data-name="San Juan" class="province-path" d="M 60 140 L 95 145 L 90 175 L 55 170 Z" />
+          <!-- Santa Fe -->
+          <path id="path-santafe" data-name="Santa Fe" class="province-path" d="M 165 115 L 195 120 L 180 185 L 155 175 Z" />
+          <!-- Córdoba -->
+          <path id="path-cordoba" data-name="Córdoba" class="province-path" d="M 125 125 L 160 130 L 155 175 L 115 170 Z" />
+          <!-- Entre Ríos -->
+          <path id="path-entrerios" data-name="Entre Ríos" class="province-path" d="M 195 135 L 230 140 L 215 175 L 185 170 Z" />
+          <!-- San Luis -->
+          <path id="path-sanluis" data-name="San Luis" class="province-path" d="M 90 170 L 115 170 L 110 205 L 85 200 Z" />
+          <!-- Mendoza -->
+          <path id="path-mendoza" data-name="Mendoza" class="province-path" d="M 55 170 L 90 175 L 85 220 L 50 215 Z" />
+          <!-- Buenos Aires -->
+          <path id="path-buenosaires" data-name="Buenos Aires" class="province-path" d="M 140 175 L 205 175 L 190 240 L 125 235 L 135 195 Z" />
+          <!-- CABA -->
+          <circle id="path-caba" data-name="CABA" class="province-path" cx="192" cy="182" r="5" />
+          <!-- La Pampa -->
+          <path id="path-lapampa" data-name="La Pampa" class="province-path" d="M 85 205 L 130 210 L 120 245 L 80 240 Z" />
+          <!-- Neuquén -->
+          <path id="path-neuquen" data-name="Neuquén" class="province-path" d="M 45 220 L 80 230 L 65 270 L 35 250 Z" />
+          <!-- Río Negro -->
+          <path id="path-rionegro" data-name="Río Negro" class="province-path" d="M 65 245 L 130 245 L 115 285 L 55 275 Z" />
+          <!-- Chubut -->
+          <path id="path-chubut" data-name="Chubut" class="province-path" d="M 50 275 L 120 285 L 110 340 L 45 330 Z" />
+          <!-- Santa Cruz -->
+          <path id="path-santacruz" data-name="Santa Cruz" class="province-path" d="M 45 330 L 110 340 L 95 410 L 35 390 Z" />
+          <!-- Tierra del Fuego -->
+          <path id="path-tierradelfuego" data-name="Tierra del Fuego" class="province-path" d="M 80 430 L 110 430 L 95 455 L 75 450 Z" />
+        </svg>
+      </div>
+
+      <!-- PANEL INFORMATIVO -->
+      <div id="info-panel" class="province-info-panel">
+        <h3 id="panel-title">🚨 ¡Faro registrado!</h3>
+        <p id="panel-desc">Tu faro está encendido. ¡Gracias por sumar tu presencia en la comunidad de ATEEZ Argentina!</p>
+        <button class="btn-share" onclick="shareBeacon()">Compartir mi Faro en 𝕏 🚨</button>
+      </div>
+
+      <!-- BOTÓN DE BACKUP PARA ADMINISTRACIÓN -->
+      <div class="admin-controls">
+        <button class="admin-btn" onclick="exportDataJSON()">Descargar Datos Acumulados (JSON) 💾</button>
+      </div>
+
+    </section>
+  </div>
+
+  <script>
+    const argentinaProvinces = [
+      "Jujuy", "Salta", "Formosa", "Tucumán", "Catamarca", "Chaco", "Misiones", 
+      "Corrientes", "Santiago del Estero", "La Rioja", "San Juan", "Santa Fe", 
+      "Córdoba", "Entre Ríos", "San Luis", "Mendoza", "Buenos Aires", "CABA", 
+      "La Pampa", "Neuquén", "Río Negro", "Chubut", "Santa Cruz", "Tierra del Fuego"
+    ];
+
+    // Cargar archivo JSON o inicializar estrictamente en 0
+    async function loadInitialData() {
+      const stored = localStorage.getItem('atiny_map_data');
+      if (stored) return JSON.parse(stored);
+
+      // Intenta cargar un JSON estático precargado si existe en el servidor
+      try {
+        const response = await fetch('./data/provincias_data.json');
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem('atiny_map_data', JSON.stringify(data));
+          return data;
+        }
+      } catch (e) {
+        console.log("Servidor en inicio limpio (0).");
+      }
+
+      // Si no existe nada, INICIALIZA ESTRICTAMENTE EN 0
+      const cleanZeroData = {};
+      argentinaProvinces.forEach(p => { cleanZeroData[p] = 0; });
+      localStorage.setItem('atiny_map_data', JSON.stringify(cleanZeroData));
+      return cleanZeroData;
+    }
+
+    async function renderMapState() {
+      const counts = await loadInitialData();
+      const userBeacon = localStorage.getItem('atiny_user_beacon');
+      const hasVoted = Boolean(userBeacon);
+
+      let total = 0;
+      let topProv = "Ninguna";
+      let maxCount = 0;
+
+      const paths = document.querySelectorAll('.province-path');
+      paths.forEach(path => {
+        const province = path.getAttribute('data-name');
+        const count = counts[province] || 0;
+        total += count;
+
+        if (count > maxCount && count > 0) {
+          maxCount = count;
+          topProv = province;
+        }
+
+        const isUserProv = userBeacon === province;
+
+        path.classList.remove('active', 'disabled');
+
+        if (isUserProv) {
+          path.classList.add('active');
+        } else if (hasVoted) {
+          path.classList.add('disabled');
+        }
+
+        path.onclick = hasVoted ? null : () => selectBeacon(province);
+
+        // Tooltip
+        path.onmousemove = (e) => showTooltip(e, province, count);
+        path.onmouseleave = hideTooltip;
+      });
+
+      document.getElementById('total-beacons').innerText = total.toLocaleString('es-AR');
+      document.getElementById('top-province').innerText = topProv;
+
+      if (hasVoted) {
+        document.getElementById('panel-title').innerText = `🚨 Tu faro está activo en ${userBeacon}`;
+        document.getElementById('panel-desc').innerText = `Registraste tu posición en ${userBeacon}. ¡Gracias por ser parte de ATEEZ Argentina!`;
+        document.getElementById('info-panel').style.display = 'block';
+      }
+    }
+
+    // TOOLTIP FLOTANTE
+    const tooltip = document.getElementById('tooltip');
+    function showTooltip(e, province, count) {
+      const containerRect = document.querySelector('.map-container').getBoundingClientRect();
+      const x = e.clientX - containerRect.left;
+      const y = e.clientY - containerRect.top;
+
+      tooltip.style.left = `${x}px`;
+      tooltip.style.top = `${y}px`;
+      tooltip.innerHTML = `<strong>${province}</strong>: ${count} ATINYs`;
+      tooltip.style.display = 'block';
+    }
+
+    function hideTooltip() {
+      tooltip.style.display = 'none';
+    }
+
+    // ACCIÓN DE VOTO ÚNICO
+    async function selectBeacon(province) {
+      if (localStorage.getItem('atiny_user_beacon')) return;
+
+      let counts = await loadInitialData();
+      counts[province] = (counts[province] || 0) + 1;
+
+      localStorage.setItem('atiny_user_beacon', province);
+      localStorage.setItem('atiny_map_data', JSON.stringify(counts));
+
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+      }
+
+      renderMapState();
+    }
+
+    // COMPARTIR EN X (TWITTER)
+    function shareBeacon() {
+      const userBeacon = localStorage.getItem('atiny_user_beacon');
+      if (!userBeacon) return;
+
+      const pageUrl = encodeURIComponent("https://ateezargentina.com.ar");
+      const text = encodeURIComponent(`¡Registré mi faro ATINY en ${userBeacon} para celebrar los 8 años de ATEEZ en ateezargentina.com.ar! 🚨🇦🇷🏴‍☠️ Sumá tu provincia en el mapa: `);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${pageUrl}`, '_blank');
+    }
+
+    // ADMINISTRACIÓN: EXPORTAR ACUMULADO JSON
+    async function exportDataJSON() {
+      const counts = await loadInitialData();
+      const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(counts, null, 2))}`;
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", jsonString);
+      downloadAnchor.setAttribute("download", "provincias_data.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    renderMapState();
+  </script>
+</body>
+</html>

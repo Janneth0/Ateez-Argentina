@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Contenido - ATEEZ Argentina</title>
+    <!-- Autor -->
+    <meta name="author" content="ATEEZ Argentina">
+    <meta name="description"
+        content="Contenido de ATEEZ Argentina: videos, series subtituladas, playlists y todo lo relacionado a ATEEZ hecho por la comunidad Argentina.">
+    <meta name="keywords"
+        content="ateez, argentina, ateez argentina, ateez argentina 2027, ateez en argentina, atiny argentina, contenido de ateez, videos de ateez">
+
+
+    <!-- Favicons -->
+    <link href="assets/img/logoATZnew.jpeg" rel="icon" class="logo">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <style>
+        :root {
+            /* --bg-color: #0b0b0e; */
+            --card-bg: #141419;
+            --card-border: #23232a;
+            /* --accent-color: #ff0055; */
+            --accent-gradient: linear-gradient(135deg, #ff0055, #ff5500);
+            --text-color: #ffffff;
+            --text-muted: #a0a0ab;
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header-title h1 {
+            margin: 0 0 8px 0;
+            font-size: 2rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .generator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .generator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background: #1c1c24;
+            border: 1px solid #2e2e3a;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        /* SELECCIÓN MÚLTIPLE DE BIAS */
+        .bias-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3px;
+            background: #1c1c24;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #2e2e3a;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+
+        .bias-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        .bias-checkbox input {
+            width: auto;
+            accent-color: var(--accent-color);
+            cursor: pointer;
+        }
+
+        /* PREVISUALIZACIÓN DE LA CREDENCIAL */
+        .preview-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .id-card {
+            width: 360px;
+            height: 220px;
+            background: linear-gradient(135deg, #181820 0%, #0d0d12 100%);
+            border: 2px solid #ff0055;
+            border-radius: 14px;
+            padding: 16px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(255, 0, 85, 0.2);
+        }
+
+        .id-card::before {
+            content: 'ATEEZ 8TH';
+            position: absolute;
+            right: -20px;
+            bottom: -15px;
+            font-size: 4rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.03);
+            letter-spacing: 2px;
+            pointer-events: none;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .card-header-title {
+            font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+            text-transform: uppercase;
+        }
+
+        .card-header-badge {
+            font-size: 0.65rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        .card-body {
+            display: flex;
+            gap: 14px;
+        }
+
+        .avatar-box {
+            width: 85px;
+            height: 105px;
+            border: 1px dashed var(--accent-color);
+            border-radius: 8px;
+            background: #121216;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-placeholder {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .info-box {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .info-field {
+            margin-bottom: 6px;
+        }
+
+        .info-field label {
+            display: block;
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-field span {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #fff;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .card-footer-text {
+            position: absolute;
+            bottom: 10px;
+            right: 16px;
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 1px;
+        }
+
+        /* ESTILOS Y ANIMACIÓN DEL SELLO */
+        .stamp-overlay {
+            display: none;
+            position: absolute;
+            bottom: 45px;
+            right: 20px;
+            width: 80px;
+            height: 75px;
+            border: 3px double #ff0055;
+            /*borde*/
+            border-radius: 50%;
+            color: #ff0055;
+            /*color texto sello*/
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 900;
+            font-size: 0.55rem;
+            letter-spacing: 0.5px;
+            line-height: 1.1;
+            box-sizing: border-box;
+            padding: 10px 4px;
+            transform: rotate(-15deg);
+            background: rgba(255, 0, 85, 0.08);
+            box-shadow: 0 0 8px rgba(255, 0, 85, 0.4);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .stamp-overlay.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: stampAnimation 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes stampAnimation {
+            0% {
+                opacity: 0;
+                transform: scale(3) rotate(-30deg);
+            }
+
+            100% {
+                opacity: 0.9;
+                transform: scale(1) rotate(-15deg);
+            }
+        }
+
+        /* BOTONES */
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #fff;
+            background: var(--accent-gradient);
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+    </style>
+
+    <link href="assets/css/main.css" rel="stylesheet">
+
+    <!-- Carga de html2canvas y canvas-confetti -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- =======================================================
+  * Template Name: LeadPage
+  * Template URL: https://bootstrapmade.com/leadpage-bootstrap-landing-page-template/
+  * Updated: Aug 12 2025 with Bootstrap v5.3.7
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body class="index-page">
+
+    <div id="site-header"></div>
+    <!-- Page Title -->
+    <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/bg/bg-2.webp);">
+    </div>
+    <main class="main ">
+        <section>
+    <div class="container">
+        <div class="header-title">
+            <h1>🏴‍☠️ ATINY Official ID Card</h1>
+            <p>Generá tu credencial personalizada para festejar los 8 años de ATEEZ</p>
+        </div>
+
+        <div class="generator-grid">
+
+            <!-- FORMULARIO -->
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="input-name">Nombre / Apodo</label>
+                    <input type="text" id="input-name" placeholder="Ej: Lucía" maxlength="20" oninput="updateCard()">
+                </div>
+
+                <div class="form-group">
+                    <label>Bias (Podés elegir varios)</label>
+                    <div class="bias-grid">
+                        <label class="bias-checkbox"><input type="checkbox" value="Hongjoong" onchange="updateCard()">
+                            Hongjoong</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="Seonghwa" onchange="updateCard()">
+                            Seonghwa</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="Yunho" onchange="updateCard()">
+                            Yunho</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="Yeosang" onchange="updateCard()">
+                            Yeosang</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="San" onchange="updateCard()">
+                            San</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="Mingi" onchange="updateCard()">
+                            Mingi</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="Wooyoung" onchange="updateCard()">
+                            Wooyoung</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="Jongho" onchange="updateCard()">
+                            Jongho</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-location">Provincia / Ciudad (Argentina)</label>
+                    <input type="text" id="input-location" placeholder="Ej: Buenos Aires" maxlength="20"
+                        oninput="updateCard()">
+                </div>
+
+                <div class="form-group">
+                    <label for="input-song">Canción Favorita / Era</label>
+                    <input type="text" id="input-song" placeholder="Ej: HALA HALA / NASA" maxlength="22"
+                        oninput="updateCard()">
+                </div>
+
+                <div class="form-group">
+                    <label for="input-photo">Foto de Perfil</label>
+                    <input type="file" id="input-photo" accept="image/*" onchange="previewPhoto(event)">
+                </div>
+            </div>
+
+            <!-- PREVISUALIZACIÓN DE LA CREDENCIAL -->
+            <div class="preview-container">
+                <div id="atiny-card" class="id-card">
+
+                    <div class="card-header">
+                        <span class="card-header-title">ATINY ARGENTINA PASSPORT</span>
+                        <span class="card-header-badge">8TH ANNIVERSARY</span>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="avatar-box" id="avatar-container">
+                            <span class="avatar-placeholder" id="avatar-text">Sin foto</span>
+                            <img id="avatar-img" src="" alt="Foto ATINY" style="display: none;">
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-field">
+                                <label>Nombre</label>
+                                <span id="card-name">TU NOMBRE</span>
+                            </div>
+
+                            <div class="info-field">
+                                <label>Bias</label>
+                                <span id="card-bias">OT8 (Todos)</span>
+                            </div>
+
+                            <div class="info-field">
+                                <label>Ubicación</label>
+                                <span id="card-location">Buenos Aires, AR</span>
+                            </div>
+
+                            <div class="info-field">
+                                <label>Era / Song Fav</label>
+                                <span id="card-song">Crazy Form</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SELLO ANIMADO -->
+                    <div id="card-stamp" class="stamp-overlay">
+                        <span>OFFICIAL</span>
+                        <span>ATINY</span>
+                        <span style="font-size: 0.45rem;">VERIFIED</span>
+                    </div>
+
+                    <div class="card-footer-text">ATEEZARGENTINA.COM.AR</div>
+                </div>
+
+                <!-- BOTÓN ÚNICO DE COMPARTIR / DESCARGAR -->
+                <div class="action-buttons">
+                    <button id="btn-dl" class="btn btn-download" onclick="triggerStampAndDownload()">Descargar</button>
+                    <button id="btn-share-native" class="btn" onclick="triggerStampAndShare()">
+                        Compartir</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+        </section>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Preloader / Verificar si mas adelante nos es util-->
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+
+    <!-- Arranque del sitio: header, footer, tema de colores y modal de Términos -->
+    <script type="module">
+        import { iniciarSitio } from "./assets/js/site-boot.js";
+        iniciarSitio({ base: "", activo: "aniversario" });
+    </script>
+    <script type="module" src="./assets/js/cookies.js"></script>
+    <script type="module" src="./assets/js/contenido-destacados.js"></script>
+    <script type="module" src="./assets/js/youtube-mvs.js"></script>
+    <script type="module" src="./assets/js/youtube-series.js"></script>
+    <script type="module" src="./assets/js/contenido-publico.js"></script>
+
+    <!-- Main JS File -->
+    <script src="assets/js/main.js"></script>
+    <!-- Embeds de redes sociales (Instagram / TikTok / Twitter-X), para el contenido cargado desde el panel -->
+    <script async src="//www.instagram.com/embed.js"></script>
+    <script async src="https://www.tiktok.com/embed.js"></script>
+    <script async src="https://platform.twitter.com/widgets.js"></script>
+<!-- SCRIPT DE CREDENCIAL, STAMP Y CONFETI -->
+    <script>
+        // 1. Obtener Bias seleccionados
+        function getSelectedBiases() {
+            const checkboxes = document.querySelectorAll('.bias-checkbox input:checked');
+            const selected = Array.from(checkboxes).map(cb => cb.value);
+            if (selected.length === 0 || selected.length === 8) return 'OT8 (Todos)';
+            return selected.join(', ');
+        }
+
+        // 2. Ocultar el sello cuando el usuario modifique algo en el formulario
+        function resetStamp() {
+            const stamp = document.getElementById('card-stamp');
+            stamp.classList.remove('active');
+        }
+
+        // 3. Actualizar textos dinámicamente y ocultar el sello existente
+        function updateCard() {
+            resetStamp(); // <-- Oculta el sello al escribir o tildar
+
+            const name = document.getElementById('input-name').value.trim();
+            const biases = getSelectedBiases();
+            const location = document.getElementById('input-location').value.trim();
+            const song = document.getElementById('input-song').value.trim();
+
+            document.getElementById('card-name').innerText = name || 'TU NOMBRE';
+            document.getElementById('card-bias').innerText = biases;
+            document.getElementById('card-location').innerText = location ? `${location}, AR` : 'Buenos Aires, AR';
+            document.getElementById('card-song').innerText = song || 'Crazy Form';
+        }
+
+        // 4. Previsualizar la foto cargada por el fan y resetear el sello
+        function previewPhoto(event) {
+            resetStamp(); // <-- Oculta el sello al cambiar la foto
+
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.getElementById('avatar-img');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById('avatar-text').style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 5. Lanzar efecto de Confeti de celebración
+        function launchConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ff0055', '#ff5500', '#ffffff', '#ffcc00']
+                });
+            }
+        }
+
+        // 6. Estampar, disparar confeti y compartir/descargar
+        async function triggerStampAndDownload(callback) {
+            const stamp = document.getElementById('card-stamp');
+            const btnDl = document.getElementById('btn-dl');
+
+
+            btnDl.disabled = true;
+            btnDl.innerText = 'Verificando...';
+
+            // 1. Mostrar la animación del sello
+            stamp.classList.add('active');
+            // Lanzar confeti al instante en que se estampa
+            launchConfetti();
+
+            // 2. Esperar 450ms a que termine la animación visual
+            setTimeout(() => {
+                const cardElement = document.getElementById('atiny-card');
+
+                // 3. Capturar con html2canvas incluyendo el sello renderizado
+                html2canvas(cardElement, {
+                    scale: 3,
+                    backgroundColor: null,
+                    useCORS: true
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `ATINY_Verified_Passport_${Date.now()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                    btnDl.disabled = false;
+                    btnDl.innerText = 'Descargar PNG 💾';
+
+                    if (callback) callback();
+                });
+            }, 950);
+
+        }
+
+        async function triggerStampAndShare() {
+            const stamp = document.getElementById('card-stamp');
+            const btnShare = document.getElementById('btn-share-native');
+
+            btnShare.disabled = true;
+            btnShare.innerText = 'Estampando credencial... ✍️';
+
+            // Disparar animación del sello
+            stamp.classList.add('active');
+
+            // Lanzar confeti al instante en que se estampa
+            launchConfetti();
+
+            // Esperar 450ms a que la animación de sello se asiente
+            setTimeout(async () => {
+                const cardElement = document.getElementById('atiny-card');
+
+                try {
+                    const canvas = await html2canvas(cardElement, {
+                        scale: 3, // Alta resolución
+                        backgroundColor: null,
+                        useCORS: true
+                    });
+
+                    // Convertir el Canvas a archivo Blob
+                    canvas.toBlob(async (blob) => {
+                        const file = new File([blob], `ATINY_Passport_8th.png`, { type: 'image/png' });
+
+                        const shareData = {
+                            title: 'ATINY Passport - 8th Anniversary ATEEZ',
+                            text: '¡Obtuve mi credencial oficial verificada para celebrar los 8 años de ATEEZ en ateezargentina.com.ar! 🏴‍☠️🇦🇷 #8YearsWithATEEZ #ATEEZ #ATINY',
+                            files: [file]
+                        };
+
+                        // Menú nativo en celulares (WhatsApp, Instagram Stories, X, etc.)
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            try {
+                                await navigator.share(shareData);
+                            } catch (err) {
+                                console.log('El usuario cerró el menú de compartir.');
+                            }
+                        } else {
+                            // Descarga directa en PC
+                            const link = document.createElement('a');
+                            link.download = `ATINY_Passport_8th_${Date.now()}.png`;
+                            link.href = canvas.toDataURL('image/png');
+                            link.click();
+                        }
+
+                        btnShare.disabled = false;
+                        btnShare.innerText = 'Compartir Credencial 📲';
+                    }, 'image/png');
+
+                } catch (error) {
+                    console.error('Error al generar la credencial:', error);
+                    btnShare.disabled = false;
+                    btnShare.innerText = 'Compartir Credencial 📲';
+                }
+            }, 450);
+        }
+    </script>
+
+</body>
+
+</html>

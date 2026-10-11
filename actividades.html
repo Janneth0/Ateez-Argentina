@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Contenido - ATEEZ Argentina</title>
+    <!-- Autor -->
+    <meta name="author" content="ATEEZ Argentina">
+    <meta name="description"
+        content="Contenido de ATEEZ Argentina: videos, series subtituladas, playlists y todo lo relacionado a ATEEZ hecho por la comunidad Argentina.">
+    <meta name="keywords"
+        content="ateez, argentina, ateez argentina, ateez argentina 2027, ateez en argentina, atiny argentina, contenido de ateez, videos de ateez">
+
+
+    <!-- Favicons -->
+    <link href="assets/img/logoATZnew.jpeg" rel="icon" class="logo">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <style>
+        :root {
+            /* --bg-color: #0b0b0e; */
+            --card-bg: #141419;
+            --card-border: #23232a;
+            /* --accent-color: #ff0055; */
+            --accent-gradient: linear-gradient(135deg, #ff0055, #ff5500);
+            --text-color: #ffffff;
+            --text-muted: #a0a0ab;
+        }
+
+        .header-title {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header-title h1 {
+            margin: 0 0 8px 0;
+            font-size: 2rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .generator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .generator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            background: #1c1c24;
+            border: 1px solid #2e2e3a;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        /* SELECCIÓN MÚLTIPLE DE BIAS */
+        .bias-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3px;
+            background: #1c1c24;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #2e2e3a;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+
+        .bias-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        .bias-checkbox input {
+            width: auto;
+            accent-color: var(--accent-color);
+            cursor: pointer;
+        }
+
+        /* PREVISUALIZACIÓN DE LA CREDENCIAL */
+        .preview-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .id-card {
+            width: 360px;
+            height: 220px;
+            background: linear-gradient(135deg, #181820 0%, #0d0d12 100%);
+            border: 2px solid #ff0055;
+            border-radius: 14px;
+            padding: 16px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(255, 0, 85, 0.2);
+        }
+
+        .id-card::before {
+            content: 'ATEEZ 8TH';
+            position: absolute;
+            right: -20px;
+            bottom: -15px;
+            font-size: 4rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.03);
+            letter-spacing: 2px;
+            pointer-events: none;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+
+        .card-header-title {
+            font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: var(--accent-color);
+            text-transform: uppercase;
+        }
+
+        .card-header-badge {
+            font-size: 0.65rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        .card-body {
+            display: flex;
+            gap: 14px;
+        }
+
+        .avatar-box {
+            width: 85px;
+            height: 105px;
+            border: 1px dashed var(--accent-color);
+            border-radius: 8px;
+            background: #121216;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-placeholder {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .info-box {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .info-field {
+            margin-bottom: 6px;
+        }
+
+        .info-field label {
+            display: block;
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-field span {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #fff;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .card-footer-text {
+            position: absolute;
+            bottom: 10px;
+            right: 16px;
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 1px;
+        }
+
+        /* ESTILOS Y ANIMACIÓN DEL SELLO */
+        .stamp-overlay {
+            display: none;
+            position: absolute;
+            bottom: 45px;
+            right: 20px;
+            width: 80px;
+            height: 75px;
+            border: 3px double #ff0055;
+            /*borde*/
+            border-radius: 50%;
+            color: #ff0055;
+            /*color texto sello*/
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 900;
+            font-size: 0.55rem;
+            letter-spacing: 0.5px;
+            line-height: 1.1;
+            box-sizing: border-box;
+            padding: 10px 4px;
+            transform: rotate(-15deg);
+            background: rgba(255, 0, 85, 0.08);
+            box-shadow: 0 0 8px rgba(255, 0, 85, 0.4);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .stamp-overlay.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: stampAnimation 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes stampAnimation {
+            0% {
+                opacity: 0;
+                transform: scale(3) rotate(-30deg);
+            }
+
+            100% {
+                opacity: 0.9;
+                transform: scale(1) rotate(-15deg);
+            }
+        }
+
+        /* BOTONES */
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #fff;
+            background: var(--accent-gradient);
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        /* ===== ACTIVIDADES EXTRA ===== */
+        .act-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+        .act-nav a{padding:8px 14px;border:1px solid var(--card-border);border-radius:20px;color:#fff;background:var(--card-bg);text-decoration:none;font-size:.85rem}
+        .act-nav a:hover{border-color:#ff0055}
+        .act-section{padding:40px 0 10px}
+        .act-card{max-width:640px;margin:0 auto;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:24px;text-align:center;color:#fff}
+        .act-card h2{font-size:1.5rem;margin-bottom:6px;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:inline-block}
+        .act-sub{color:var(--text-muted);font-size:.9rem;margin-bottom:18px}
+        .act-result{font-size:1.1rem;margin:12px 0}
+        .act-card .btn{max-width:260px;margin:14px auto 0}
+        .cd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+        .cd-box{background:#1c1c24;border:1px solid #2e2e3a;border-radius:10px;padding:14px 4px}
+        .cd-box b{display:block;font-size:2rem}
+        .cd-box small{color:var(--text-muted);font-size:.7rem;text-transform:uppercase}
+        .opt-btn{display:block;width:100%;text-align:left;margin:8px 0;padding:12px;background:#1c1c24;border:1px solid #2e2e3a;border-radius:8px;color:#fff;cursor:pointer}
+        .opt-btn:hover{border-color:#ff0055}
+        .opt-btn.ok{background:rgba(0,200,120,.2);border-color:#00c878}
+        .opt-btn.bad{background:rgba(255,0,85,.2);border-color:#ff0055}
+        .bingo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+        .bingo-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;padding:4px;font-size:.7rem;background:#1c1c24;border:1px solid #2e2e3a;border-radius:8px;color:#fff;cursor:pointer;text-align:center}
+        .bingo-cell.on{background:var(--accent-gradient);border-color:transparent;font-weight:700}
+    </style>
+
+    <link href="assets/css/main.css" rel="stylesheet">
+
+    <!-- Carga de html2canvas y canvas-confetti -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- =======================================================
+  * Template Name: LeadPage
+  * Template URL: https://bootstrapmade.com/leadpage-bootstrap-landing-page-template/
+  * Updated: Aug 12 2025 with Bootstrap v5.3.7
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body class="index-page">
+
+    <div id="site-header"></div>
+    <!-- Page Title -->
+    <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/bg/bg-2.webp);">
+    </div>
+    <main class="main ">
+        <section>
+    <div class="container">
+        <div class="header-title">
+            <h1>🏴‍☠️ ATINY Official ID Card</h1>
+            <p>Generá tu credencial personalizada para festejar los 8 años de ATEEZ</p>
+            <div class="act-nav">
+                <a href="#act-countdown">⏳ Cuenta regresiva</a>
+                <a href="#act-trivia">🧠 Trivia</a>
+                <a href="#act-quiz">🏴‍☠️ ¿Qué integrante sos?</a>
+                <a href="#act-bingo">🎯 Bingo ATINY</a>
+            </div>
+        </div>
+
+        <div class="generator-grid">
+
+            <!-- FORMULARIO -->
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="input-name">Nombre / Apodo</label>
+                    <input type="text" id="input-name" placeholder="Ej: Lucía" maxlength="20" oninput="updateCard()">
+                </div>
+
+                <div class="form-group">
+                    <label>Bias (Podés elegir varios)</label>
+                    <div class="bias-grid">
+                        <label class="bias-checkbox"><input type="checkbox" value="Hongjoong" onchange="updateCard()">
+                            Hongjoong</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="Seonghwa" onchange="updateCard()">
+                            Seonghwa</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="Yunho" onchange="updateCard()">
+                            Yunho</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="Yeosang" onchange="updateCard()">
+                            Yeosang</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="San" onchange="updateCard()">
+                            San</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="Mingi" onchange="updateCard()">
+                            Mingi</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="Wooyoung" onchange="updateCard()">
+                            Wooyoung</label>
+                        <label class="bias-checkbox"><input type="checkbox" value="Jongho" onchange="updateCard()">
+                            Jongho</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-location">Provincia / Ciudad (Argentina)</label>
+                    <input type="text" id="input-location" placeholder="Ej: Buenos Aires" maxlength="20"
+                        oninput="updateCard()">
+                </div>
+
+                <div class="form-group">
+                    <label for="input-song">Canción Favorita / Era</label>
+                    <input type="text" id="input-song" placeholder="Ej: HALA HALA / NASA" maxlength="22"
+                        oninput="updateCard()">
+                </div>
+
+                <div class="form-group">
+                    <label for="input-photo">Foto de Perfil</label>
+                    <input type="file" id="input-photo" accept="image/*" onchange="previewPhoto(event)">
+                </div>
+            </div>
+
+            <!-- PREVISUALIZACIÓN DE LA CREDENCIAL -->
+            <div class="preview-container">
+                <div id="atiny-card" class="id-card">
+
+                    <div class="card-header">
+                        <span class="card-header-title">ATINY ARGENTINA PASSPORT</span>
+                        <span class="card-header-badge">8TH ANNIVERSARY</span>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="avatar-box" id="avatar-container">
+                            <span class="avatar-placeholder" id="avatar-text">Sin foto</span>
+                            <img id="avatar-img" src="" alt="Foto ATINY" style="display: none;">
+                        </div>
+
+                        <div class="info-box">
+                            <div class="info-field">
+                                <label>Nombre</label>
+                                <span id="card-name">TU NOMBRE</span>
+                            </div>
+
+                            <div class="info-field">
+                                <label>Bias</label>
+                                <span id="card-bias">OT8 (Todos)</span>
+                            </div>
+
+                            <div class="info-field">
+                                <label>Ubicación</label>
+                                <span id="card-location">Buenos Aires, AR</span>
+                            </div>
+
+                            <div class="info-field">
+                                <label>Era / Song Fav</label>
+                                <span id="card-song">Crazy Form</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SELLO ANIMADO -->
+                    <div id="card-stamp" class="stamp-overlay">
+                        <span>OFFICIAL</span>
+                        <span>ATINY</span>
+                        <span style="font-size: 0.45rem;">VERIFIED</span>
+                    </div>
+
+                    <div class="card-footer-text">ATEEZARGENTINA.COM.AR</div>
+                </div>
+
+                <!-- BOTÓN ÚNICO DE COMPARTIR / DESCARGAR -->
+                <div class="action-buttons">
+                    <button id="btn-dl" class="btn btn-download" onclick="triggerStampAndDownload()">Descargar</button>
+                    <button id="btn-share-native" class="btn" onclick="triggerStampAndShare()">
+                        Compartir</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+        </section>
+
+    <!-- ===== ACTIVIDADES EXTRA ===== -->
+    <section id="act-countdown" class="act-section"><div class="container"><div class="act-card">
+        <h2>⏳ Cuenta regresiva al 8º aniversario</h2>
+        <p class="act-sub">ATEEZ debutó el 24 de octubre de 2018</p>
+        <div id="cd-wrap" class="cd-grid">
+            <div class="cd-box"><b id="cd-d">0</b><small>días</small></div>
+            <div class="cd-box"><b id="cd-h">0</b><small>horas</small></div>
+            <div class="cd-box"><b id="cd-m">0</b><small>min</small></div>
+            <div class="cd-box"><b id="cd-s">0</b><small>seg</small></div>
+        </div>
+        <p id="cd-msg" class="act-result"></p>
+    </div></div></section>
+
+    <section id="act-trivia" class="act-section"><div class="container"><div class="act-card">
+        <h2>🧠 Trivia ATINY</h2>
+        <p class="act-sub">¿Cuánto sabés de ATEEZ?</p>
+        <div id="tv-box"></div>
+    </div></div></section>
+
+    <section id="act-quiz" class="act-section"><div class="container"><div class="act-card">
+        <h2>🏴‍☠️ ¿Qué integrante sos?</h2>
+        <p class="act-sub">Test hecho en Argentina: respondé 8 preguntas y descubrí con quién compartís vibra</p>
+        <div id="qz-box"></div>
+    </div></div></section>
+
+    <section id="act-bingo" class="act-section"><div class="container"><div class="act-card">
+        <h2>🎯 Bingo ATINY</h2>
+        <p class="act-sub">Tocá las casillas que te representan. ¡Completá una línea para ganar!</p>
+        <div id="bg-grid" class="bingo-grid"></div>
+        <p id="bg-msg" class="act-result"></p>
+        <button class="btn" onclick="bingoInit()">Mezclar 🔀</button>
+    </div></div></section>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Preloader / Verificar si mas adelante nos es util-->
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/php-email-form/validate.js"></script>
+    <script src="assets/vendor/aos/aos.js"></script>
+    <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+
+    <!-- Arranque del sitio: header, footer, tema de colores y modal de Términos -->
+    <script type="module">
+        import { iniciarSitio } from "./assets/js/site-boot.js";
+        iniciarSitio({ base: "", activo: "aniversario" });
+    </script>
+    <script type="module" src="./assets/js/cookies.js"></script>
+    <script type="module" src="./assets/js/contenido-destacados.js"></script>
+    <script type="module" src="./assets/js/youtube-mvs.js"></script>
+    <script type="module" src="./assets/js/youtube-series.js"></script>
+    <script type="module" src="./assets/js/contenido-publico.js"></script>
+
+    <!-- Main JS File -->
+    <script src="assets/js/main.js"></script>
+    <!-- Embeds de redes sociales (Instagram / TikTok / Twitter-X), para el contenido cargado desde el panel -->
+    <script async src="//www.instagram.com/embed.js"></script>
+    <script async src="https://www.tiktok.com/embed.js"></script>
+    <script async src="https://platform.twitter.com/widgets.js"></script>
+<!-- SCRIPT DE CREDENCIAL, STAMP Y CONFETI -->
+    <script>
+        // 1. Obtener Bias seleccionados
+        function getSelectedBiases() {
+            const checkboxes = document.querySelectorAll('.bias-checkbox input:checked');
+            const selected = Array.from(checkboxes).map(cb => cb.value);
+            if (selected.length === 0 || selected.length === 8) return 'OT8 (Todos)';
+            return selected.join(', ');
+        }
+
+        // 2. Ocultar el sello cuando el usuario modifique algo en el formulario
+        function resetStamp() {
+            const stamp = document.getElementById('card-stamp');
+            stamp.classList.remove('active');
+        }
+
+        // 3. Actualizar textos dinámicamente y ocultar el sello existente
+        function updateCard() {
+            resetStamp(); // <-- Oculta el sello al escribir o tildar
+
+            const name = document.getElementById('input-name').value.trim();
+            const biases = getSelectedBiases();
+            const location = document.getElementById('input-location').value.trim();
+            const song = document.getElementById('input-song').value.trim();
+
+            document.getElementById('card-name').innerText = name || 'TU NOMBRE';
+            document.getElementById('card-bias').innerText = biases;
+            document.getElementById('card-location').innerText = location ? `${location}, AR` : 'Buenos Aires, AR';
+            document.getElementById('card-song').innerText = song || 'Crazy Form';
+        }
+
+        // 4. Previsualizar la foto cargada por el fan y resetear el sello
+        function previewPhoto(event) {
+            resetStamp(); // <-- Oculta el sello al cambiar la foto
+
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.getElementById('avatar-img');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById('avatar-text').style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 5. Lanzar efecto de Confeti de celebración
+        function launchConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ff0055', '#ff5500', '#ffffff', '#ffcc00']
+                });
+            }
+        }
+
+        // 6. Estampar, disparar confeti y compartir/descargar
+        async function triggerStampAndDownload(callback) {
+            const stamp = document.getElementById('card-stamp');
+            const btnDl = document.getElementById('btn-dl');
+
+
+            btnDl.disabled = true;
+            btnDl.innerText = 'Verificando...';
+
+            // 1. Mostrar la animación del sello
+            stamp.classList.add('active');
+            // Lanzar confeti al instante en que se estampa
+            launchConfetti();
+
+            // 2. Esperar 450ms a que termine la animación visual
+            setTimeout(() => {
+                const cardElement = document.getElementById('atiny-card');
+
+                // 3. Capturar con html2canvas incluyendo el sello renderizado
+                html2canvas(cardElement, {
+                    scale: 3,
+                    backgroundColor: null,
+                    useCORS: true
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `ATINY_Verified_Passport_${Date.now()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                    btnDl.disabled = false;
+                    btnDl.innerText = 'Descargar PNG 💾';
+
+                    if (callback) callback();
+                });
+            }, 950);
+
+        }
+
+        async function triggerStampAndShare() {
+            const stamp = document.getElementById('card-stamp');
+            const btnShare = document.getElementById('btn-share-native');
+
+            btnShare.disabled = true;
+            btnShare.innerText = 'Estampando credencial... ✍️';
+
+            // Disparar animación del sello
+            stamp.classList.add('active');
+
+            // Lanzar confeti al instante en que se estampa
+            launchConfetti();
+
+            // Esperar 450ms a que la animación de sello se asiente
+            setTimeout(async () => {
+                const cardElement = document.getElementById('atiny-card');
+
+                try {
+                    const canvas = await html2canvas(cardElement, {
+                        scale: 3, // Alta resolución
+                        backgroundColor: null,
+                        useCORS: true
+                    });
+
+                    // Convertir el Canvas a archivo Blob
+                    canvas.toBlob(async (blob) => {
+                        const file = new File([blob], `ATINY_Passport_8th.png`, { type: 'image/png' });
+
+                        const shareData = {
+                            title: 'ATINY Passport - 8th Anniversary ATEEZ',
+                            text: '¡Obtuve mi credencial oficial verificada para celebrar los 8 años de ATEEZ en ateezargentina.com.ar! 🏴‍☠️🇦🇷 #8YearsWithATEEZ #ATEEZ #ATINY',
+                            files: [file]
+                        };
+
+                        // Menú nativo en celulares (WhatsApp, Instagram Stories, X, etc.)
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            try {
+                                await navigator.share(shareData);
+                            } catch (err) {
+                                console.log('El usuario cerró el menú de compartir.');
+                            }
+                        } else {
+                            // Descarga directa en PC
+                            const link = document.createElement('a');
+                            link.download = `ATINY_Passport_8th_${Date.now()}.png`;
+                            link.href = canvas.toDataURL('image/png');
+                            link.click();
+                        }
+
+                        btnShare.disabled = false;
+                        btnShare.innerText = 'Compartir Credencial 📲';
+                    }, 'image/png');
+
+                } catch (error) {
+                    console.error('Error al generar la credencial:', error);
+                    btnShare.disabled = false;
+                    btnShare.innerText = 'Compartir Credencial 📲';
+                }
+            }, 450);
+        }
+    </script>
+
+
+<script>
+// ===== Cuenta regresiva =====
+(function () {
+    const target = new Date('2026-10-24T00:00:00-03:00');
+    const debut = new Date('2018-10-24T00:00:00-03:00');
+    let fired = false;
+    function tick() {
+        const diff = target - new Date();
+        const msg = document.getElementById('cd-msg');
+        if (diff <= 0) {
+            document.getElementById('cd-wrap').style.display = 'none';
+            const days = Math.floor((new Date() - debut) / 864e5);
+            msg.innerText = `🎉 ¡Feliz 8º aniversario, ATEEZ! Ya son ${days.toLocaleString('es-AR')} días juntos.`;
+            if (!fired) { fired = true; launchConfetti(); }
+            return;
+        }
+        const p = (id, v) => document.getElementById(id).innerText = v;
+        p('cd-d', Math.floor(diff / 864e5));
+        p('cd-h', Math.floor(diff / 36e5) % 24);
+        p('cd-m', Math.floor(diff / 6e4) % 60);
+        p('cd-s', Math.floor(diff / 1e3) % 60);
+        msg.innerText = 'Falta poquito para festejar 🏴‍☠️';
+    }
+    tick(); setInterval(tick, 1000);
+})();
+
+// ===== Trivia =====
+const TRIVIA = [
+    { q: '¿En qué año debutó ATEEZ?', o: ['2016', '2017', '2018', '2019'], a: 2 },
+    { q: '¿Cómo se llama el fandom?', o: ['ATINY', 'ATEEN', 'ATZ', 'TREASURE'], a: 0 },
+    { q: '¿Cuántos integrantes tiene ATEEZ?', o: ['6', '7', '8', '9'], a: 2 },
+    { q: '¿Quién es el líder?', o: ['San', 'Hongjoong', 'Yunho', 'Seonghwa'], a: 1 },
+    { q: '¿Cuál fue la canción de debut?', o: ['Pirate King', 'Say My Name', 'Wave', 'Guerrilla'], a: 0 },
+    { q: '¿A qué agencia pertenecen?', o: ['SM', 'JYP', 'KQ Entertainment', 'HYBE'], a: 2 },
+    { q: '¿Quién es el maknae?', o: ['Jongho', 'Wooyoung', 'Mingi', 'Yeosang'], a: 0 },
+    { q: '¿Qué concepto los identifica?', o: ['Piratas', 'Samuráis', 'Astronautas', 'Vaqueros'], a: 0 }
+];
+let tvI = 0, tvScore = 0;
+function tvRender() {
+    const box = document.getElementById('tv-box');
+    if (tvI >= TRIVIA.length) {
+        const msg = tvScore >= 7 ? '¡ATINY de ley! 🏆' : tvScore >= 4 ? '¡Muy bien, seguí así! 💪' : '¡A repasar los MVs! 🎬';
+        box.innerHTML = `<p class="act-result">Tu puntaje: <b>${tvScore}/${TRIVIA.length}</b><br>${msg}</p><button class="btn" onclick="tvI=0;tvScore=0;tvRender()">Jugar de nuevo</button>`;
+        if (tvScore >= 7) launchConfetti();
+        return;
+    }
+    const t = TRIVIA[tvI];
+    box.innerHTML = `<p><small>Pregunta ${tvI + 1} de ${TRIVIA.length}</small></p><h5>${t.q}</h5>` +
+        t.o.map((x, i) => `<button class="opt-btn" onclick="tvAnswer(${i}, this)">${x}</button>`).join('');
+}
+function tvAnswer(i, el) {
+    const t = TRIVIA[tvI], btns = document.querySelectorAll('#tv-box .opt-btn');
+    btns.forEach(b => b.disabled = true);
+    btns[t.a].classList.add('ok');
+    if (i === t.a) tvScore++; else el.classList.add('bad');
+    setTimeout(() => { tvI++; tvRender(); }, 900);
+}
+tvRender();
+
+// ===== ¿Qué integrante sos? (cada opción suma puntos a 2 integrantes) =====
+const QZ = [
+    { q: '¿Cómo tomás el mate?', o: [['Amargo y sin vueltas', ['Hongjoong', 'Yeosang']], ['Dulce, con bastante azúcar', ['Wooyoung', 'Yunho']], ['Soy el cebador oficial de la ronda', ['Seonghwa', 'Jongho']], ['Mejor un mate cocido con facturas', ['Mingi', 'San']]] },
+    { q: '¿Qué rol tenés en el asado?', o: [['Parrillero/a: yo mando en la parrilla', ['Hongjoong', 'Jongho']], ['Me encargo de la música y el ambiente', ['Wooyoung', 'Yunho']], ['Pongo la mesa y cuido que todos coman', ['Seonghwa', 'Yeosang']], ['Voy por la picada y las ideas raras', ['Mingi', 'San']]] },
+    { q: 'Viajás en un colectivo o subte lleno. ¿Qué hacés?', o: [['Auriculares y mi playlist', ['Yeosang', 'Mingi']], ['Charlo con cualquiera', ['Wooyoung', 'San']], ['Cedo el asiento y ayudo a quien lo necesite', ['Seonghwa', 'Jongho']], ['Voy planificando todo el día', ['Hongjoong', 'Yunho']]] },
+    { q: 'Juega la Selección. ¿Cómo lo vivís?', o: [['Canto todas las canciones de la cancha', ['Jongho', 'Wooyoung']], ['Analizo tácticas como un DT', ['Hongjoong', 'Seonghwa']], ['Bailo cada gol', ['Yunho', 'San']], ['Lo miro tranqui con snacks', ['Yeosang', 'Mingi']]] },
+    { q: '¿Adónde te vas de vacaciones?', o: [['Bariloche, entre nieve y chocolate', ['Seonghwa', 'Yeosang']], ['Mar del Plata, playa y fiesta', ['Wooyoung', 'Yunho']], ['Patagonia: aventura y paisajes', ['San', 'Hongjoong']], ['Las sierras de Córdoba con amigos', ['Jongho', 'Mingi']]] },
+    { q: 'Hora de la merienda. ¿Qué elegís?', o: [['Medialunas calentitas', ['Seonghwa', 'Jongho']], ['Un alfajor (o tres)', ['Mingi', 'Wooyoung']], ['Tortas fritas en un día de lluvia', ['Yeosang', 'San']], ['Dulce de leche con cuchara', ['Yunho', 'Hongjoong']]] },
+    { q: 'Te cae un finde largo. ¿Qué plan armás?', o: [['Escapada improvisada', ['San', 'Wooyoung']], ['Maratón de series en casa', ['Yeosang', 'Mingi']], ['Juntada con todos los amigos', ['Hongjoong', 'Seonghwa']], ['Salir a correr, bailar o entrenar', ['Yunho', 'Jongho']]] },
+    { q: 'En una juntada, ¿qué música no puede faltar?', o: [['Cumbia para bailar toda la noche', ['Wooyoung', 'Yunho']], ['Rock nacional y cantar a los gritos', ['Jongho', 'Hongjoong']], ['Trap y pop argentino', ['San', 'Mingi']], ['Folclore o baladas tranquilas', ['Seonghwa', 'Yeosang']]] }
+];
+const QZ_RES = {
+    Hongjoong: 'Líder nato: ideas, estrategia y capitán del barco.',
+    Seonghwa: 'Cuidás a todos y tenés una elegancia natural.',
+    Yunho: 'Energía inagotable y muy buena onda.',
+    Yeosang: 'Observador/a, tranquilo/a y con estilo propio.',
+    San: 'Intensidad y carisma en todo lo que hacés.',
+    Mingi: 'Cabeza creativa, humor y fuerza.',
+    Wooyoung: 'Alma de la fiesta: expresivo/a y divertido/a.',
+    Jongho: 'Constancia, poder y un corazón enorme.'
+};
+let qzI = 0, qzPts = {};
+function qzRender() {
+    const box = document.getElementById('qz-box');
+    if (qzI >= QZ.length) {
+        const top = Object.entries(qzPts).sort((a, b) => b[1] - a[1])[0][0];
+        box.innerHTML = `<p class="act-result">Sos <b style="font-size:1.6rem">${top}</b> 🏴‍☠️<br>${QZ_RES[top]}</p><button class="btn" onclick="qzI=0;qzPts={};qzRender()">Repetir test</button>`;
+        launchConfetti();
+        return;
+    }
+    const t = QZ[qzI];
+    box.innerHTML = `<p><small>Pregunta ${qzI + 1} de ${QZ.length}</small></p><h5>${t.q}</h5>` +
+        t.o.map((x, i) => `<button class="opt-btn" onclick="qzAnswer(${i})">${x[0]}</button>`).join('');
+}
+function qzAnswer(i) {
+    QZ[qzI].o[i][1].forEach(n => qzPts[n] = (qzPts[n] || 0) + 1);
+    qzI++; qzRender();
+}
+qzRender();
+
+// ===== Bingo ATINY =====
+const BINGO = ['Lloré con un MV', 'Tengo un lightstick', 'Fui a un concierto', 'Me sé una coreo', 'Tengo photocards', 'Armé una playlist de ATEEZ', 'Convertí a un amigo en ATINY', 'Me desvelé por un comeback', 'Compré un álbum', 'Tengo más de un bias', 'Participé en un proyecto de fans', 'Escuché Pirate King mil veces', 'Vi un live a la madrugada', 'Tengo merch de ATEEZ', 'Conocí amigos por ATEEZ', 'Sueño con verlos en Argentina'];
+let bgOn = [];
+function bingoInit() {
+    const items = [...BINGO].sort(() => Math.random() - 0.5);
+    bgOn = Array(16).fill(false);
+    document.getElementById('bg-msg').innerText = '';
+    document.getElementById('bg-grid').innerHTML = items.map((t, i) => `<div class="bingo-cell" onclick="bingoToggle(${i}, this)">${t}</div>`).join('');
+}
+function bingoToggle(i, el) {
+    bgOn[i] = !bgOn[i];
+    el.classList.toggle('on', bgOn[i]);
+    const lines = [];
+    for (let k = 0; k < 4; k++) {
+        lines.push([0, 1, 2, 3].map(j => k * 4 + j), [0, 1, 2, 3].map(j => j * 4 + k));
+    }
+    lines.push([0, 5, 10, 15], [3, 6, 9, 12]);
+    const n = lines.filter(l => l.every(x => bgOn[x])).length;
+    const msg = document.getElementById('bg-msg');
+    if (n > 0) { msg.innerText = `🎉 ¡BINGO! ${n} línea${n > 1 ? 's' : ''} completa${n > 1 ? 's' : ''}`; launchConfetti(); }
+    else msg.innerText = '';
+}
+bingoInit();
+</script>
+</body>
+
+</html>
