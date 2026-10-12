@@ -10,7 +10,9 @@
 .admin-vista {
   animation: fadeIn 0.3s ease;
 }
-
+.text-muted{
+  color: var(--accent-color);
+}
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
@@ -708,4 +710,8 @@
 .admin-list-item .item-actions:has(.permiso-colores) {
   flex-wrap: wrap;
   justify-content: flex-end;
+}
+
+.text-muted1{
+  color: aliceblue;
 }

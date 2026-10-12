@@ -47,6 +47,7 @@
   --hf-background-color: #0c0e16;
   --hf-text-color: #e9e6df;
   --hf-accent-color: #d4af37;
+  /* --text-muted: white; */
 }
 
 /* Nav Menu Colors - derivan de los colores globales para que el modo
@@ -189,11 +190,11 @@ h6 {
   color: var(--default-color);
   transition: all 0.5s;
   z-index: 997;
-  padding: 20px 0 0 0;
+  padding: 5px 0 0 0;
 }
 
 .header .top-row {
-  padding-bottom: 10px;
+  padding-bottom: 5px;
 }
 
 .header .top-row .logo {
@@ -201,7 +202,7 @@ h6 {
 }
 
 .header .top-row .logo img {
-  max-height: 40px;
+  max-height: 80px;
   margin-right: 10px;
 }
 
@@ -215,7 +216,7 @@ h6 {
 
 .header .social-links a {
   color: var(--heading-color);
-  padding: 0 8px;
+  padding: 0 4px;
   display: inline-block;
   font-size: 18px;
   transition: 0.3s;
@@ -280,7 +281,7 @@ h6 {
   .navmenu a,
   .navmenu a:focus {
     color: var(--nav-color);
-    padding: 18px 15px;
+    padding: 15px 15px;
     font-size: 16px;
     font-family: var(--nav-font);
     font-weight: 400;
@@ -865,6 +866,9 @@ textarea::placeholder {
     transform: rotate(360deg);
   }
 }
+.main-publi{
+  width: 100%;
+}
 
 /*--------------------------------------------------------------
 # Scroll Top Button
@@ -961,6 +965,11 @@ textarea::placeholder {
   color: color-mix(in srgb, var(--default-color), transparent 50%);
 }
 
+@media screen and (max-width: 768px) {
+  .page-title {
+  padding: 40px 0 40px 0;
+}
+}
 /*--------------------------------------------------------------
 # Global Sections
 --------------------------------------------------------------*/

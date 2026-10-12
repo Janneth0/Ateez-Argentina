@@ -54,7 +54,7 @@ export const REDES_SOCIALES_POR_DEFECTO = [
 ];
 
 export const CONFIG_POR_DEFECTO = {
-  logoUrl: "assets/img/logoATZnew.jpeg",
+  logoUrl: "assets/img/AteezArgentinaLogo.png",
   paletaId: "pirata-dorado",
   modo: "oscuro",
   // Paleta del contenido principal
