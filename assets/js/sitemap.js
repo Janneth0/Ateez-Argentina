@@ -13,8 +13,7 @@ const PAGINAS_FIJAS = [
   { loc: "/", changefreq: "weekly", priority: "1.0" },
   { loc: "/evento/", changefreq: "weekly", priority: "0.9" },
   { loc: "/Noticias/noticias.html", changefreq: "daily", priority: "0.9" },
-  { loc: "/contenido.html", changefreq: "weekly", priority: "0.7" },
-  { loc: "/terminos.html", changefreq: "yearly", priority: "0.2" }
+  { loc: "/contenido.html", changefreq: "weekly", priority: "0.7" }
 ];
 
 function fechaISO(fecha) {
