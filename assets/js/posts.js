@@ -97,8 +97,8 @@ export async function crearPost({ titulo, descripcion, link, categoria, uid, fec
   });
 }
 
-export async function editarPost(id, { titulo, descripcion, link, categoria, fechaEvento, horaEvento = "", mostrarFecha = true, mostrarFanbase = false }) {
-  return updateDoc(doc(db, POSTS_COL, id), {
+export async function editarPost(id, { titulo, descripcion, link, categoria, fechaEvento, horaEvento = "", mostrarFecha = true, mostrarFanbase = false, fanbaseId }) {
+  const cambios = {
     titulo,
     descripcion,
     link,
@@ -108,7 +108,11 @@ export async function editarPost(id, { titulo, descripcion, link, categoria, fec
     mostrarFecha: mostrarFecha !== false,
     mostrarFanbase: mostrarFanbase === true,
     actualizadoEn: serverTimestamp()
-  });
+  };
+  // La fanbase solo se toca si viene explícita (la manda el admin; null = fan independiente).
+  // Un colaborador no la manda, y las reglas de Firestore tampoco le dejarían cambiarla.
+  if (fanbaseId !== undefined) cambios.fanbaseId = fanbaseId || null;
+  return updateDoc(doc(db, POSTS_COL, id), cambios);
 }
 
 /** Estrella de un evento (solo admin: las reglas de Firestore lo exigen). */

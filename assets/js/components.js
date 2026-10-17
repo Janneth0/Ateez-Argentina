@@ -296,8 +296,11 @@ export function renderPostCard({ id, titulo, descripcion, link = "", categoria =
     fechaTexto ? `<span class="evento-dato"><i class="bi bi-calendar-event"></i> ${escapeHtml(fechaTexto)}</span>` : "",
     fanbaseNombre ? `<span class="evento-dato evento-fanbase"><i class="bi bi-people-fill"></i> ${escapeHtml(fanbaseNombre)}</span>` : ""
   ].join("");
+//   const verPublicacion = link
+//     ? `<a class="evento-ver" href="${escapeHtml(link)}" target="_blank" rel="noopener">Ver publicación <i class="bi bi-box-arrow-up-right"></i></a>`
+//     : "";
   const verPublicacion = link
-    ? `<a class="evento-ver" href="${escapeHtml(link)}" target="_blank" rel="noopener">Ver publicación <i class="bi bi-box-arrow-up-right"></i></a>`
+    ? ``
     : "";
 
   return `

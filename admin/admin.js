@@ -275,6 +275,16 @@ function nombreResponsableDe(item) {
   return u ? (u.nombreCompleto || u.email || "Sin nombre") : (item.creadoPorNombre || "Usuario desconocido");
 }
 
+/** Selector de fanbase que solo ve el admin en los formularios de evento, noticia y contenido. */
+function llenarSelectFanbaseAdmin(idSelect, fanbaseId) {
+  document.getElementById(idSelect).innerHTML = opcionesFanbase(fanbaseId || null);
+}
+
+/** Fanbase elegida por el admin en un formulario; undefined si quien guarda no es admin (así no se toca). */
+function fanbaseElegidaPorAdmin(idSelect) {
+  return esAdminActual() ? (document.getElementById(idSelect).value || null) : undefined;
+}
+
 /** Etiqueta con la fanbase del item, o "Independiente" si lo cargó un fan sin fanbase. */
 function etiquetaFanbaseDe(item) {
   if (!item.fanbaseId) return `<span class="badge-fanbase independiente">Independiente</span>`;
@@ -300,10 +310,10 @@ function accionesItem(item) {
 }
 
 /** Datos del autor que se guardan en cada evento/noticia/contenido nuevo. */
-function datosDeAutor() {
+function datosDeAutor(fanbaseId = miFanbase()) {
   return {
     uid: usuarioActual.uid,
-    fanbaseId: miFanbase(),
+    fanbaseId,
     autorNombre: usuarioActual.nombreCompleto || usuarioActual.email || ""
   };
 }
@@ -402,6 +412,7 @@ listaPublicacionesEl.addEventListener("click", async (e) => {
     document.getElementById("pub-fecha").value = fechaInputValue(post.fechaEvento);
     document.getElementById("pub-hora").value = post.horaEvento || "";
     document.getElementById("pub-mostrar-fecha").checked = post.mostrarFecha !== false;
+    llenarSelectFanbaseAdmin("pub-fanbase-admin", post.fanbaseId);
     prepararFilaFanbase(post.fanbaseId, post.mostrarFanbase === true);
     publicacionError.style.display = "none";
     modalPublicacion.show();
@@ -416,9 +427,15 @@ document.getElementById("btn-nueva-publicacion").addEventListener("click", () =>
   document.getElementById("pub-fecha").value = hoyParaInput();
   document.getElementById("pub-hora").value = "";
   document.getElementById("pub-mostrar-fecha").checked = true;
+  llenarSelectFanbaseAdmin("pub-fanbase-admin", miFanbase());
   prepararFilaFanbase(miFanbase(), false);
   publicacionError.style.display = "none";
   modalPublicacion.show();
+});
+
+// Si el admin cambia la fanbase del evento, la casilla "mostrar fanbase" se actualiza (o se oculta si es independiente).
+document.getElementById("pub-fanbase-admin").addEventListener("change", (e) => {
+  prepararFilaFanbase(e.target.value || null, document.getElementById("pub-mostrar-fanbase").checked);
 });
 
 /** La opción "mostrar mi fanbase" solo aparece si el evento pertenece a una fanbase (los independientes no tienen). */
@@ -446,7 +463,8 @@ formPublicacion.addEventListener("submit", async (e) => {
       && document.getElementById("pub-mostrar-fanbase").checked
   };
   try {
-    if (id) await editarPost(id, datos); else await crearPost({ ...datos, ...datosDeAutor() });
+    const fanbaseAdmin = fanbaseElegidaPorAdmin("pub-fanbase-admin");
+    if (id) await editarPost(id, { ...datos, fanbaseId: fanbaseAdmin }); else await crearPost({ ...datos, ...datosDeAutor(fanbaseAdmin) });
     modalPublicacion.hide();
   } catch (err) {
     console.error(err);
@@ -532,6 +550,7 @@ listaNoticiasEl.addEventListener("click", async (e) => {
     document.getElementById("not-resumen").value = n.resumen || "";
     document.getElementById("not-imagen-url").value = n.imagenUrl || "";
     document.getElementById("not-fecha").value = fechaInputValue(n.fechaPublicacion);
+    llenarSelectFanbaseAdmin("not-fanbase-admin", n.fanbaseId);
     editorContenido.innerHTML = n.contenidoHtml || "";
     tituloOriginalEdicion = n.titulo || "";
     noticiaError.style.display = "none";
@@ -546,6 +565,7 @@ document.getElementById("btn-nueva-noticia").addEventListener("click", () => {
   formNoticia.reset();
   document.getElementById("not-id").value = "";
   document.getElementById("not-fecha").value = hoyParaInput();
+  llenarSelectFanbaseAdmin("not-fanbase-admin", miFanbase());
   editorContenido.innerHTML = "";
   tituloOriginalEdicion = "";
   noticiaError.style.display = "none";
@@ -602,9 +622,10 @@ formNoticia.addEventListener("submit", async (e) => {
   };
   try {
     if (id) {
-      await editarNoticia(id, datos, titulo !== tituloOriginalEdicion);
+      const fanbaseAdmin = fanbaseElegidaPorAdmin("not-fanbase-admin");
+      await editarNoticia(id, fanbaseAdmin === undefined ? datos : { ...datos, fanbaseId: fanbaseAdmin }, titulo !== tituloOriginalEdicion);
     } else {
-      await crearNoticia({ ...datos, ...datosDeAutor() });
+      await crearNoticia({ ...datos, ...datosDeAutor(fanbaseElegidaPorAdmin("not-fanbase-admin")) });
     }
     modalNoticia.hide();
   } catch (err) {
@@ -672,6 +693,7 @@ listaContenidoEl.addEventListener("click", (e) => {
     document.getElementById("cont-link").value = item.link || "";
     document.getElementById("cont-adjunto").value = item.adjunto || "";
     document.getElementById("cont-destacado").checked = item.destacado === true;
+    llenarSelectFanbaseAdmin("cont-fanbase-admin", item.fanbaseId);
     contenidoError.style.display = "none";
     modalContenido.show();
   }
@@ -682,6 +704,7 @@ document.getElementById("btn-nuevo-contenido").addEventListener("click", () => {
   document.getElementById("modalContenidoTitulo").textContent = "Nuevo contenido";
   formContenido.reset();
   document.getElementById("cont-id").value = "";
+  llenarSelectFanbaseAdmin("cont-fanbase-admin", miFanbase());
   contenidoError.style.display = "none";
   modalContenido.show();
 });
@@ -723,7 +746,8 @@ formContenido.addEventListener("submit", async (e) => {
   }
 
   try {
-    if (id) await editarContenido(id, datos); else await crearContenido({ ...datos, ...datosDeAutor() });
+    const fanbaseAdmin = fanbaseElegidaPorAdmin("cont-fanbase-admin");
+    if (id) await editarContenido(id, { ...datos, fanbaseId: fanbaseAdmin }); else await crearContenido({ ...datos, ...datosDeAutor(fanbaseAdmin) });
     modalContenido.hide();
   } catch (err) {
     console.error(err);

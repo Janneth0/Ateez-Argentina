@@ -523,6 +523,11 @@
                             <input type="time" class="form-control" id="pub-hora">
                             <div class="form-text">Hora de Argentina. Si la completás, se muestra junto a la fecha, por ejemplo «1 de noviembre de 2026 · 18:30 hs».</div>
                         </div>
+                        <div class="mb-3 admin-only" style="display:none;">
+                            <label class="form-label" for="pub-fanbase-admin">Fanbase a la que pertenece <span class="text-muted1">(solo admin)</span></label>
+                            <select class="form-select" id="pub-fanbase-admin"></select>
+                            <div class="form-text">Define qué colaboradores lo ven en su panel. «Fan independiente» = solo lo ve quien lo cargó (y vos).</div>
+                        </div>
                         <div class="mb-3" id="pub-fanbase-fila" style="display:none;">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="pub-mostrar-fanbase">
@@ -598,6 +603,11 @@
                                 <div class="mb-3">
                                     <label class="form-label" for="not-fecha">Fecha de publicación</label>
                                     <input type="date" class="form-control" id="not-fecha" required>
+                                </div>
+                                <div class="mb-3 admin-only" style="display:none;">
+                                    <label class="form-label" for="not-fanbase-admin">Fanbase a la que pertenece <span class="text-muted1">(solo admin)</span></label>
+                                    <select class="form-select" id="not-fanbase-admin"></select>
+                                    <div class="form-text">Define qué colaboradores lo ven en su panel. «Fan independiente» = solo lo ve quien lo cargó (y vos).</div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Contenido</label>
@@ -676,6 +686,11 @@
                             <label class="form-label" for="cont-adjunto">Imagen o publicación (opcional)</label>
                             <input type="url" class="form-control" id="cont-adjunto" placeholder="Imagen, link de Drive, video de YouTube, o post de Instagram/TikTok/Twitter/Facebook">
                             <div class="form-text">Si pegás un <strong>video de YouTube</strong> o un post de una red social, se va a embeber en la tarjeta. Si es un link de Drive, se convierte solo en imagen. Si dejás esto vacío y el «Link» de arriba es de YouTube, se embebe ese video.</div>
+                        </div>
+                        <div class="mb-3 admin-only" style="display:none;">
+                            <label class="form-label" for="cont-fanbase-admin">Fanbase a la que pertenece <span class="text-muted1">(solo admin)</span></label>
+                            <select class="form-select" id="cont-fanbase-admin"></select>
+                            <div class="form-text">Define qué colaboradores lo ven en su panel. «Fan independiente» = solo lo ve quien lo cargó (y vos).</div>
                         </div>
                         <div class="mb-3 admin-only" id="cont-destacado-wrap" style="display:none;">
                             <div class="form-check form-switch">

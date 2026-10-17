@@ -238,7 +238,7 @@ h6 {
 
 .header .nav-wrap {
   background-color: color-mix(in srgb, var(--default-color), transparent 92%);
-  margin-top: 10px;
+  /* margin-top: 10px; */
   display: flex;
   justify-content: center;
 }
@@ -2870,7 +2870,7 @@ section,
   margin-bottom: 10px;
   border-radius: 8px;
   overflow: hidden;
-  height: 800px;
+  height: 725px; /*800px phone*/
   position: relative;
   display: flex;
   flex-direction: column;
@@ -2878,6 +2878,7 @@ section,
 
 .portfolio {
   justify-content: center;
+  width: 80%;
 
 }
 
@@ -3478,15 +3479,15 @@ section,
 
 .evento-estrella {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 14px;
+  right: 5px;
   z-index: 5;
   background: var(--accent-color);
   color: #10121c;
   font-size: 12px;
   font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
+  padding: 5px 11px;
+  border-radius: 5px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .35);
 }
 
@@ -5069,9 +5070,7 @@ section,
   }
 
   .portfolio .portfolio-card {
-
     margin-bottom: 40px;
-
   }
 }
 
@@ -5079,7 +5078,10 @@ section,
   .portfolio-details .gallery-masonry {
     grid-template-columns: 1fr !important;
   }
-
+  .portfolio .portfolio-card {
+    margin-bottom: 40px;
+    height: 700px;
+  }
   .galeria-grid {}
 
   .portfolio-details .gallery-masonry .gallery-item.large {

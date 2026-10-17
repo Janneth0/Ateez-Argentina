@@ -83,7 +83,7 @@ export async function crearContenido({ titulo, descripcion, link, adjunto, categ
   });
 }
 
-export async function editarContenido(id, { titulo, descripcion, link, adjunto, categoria, destacado }) {
+export async function editarContenido(id, { titulo, descripcion, link, adjunto, categoria, destacado, fanbaseId }) {
   const cambios = {
     titulo,
     descripcion,
@@ -96,6 +96,8 @@ export async function editarContenido(id, { titulo, descripcion, link, adjunto, 
   // no lo manda, así su edición no toca ese campo — y las reglas de Firestore
   // además le impedirían cambiarlo aunque lo intentara.
   if (typeof destacado === "boolean") cambios.destacado = destacado;
+  // Igual con la fanbase: solo la manda el admin (null = fan independiente).
+  if (fanbaseId !== undefined) cambios.fanbaseId = fanbaseId || null;
   return updateDoc(doc(db, COL, id), cambios);
 }
 

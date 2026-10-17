@@ -774,3 +774,6 @@
 .text-muted1{
   color: aliceblue;
 }
+.form-text {
+  color: #a0aec0; /* Un gris claro o blanco (#ffffff) para que contraste bien */
+}
