@@ -10,6 +10,7 @@
 
 import { escucharPosts } from "./posts.js";
 import { renderPostCard, reprocesarEmbedsRedes } from "./components.js";
+import { listarFanbases } from "./fanbases.js";
 import { eventoVencido, formatearFecha } from "./util.js";
 
 const contenedor = document.getElementById("publicaciones-comunidad");
@@ -19,6 +20,15 @@ const vacio = document.getElementById("publicaciones-vacio");
 if (contenedor) {
   let todasLasPosts = [];
   let filtroActivo = "todas";
+  let nombresFanbase = null; // id -> nombre; se pide una sola vez y solo si algún evento muestra su fanbase
+
+  function asegurarFanbases() {
+    if (nombresFanbase) return;
+    nombresFanbase = {};
+    listarFanbases()
+      .then(lista => { nombresFanbase = Object.fromEntries(lista.map(f => [f.id, f.nombre])); pintar(); })
+      .catch(() => {});
+  }
 
   function pintar() {
     const vigentes = todasLasPosts.filter(p => !eventoVencido(p.fechaEvento));
@@ -32,9 +42,13 @@ if (contenedor) {
       return;
     }
     if (vacio) vacio.style.display = "none";
+    if (lista.some(p => p.mostrarFanbase && p.fanbaseId)) asegurarFanbases();
     contenedor.innerHTML = lista.map(p => renderPostCard({
       ...p,
-      descripcion: `${p.descripcion} \u00b7 ${formatearFecha(p.fechaEvento)}`
+      // La fecha se muestra salvo que quien lo cargó haya elegido ocultarla (los viejos la muestran).
+      fechaTexto: p.mostrarFecha === false ? "" : formatearFecha(p.fechaEvento),
+      fanbaseNombre: p.mostrarFanbase && p.fanbaseId ? (nombresFanbase?.[p.fanbaseId] || "") : "",
+      destacado: p.destacado === true
     })).join("");
     reprocesarEmbedsRedes();
   }

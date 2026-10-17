@@ -11,6 +11,9 @@
 //   link: string,           // instagram u otra red social
 //   categoria: "cumpleanos" | "comeback" | "especial" | "otro",
 //   fechaEvento: timestamp, // puede faltar en documentos viejos, ver nota abajo
+//   mostrarFecha: boolean,    // false = la fecha NO se muestra en la tarjeta pública (por defecto se muestra)
+//   mostrarFanbase: boolean,  // true = la tarjeta pública muestra a qué fanbase pertenece (por defecto no)
+//   destacado: boolean,       // estrella: lo maneja un admin; los destacados salen primero
 //   creadoPor: uid,
 //   creadoPorNombre: string, // nombre de quien lo cargó (para que su equipo lo vea en el panel)
 //   fanbaseId: string|null,  // fanbase de quien lo cargó (null = fan independiente)
@@ -57,9 +60,11 @@ function aMilisegundos(valor) {
   return isNaN(d.getTime()) ? 0 : d.getTime();
 }
 
-/** Ordena por fechaEvento; si a algún doc le falta, usa creadoEn como respaldo. */
+/** Destacados primero; después por fechaEvento (si a algún doc le falta, usa creadoEn como respaldo). */
 function ordenarPosts(posts) {
   return [...posts].sort((a, b) => {
+    const da = a.destacado === true, db_ = b.destacado === true;
+    if (da !== db_) return da ? -1 : 1;
     const fechaA = aMilisegundos(a.fechaEvento) || aMilisegundos(a.creadoEn);
     const fechaB = aMilisegundos(b.fechaEvento) || aMilisegundos(b.creadoEn);
     return fechaB - fechaA;
@@ -71,13 +76,16 @@ export async function listarPosts() {
   return ordenarPosts(snap.docs.map(d => ({ id: d.id, ...d.data() })));
 }
 
-export async function crearPost({ titulo, descripcion, link, categoria, uid, fechaEvento, fanbaseId, autorNombre }) {
+export async function crearPost({ titulo, descripcion, link, categoria, uid, fechaEvento, fanbaseId, autorNombre, mostrarFecha = true, mostrarFanbase = false }) {
   return addDoc(collection(db, POSTS_COL), {
     titulo,
     descripcion,
     link,
     categoria: categoria || "otro",
     fechaEvento: Timestamp.fromDate(new Date(fechaEvento)),
+    mostrarFecha: mostrarFecha !== false,
+    mostrarFanbase: mostrarFanbase === true,
+    destacado: false,
     creadoPor: uid,
     creadoPorNombre: autorNombre || "",
     fanbaseId: fanbaseId || null,
@@ -86,15 +94,22 @@ export async function crearPost({ titulo, descripcion, link, categoria, uid, fec
   });
 }
 
-export async function editarPost(id, { titulo, descripcion, link, categoria, fechaEvento }) {
+export async function editarPost(id, { titulo, descripcion, link, categoria, fechaEvento, mostrarFecha = true, mostrarFanbase = false }) {
   return updateDoc(doc(db, POSTS_COL, id), {
     titulo,
     descripcion,
     link,
     categoria: categoria || "otro",
     fechaEvento: Timestamp.fromDate(new Date(fechaEvento)),
+    mostrarFecha: mostrarFecha !== false,
+    mostrarFanbase: mostrarFanbase === true,
     actualizadoEn: serverTimestamp()
   });
+}
+
+/** Estrella de un evento (solo admin: las reglas de Firestore lo exigen). */
+export async function marcarPostDestacado(id, destacado) {
+  return updateDoc(doc(db, POSTS_COL, id), { destacado });
 }
 
 export async function eliminarPost(id) {

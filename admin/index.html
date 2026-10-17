@@ -173,6 +173,17 @@
                     </button>
                 </div>
 
+                <div class="admin-alert admin-alert-warning admin-reglas" role="note">
+                    <i class="bi bi-shield-exclamation"></i>
+                    <div>
+                        <strong>Regla de publicación:</strong> no se permiten publicaciones de <strong>venta o reventa</strong>
+                        (entradas, álbumes, merch, productos de fans, etc.) de personas o tiendas particulares. Solo se pueden
+                        publicar ventas, preventas o sorteos de <strong>fuentes oficiales</strong> (la agencia y sus tiendas
+                        oficiales, distribuidores autorizados, ticketeras o productoras oficiales del show). Si dudás del origen,
+                        no lo publiques y consultá a un admin. Las publicaciones que no cumplan pueden ser retiradas.
+                    </div>
+                </div>
+
                 <div id="aviso-vencimiento" class="admin-alert admin-alert-warning" style="display:none;"></div>
 
                 <ul class="nav nav-tabs dashboard-tabs" id="dashboard-tabs" role="tablist">
@@ -495,12 +506,24 @@
                         <div class="mb-3">
                             <label class="form-label" for="pub-link">Link de la publicación</label>
                             <input type="url" class="form-control" id="pub-link" placeholder="https://www.instagram.com/p/... , tiktok.com/@.../video/..., x.com/.../status/..." required>
-                            <div class="form-text">Soporta Instagram, TikTok, Twitter/X y Facebook (posts públicos). Cualquier otro link se muestra como una tarjeta con botón "Ver publicación".</div>
+                            <div class="form-text">Soporta Instagram, TikTok, Twitter/X y Facebook (posts públicos). Cualquier otro link se muestra como una tarjeta con botón "Ver publicación". <strong>No se permiten publicaciones de venta salvo de fuentes oficiales.</strong></div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="pub-fecha">Fecha del evento</label>
                             <input type="date" class="form-control" id="pub-fecha" required>
                             <div class="form-text">La fecha en la que ocurrió el evento (no en la que lo cargás). Instagram no permite obtenerla automáticamente desde un link, así que hay que ponerla a mano — fijate la fecha del posteo original. Se usa para ordenar los eventos y para desactivarlos automáticamente al año.</div>
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" id="pub-mostrar-fecha" checked>
+                                <label class="form-check-label" for="pub-mostrar-fecha">Mostrar la fecha en la tarjeta pública</label>
+                            </div>
+                            <div class="form-text">Si lo desmarcás, la fecha se guarda igual (para ordenar y vencer el evento) pero no se ve en el sitio.</div>
+                        </div>
+                        <div class="mb-3" id="pub-fanbase-fila" style="display:none;">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="pub-mostrar-fanbase">
+                                <label class="form-check-label" for="pub-mostrar-fanbase">Mostrar que pertenece a <strong id="pub-fanbase-nombre">tu fanbase</strong></label>
+                            </div>
+                            <div class="form-text">Opcional. Agrega el nombre de la fanbase en la tarjeta pública del evento.</div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="pub-categoria">Categoría</label>

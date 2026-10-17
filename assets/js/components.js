@@ -142,7 +142,7 @@ export function renderModalTerminos() {
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
               </div>
               <div class="modal-body terminos-cuerpo">
-                  <p class="text-muted">Última actualización: septiembre de 2026</p>
+                  <p class="text-muted">Última actualización: octubre de 2026</p>
 
                   <h6>1. Quiénes somos</h6>
                   <p>ATEEZ Argentina es un sitio hecho por fans, sin fines de lucro, que reúne información sobre la
@@ -174,7 +174,15 @@ export function renderModalTerminos() {
                       colaboradores. Hacemos lo posible por mantener la información precisa, pero puede haber
                       errores. Si encontrás algo incorrecto, avisanos por email.</p>
 
-                  <h6>7. Contacto</h6>
+                  <h6>7. Publicaciones de venta</h6>
+                  <p>En el sitio no se publican ofertas de venta ni de reventa (entradas, álbumes, merchandising,
+                      productos de fans, etc.) de personas o tiendas particulares. Solo se difunden ventas, preventas
+                      o sorteos que provengan de <strong>fuentes oficiales</strong>: la agencia y sus tiendas oficiales,
+                      distribuidores autorizados y las ticketeras o productoras oficiales de cada show. Quienes
+                      colaboran con el sitio deben verificar el origen antes de publicar, y el equipo puede quitar
+                      cualquier publicación que no cumpla esta regla.</p>
+
+                  <h6>8. Contacto</h6>
                   <p>Para cualquier consulta escribinos a
                       <a href="mailto:ateezargentina.contacto@gmail.com">ateezargentina.contacto@gmail.com</a>.</p>
               </div>
@@ -273,7 +281,7 @@ export function reprocesarEmbedsInstagram() {
 // Tarjetas de contenido (eventos, noticias, fanbases, galería, contenido)
 // ------------------------------------------------------------
 
-export function renderPostCard({ id, titulo, descripcion, link = "", categoria = "otro" } = {}) {
+export function renderPostCard({ id, titulo, descripcion, link = "", categoria = "otro", fechaTexto = "", fanbaseNombre = "", destacado = false } = {}) {
   const claveFiltro = {
     cumpleanos: "filter-hbd",
     comeback: "filter-cb",
@@ -281,13 +289,26 @@ export function renderPostCard({ id, titulo, descripcion, link = "", categoria =
     otro: "filter-other"
   }[categoria] || "filter-other";
 
+  // Todas las tarjetas tienen el mismo alto: el título y la descripción se cortan con "…"
+  // si son largos (el texto completo queda en el tooltip), y la fecha / fanbase / link
+  // van siempre en una franja fija abajo, así nunca se pisan con el embed.
+  const datos = [
+    fechaTexto ? `<span class="evento-dato"><i class="bi bi-calendar-event"></i> ${escapeHtml(fechaTexto)}</span>` : "",
+    fanbaseNombre ? `<span class="evento-dato evento-fanbase"><i class="bi bi-people-fill"></i> ${escapeHtml(fanbaseNombre)}</span>` : ""
+  ].join("");
+  const verPublicacion = link
+    ? `<a class="evento-ver" href="${escapeHtml(link)}" target="_blank" rel="noopener">Ver publicación <i class="bi bi-box-arrow-up-right"></i></a>`
+    : "";
+
   return `
   <div class="col-lg-4 col-md-6 portfolio-item isotope-item ${claveFiltro}" data-post-id="${id || ''}">
-      <div class="portfolio-card">
+      <div class="portfolio-card${destacado ? " es-destacado" : ""}">
+          ${destacado ? `<span class="evento-estrella"><i class="bi bi-star-fill"></i> Destacado</span>` : ""}
           <div class="image-container">${renderEmbedRedSocial(link)}</div>
           <div class="content">
-              <h3>${escapeHtml(titulo)}</h3>
-              <p>${escapeHtml(descripcion)}</p>
+              <h3 class="texto-2-lineas" title="${escapeHtml(titulo)}">${escapeHtml(titulo)}</h3>
+              <p class="texto-3-lineas" title="${escapeHtml(descripcion)}">${escapeHtml(descripcion)}</p>
+              <div class="evento-meta">${datos}${verPublicacion}</div>
           </div>
       </div>
   </div>`;
@@ -410,7 +431,51 @@ if (typeof document !== "undefined") {
     iframe.allowFullscreen = true;
     fachada.replaceWith(iframe);
   });
+
+  // Publicaciones de redes sociales en "Contenido": en la grilla se muestra una tarjeta
+  // uniforme y el embed real (que es pesado y de alto variable) se abre en una ventana.
+  document.addEventListener("click", (e) => {
+    const fachada = e.target.closest?.(".social-facade");
+    if (!fachada) return;
+    abrirPublicacion(fachada.dataset.url, fachada.dataset.titulo);
+  });
+
+  // Si la imagen de una tarjeta de contenido no carga, se reemplaza por el logo del sitio.
+  document.addEventListener("error", (e) => {
+    const img = e.target;
+    if (img?.tagName !== "IMG" || !img.matches(".contenido-media img:not(.contenido-img-respaldo)")) return;
+    img.classList.add("contenido-img-respaldo", "logo-fallback");
+    img.src = logoDelSitio("");
+  }, true);
 }
+
+function abrirPublicacion(url, titulo = "") {
+  if (!url) return;
+  let dialogo = document.getElementById("dialogo-publicacion");
+  if (!dialogo) {
+    dialogo = document.createElement("dialog");
+    dialogo.id = "dialogo-publicacion";
+    dialogo.className = "dialogo-publicacion";
+    dialogo.innerHTML = `<button type="button" class="dialogo-cerrar" aria-label="Cerrar"><i class="bi bi-x-lg"></i></button>
+      <div class="dialogo-cuerpo"></div>`;
+    document.body.appendChild(dialogo);
+    dialogo.addEventListener("click", (ev) => {
+      if (ev.target === dialogo || ev.target.closest(".dialogo-cerrar")) dialogo.close(); // clic afuera o en la X
+    });
+    dialogo.addEventListener("close", () => { dialogo.querySelector(".dialogo-cuerpo").innerHTML = ""; });
+  }
+  dialogo.setAttribute("aria-label", titulo || "Publicación");
+  dialogo.querySelector(".dialogo-cuerpo").innerHTML = renderEmbedRedSocial(url);
+  dialogo.showModal();
+  reprocesarEmbedsRedes();
+}
+
+const REDES_CONTENIDO = [
+  { re: /instagram\.com/i, clave: "instagram", nombre: "Instagram", icono: "bi-instagram" },
+  { re: /tiktok\.com/i, clave: "tiktok", nombre: "TikTok", icono: "bi-tiktok" },
+  { re: /(twitter\.com|x\.com)\//i, clave: "x", nombre: "X", icono: "bi-twitter-x" },
+  { re: /facebook\.com/i, clave: "facebook", nombre: "Facebook", icono: "bi-facebook" }
+];
 
 const ES_LINK_IMAGEN = (url = "") => /\.(jpe?g|png|gif|webp|avif)(\?.*)?$/i.test(url) || /drive\.google\.com\/thumbnail/i.test(url);
 
@@ -437,9 +502,18 @@ export function renderContenidoCard({ id, titulo, descripcion, link = "", adjunt
         </button>
       </div>`;
   } else if (adjunto && esLinkRedSocial(adjunto)) {
-    media = `<div class="contenido-media">${renderEmbedRedSocial(adjunto)}</div>`;
+    const red = REDES_CONTENIDO.find(r => r.re.test(adjunto)) || REDES_CONTENIDO[0];
+    media = `<div class="contenido-media contenido-social red-${red.clave}">
+        <button type="button" class="social-facade" data-url="${escapeHtml(adjunto)}" data-titulo="${escapeHtml(titulo)}" aria-label="Ver publicación de ${red.nombre}: ${escapeHtml(titulo)}">
+            <i class="bi ${red.icono} social-icono" aria-hidden="true"></i>
+            <span class="social-cta">Ver publicación de ${red.nombre}</span>
+        </button>
+      </div>`;
   } else if (adjunto) {
-    media = `<div class="contenido-media"><img src="${adjunto}" alt="${escapeHtml(titulo)}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`;
+    media = `<div class="contenido-media"><img src="${escapeHtml(adjunto)}" alt="${escapeHtml(titulo)}" loading="lazy"></div>`;
+  } else {
+    // Sin imagen: se muestra el logo del sitio para que todas las tarjetas tengan el mismo tamaño.
+    media = `<div class="contenido-media contenido-sin-imagen"><img class="contenido-img-respaldo logo-fallback" src="${logoDelSitio("")}" alt="" loading="lazy"></div>`;
   }
 
   return `
@@ -447,9 +521,9 @@ export function renderContenidoCard({ id, titulo, descripcion, link = "", adjunt
       <div class="contenido-card">
           ${media}
           <div class="contenido-card-body">
-              <h4>${escapeHtml(titulo)}</h4>
-              <p>${escapeHtml(descripcion)}</p>
-              ${link ? `<a href="${link}" target="_blank" rel="noopener" class="contenido-card-link">Ver <i class="bi bi-box-arrow-up-right"></i></a>` : ""}
+              <h4 class="texto-2-lineas" title="${escapeHtml(titulo)}">${escapeHtml(titulo)}</h4>
+              <p class="texto-3-lineas" title="${escapeHtml(descripcion)}">${escapeHtml(descripcion)}</p>
+              ${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener" class="contenido-card-link">Ver <i class="bi bi-box-arrow-up-right"></i></a>` : ""}
           </div>
       </div>
   </div>`;

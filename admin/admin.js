@@ -9,7 +9,7 @@ import {
   escucharAuth, traducirErrorAuth, listarUsuarios, asignarRol, recuperarContrasena, actualizarMiFanbase,
   actualizarPermisoColores, asignarFanbase
 } from "../assets/js/auth.js";
-import { escucharPosts, crearPost, editarPost, eliminarPost, CATEGORIAS } from "../assets/js/posts.js";
+import { escucharPosts, crearPost, editarPost, eliminarPost, marcarPostDestacado, CATEGORIAS } from "../assets/js/posts.js";
 import {
   escucharNoticias, crearNoticia, editarNoticia, eliminarNoticia, marcarDestacada
 } from "../assets/js/noticias.js";
@@ -275,9 +275,20 @@ function nombreResponsableDe(item) {
   return u ? (u.nombreCompleto || u.email || "Sin nombre") : (item.creadoPorNombre || "Usuario desconocido");
 }
 
+/** Etiqueta con la fanbase del item, o "Independiente" si lo cargó un fan sin fanbase. */
+function etiquetaFanbaseDe(item) {
+  if (!item.fanbaseId) return `<span class="badge-fanbase independiente">Independiente</span>`;
+  const nombre = cacheFanbasesRegistro.find(f => f.id === item.fanbaseId)?.nombre || "Fanbase eliminada";
+  return `<span class="badge-fanbase">${escapeHtml(nombre)}</span>`;
+}
+
 function lineaResponsable(item) {
-  if (!esAdminActual() && item.creadoPor === usuarioActual.uid) return "";
-  return `<p class="responsable">Cargado por: ${escapeHtml(nombreResponsableDe(item))}</p>`;
+  const partes = [];
+  if (esAdminActual() || item.creadoPor !== usuarioActual.uid) partes.push(`Cargado por: ${escapeHtml(nombreResponsableDe(item))}`);
+  // El admin ve la fanbase de todo; un colaborador de fanbase también (ve lo de su equipo).
+  // Un colaborador independiente solo ve lo suyo, así que ahí la etiqueta sobra.
+  if (esAdminActual() || miFanbase()) partes.push(etiquetaFanbaseDe(item));
+  return partes.length ? `<p class="responsable">${partes.join(" \u00b7 ")}</p>` : "";
 }
 
 function accionesItem(item) {
@@ -336,11 +347,13 @@ function cargarPublicaciones() {
           <div class="admin-list-item" data-id="${p.id}">
               <div class="item-info">
                   <h5><span class="badge-categoria">${etiquetaCategoria(p.categoria)}</span>${escapeHtml(p.titulo)}
+                      ${p.destacado ? '<i class="bi bi-star-fill estrella-evento" title="Evento destacado"></i>' : ''}
                       ${vencido ? '<span class="badge-estado vencido">Inactivo</span>' : ''}</h5>
-                  <p>${escapeHtml(p.descripcion)} \u00b7 ${formatearFechaCorta(p.fechaEvento)}</p>
+                  <p>${escapeHtml(p.descripcion)} \u00b7 ${formatearFechaCorta(p.fechaEvento)}${p.mostrarFecha === false ? ' <em class="nota-oculta">(fecha oculta al público)</em>' : ''}</p>
                   ${lineaResponsable(p)}
               </div>
               <div class="item-actions">
+                  ${esAdminActual() ? `<button type="button" class="destacar ${p.destacado ? 'activa' : ''}" title="${p.destacado ? 'Quitar la estrella' : 'Destacar: aparece primero'}" data-id="${p.id}"><i class="bi ${p.destacado ? 'bi-star-fill' : 'bi-star'}"></i></button>` : ''}
                   ${accionesItem(p)}
               </div>
           </div>`;
@@ -365,9 +378,17 @@ function cargarPublicaciones() {
   );
 }
 
-listaPublicacionesEl.addEventListener("click", (e) => {
+listaPublicacionesEl.addEventListener("click", async (e) => {
   const btnEditar = e.target.closest(".editar");
   const btnEliminar = e.target.closest(".eliminar");
+  const btnDestacar = e.target.closest(".destacar");
+
+  if (btnDestacar && esAdminActual()) {
+    const post = cachePosts.find(p => p.id === btnDestacar.dataset.id);
+    if (!post) return;
+    try { await marcarPostDestacado(post.id, !post.destacado); } catch (err) { console.error(err); }
+    return;
+  }
 
   if (btnEditar) {
     const post = cachePosts.find(p => p.id === btnEditar.dataset.id);
@@ -379,6 +400,8 @@ listaPublicacionesEl.addEventListener("click", (e) => {
     document.getElementById("pub-link").value = post.link || "";
     document.getElementById("pub-categoria").value = post.categoria || "otro";
     document.getElementById("pub-fecha").value = fechaInputValue(post.fechaEvento);
+    document.getElementById("pub-mostrar-fecha").checked = post.mostrarFecha !== false;
+    prepararFilaFanbase(post.fanbaseId, post.mostrarFanbase === true);
     publicacionError.style.display = "none";
     modalPublicacion.show();
   }
@@ -390,9 +413,20 @@ document.getElementById("btn-nueva-publicacion").addEventListener("click", () =>
   formPublicacion.reset();
   document.getElementById("pub-id").value = "";
   document.getElementById("pub-fecha").value = new Date().toISOString().slice(0, 10);
+  document.getElementById("pub-mostrar-fecha").checked = true;
+  prepararFilaFanbase(miFanbase(), false);
   publicacionError.style.display = "none";
   modalPublicacion.show();
 });
+
+/** La opción "mostrar mi fanbase" solo aparece si el evento pertenece a una fanbase (los independientes no tienen). */
+function prepararFilaFanbase(fanbaseId, marcado) {
+  const fila = document.getElementById("pub-fanbase-fila");
+  fila.style.display = fanbaseId ? "" : "none";
+  document.getElementById("pub-mostrar-fanbase").checked = !!fanbaseId && marcado;
+  document.getElementById("pub-fanbase-nombre").textContent =
+    cacheFanbasesRegistro.find(f => f.id === fanbaseId)?.nombre || "tu fanbase";
+}
 
 formPublicacion.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -403,7 +437,10 @@ formPublicacion.addEventListener("submit", async (e) => {
     descripcion: document.getElementById("pub-descripcion").value.trim(),
     link: document.getElementById("pub-link").value.trim(),
     categoria: document.getElementById("pub-categoria").value,
-    fechaEvento: document.getElementById("pub-fecha").value
+    fechaEvento: document.getElementById("pub-fecha").value,
+    mostrarFecha: document.getElementById("pub-mostrar-fecha").checked,
+    mostrarFanbase: document.getElementById("pub-fanbase-fila").style.display !== "none"
+      && document.getElementById("pub-mostrar-fanbase").checked
   };
   try {
     if (id) await editarPost(id, datos); else await crearPost({ ...datos, ...datosDeAutor() });

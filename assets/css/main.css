@@ -2871,6 +2871,9 @@ section,
   border-radius: 8px;
   overflow: hidden;
   height: 800px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .portfolio {
@@ -2895,12 +2898,15 @@ section,
   color: var(--accent-color);
 }
 
+/* El embed ocupa el espacio que sobra arriba; si es más alto, se recorta por abajo
+   (el link "Ver publicación" de la franja de abajo lleva al post completo). Así el
+   texto de abajo queda siempre en el mismo lugar y no se pisa con el embed. */
 .portfolio .image-container {
   position: relative;
-  /* overflow: hidden; */
-  aspect-ratio: 4/3;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
   border-radius: 8px;
-  /* margin-bottom: 20px; */
 }
 
 /* TikTok y Twitter/X ya traen su propia tarjeta con fondo, bordes redondeados
@@ -3405,8 +3411,83 @@ section,
 }
 
 .portfolio .content {
-  padding: 30px 0;
+  flex: 0 0 auto;
+  height: 215px;
+  padding: 16px 18px 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   text-align: center;
+}
+
+/* Texto con la misma cantidad de líneas en todas las tarjetas; lo que no entra se corta con "…" */
+.texto-2-lineas,
+.texto-3-lineas {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.texto-2-lineas { -webkit-line-clamp: 2; line-clamp: 2; }
+.texto-3-lineas { -webkit-line-clamp: 3; line-clamp: 3; }
+
+/* Franja fija de abajo: fecha, fanbase y link */
+.portfolio .evento-meta {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 14px;
+  font-size: 13px;
+}
+
+.portfolio .evento-dato {
+  color: color-mix(in srgb, var(--default-color), transparent 25%);
+  white-space: nowrap;
+}
+
+.portfolio .evento-dato i,
+.portfolio .evento-ver i {
+  color: var(--accent-color);
+}
+
+.portfolio .evento-fanbase {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.portfolio .evento-ver {
+  color: var(--accent-color);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.portfolio .evento-ver:hover {
+  text-decoration: underline;
+}
+
+/* Evento con estrella (destacado): sale primero y se marca */
+.portfolio .portfolio-card.es-destacado {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 1px var(--accent-color), 0 8px 24px color-mix(in srgb, var(--accent-color), transparent 80%);
+}
+
+.evento-estrella {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 5;
+  background: var(--accent-color);
+  color: #10121c;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .35);
 }
 
 .portfolio .content h3 {
@@ -5143,6 +5224,8 @@ section,
   border-radius: 12px;
   overflow: hidden;
   height: 100%;
+  display: flex;
+  flex-direction: column;
   transition: 0.3s;
 }
 
@@ -5151,9 +5234,13 @@ section,
   transform: translateY(-3px);
 }
 
+/* Todas las tarjetas de contenido tienen la misma caja de imagen/video (16:9),
+   sea YouTube, imagen o publicación de una red social. */
 .contenido-media {
-  height: 420px;
+  position: relative;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
+  flex: 0 0 auto;
   background: color-mix(in srgb, var(--surface-color), #000 10%);
 }
 
@@ -5242,6 +5329,9 @@ section,
 
 .contenido-card-body {
   padding: 18px;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .contenido-card-body h4 {
@@ -5257,10 +5347,102 @@ section,
 }
 
 .contenido-card-link {
+  margin-top: auto; /* el "Ver" queda siempre al fondo de la tarjeta */
   color: var(--accent-color);
   font-weight: 600;
   font-size: 14px;
   text-decoration: none;
+}
+
+/* Imagen de respaldo (logo del sitio) cuando no hay imagen o no carga */
+.contenido-media img.contenido-img-respaldo {
+  object-fit: contain;
+  padding: 18%;
+  opacity: .55;
+}
+
+/* Publicación de red social: tarjeta de color + botón que abre el post en una ventana */
+.social-facade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  border: 0;
+  color: #fff;
+  cursor: pointer;
+  transition: filter .25s ease;
+}
+
+.social-facade:hover,
+.social-facade:focus-visible {
+  filter: brightness(1.12);
+}
+
+.social-facade .social-icono {
+  font-size: 46px;
+  line-height: 1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, .35);
+}
+
+.social-facade .social-cta {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, .35);
+}
+
+.red-instagram .social-facade { background: linear-gradient(45deg, #f09433, #dc2743 50%, #bc1888); }
+.red-tiktok .social-facade { background: linear-gradient(135deg, #111 0%, #25f4ee 160%); }
+.red-x .social-facade { background: linear-gradient(135deg, #0f1115, #3a3f4a); }
+.red-facebook .social-facade { background: linear-gradient(135deg, #1877f2, #0d4fb3); }
+
+/* Ventana (<dialog>) donde se abre la publicación completa */
+.dialogo-publicacion {
+  width: min(560px, 94vw);
+  max-height: 92vh;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--accent-color), transparent 60%);
+  border-radius: 14px;
+  background: var(--surface-color);
+  color: var(--default-color);
+  overflow: auto;
+}
+
+.dialogo-publicacion::backdrop {
+  background: rgba(0, 0, 0, .72);
+}
+
+.dialogo-publicacion .dialogo-cerrar {
+  position: sticky;
+  top: 8px;
+  float: right;
+  margin: 8px 8px 0 0;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .55);
+  color: #fff;
+  cursor: pointer;
+}
+
+.dialogo-publicacion .dialogo-cuerpo {
+  padding: 14px;
+  clear: both;
+}
+
+.dialogo-publicacion .dialogo-cuerpo iframe {
+  width: 100%;
+  min-height: 520px;
+  height: 70vh;
 }
 
 .contenido-card-link:hover {

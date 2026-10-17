@@ -273,6 +273,41 @@
 }
 
 /* --- selector de fanbase de cada usuario (pestaña Usuarios) --- */
+/* Etiqueta de fanbase en cada item del panel */
+.admin-list-item .badge-fanbase {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent-color), transparent 55%);
+  color: var(--accent-color);
+}
+
+.admin-list-item .badge-fanbase.independiente {
+  border-color: color-mix(in srgb, var(--default-color), transparent 65%);
+  color: color-mix(in srgb, var(--default-color), transparent 25%);
+}
+
+.admin-list-item .estrella-evento {
+  color: var(--accent-color);
+  margin-left: 6px;
+}
+
+.admin-list-item .nota-oculta {
+  opacity: .65;
+  font-size: 12px;
+}
+
+/* Aviso de reglas de publicación (ventas) */
+.admin-reglas {
+  max-width: none;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
 .admin-list-item select.fanbase-select {
   max-width: 200px;
 }
