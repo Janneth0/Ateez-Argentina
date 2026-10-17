@@ -11,7 +11,7 @@ import {
   collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs,
   onSnapshot, query, where, serverTimestamp, Timestamp
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-import { slugify } from "./util.js";
+import { slugify, fechaDesdeInput } from "./util.js";
 
 const COL = "noticias";
 
@@ -105,7 +105,7 @@ export async function crearNoticia(datosCompletos) {
     creadoPorNombre: autorNombre || "",
     fanbaseId: fanbaseId || null,
     destacada: false,
-    fechaPublicacion: Timestamp.fromDate(new Date(datos.fechaPublicacion)),
+    fechaPublicacion: Timestamp.fromDate(fechaDesdeInput(datos.fechaPublicacion)),
     creadoPor: datos.uid,
     creadoEn: serverTimestamp(),
     actualizadoEn: serverTimestamp()
@@ -115,7 +115,7 @@ export async function crearNoticia(datosCompletos) {
 export async function editarNoticia(id, datos, regenerarSlug = false) {
   const cambios = {
     ...datos,
-    fechaPublicacion: Timestamp.fromDate(new Date(datos.fechaPublicacion)),
+    fechaPublicacion: Timestamp.fromDate(fechaDesdeInput(datos.fechaPublicacion)),
     actualizadoEn: serverTimestamp()
   };
   if (regenerarSlug) {

@@ -46,7 +46,7 @@ if (contenedor) {
     contenedor.innerHTML = lista.map(p => renderPostCard({
       ...p,
       // La fecha se muestra salvo que quien lo cargó haya elegido ocultarla (los viejos la muestran).
-      fechaTexto: p.mostrarFecha === false ? "" : formatearFecha(p.fechaEvento),
+      fechaTexto: p.mostrarFecha === false ? "" : formatearFecha(p.fechaEvento) + (p.horaEvento ? ` \u00b7 ${p.horaEvento} hs` : ""),
       fanbaseNombre: p.mostrarFanbase && p.fanbaseId ? (nombresFanbase?.[p.fanbaseId] || "") : "",
       destacado: p.destacado === true
     })).join("");

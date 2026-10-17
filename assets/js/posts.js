@@ -11,6 +11,7 @@
 //   link: string,           // instagram u otra red social
 //   categoria: "cumpleanos" | "comeback" | "especial" | "otro",
 //   fechaEvento: timestamp, // puede faltar en documentos viejos, ver nota abajo
+//   horaEvento: string,       // opcional, "18:30" (hora de Argentina, texto: no tiene problemas de zona horaria)
 //   mostrarFecha: boolean,    // false = la fecha NO se muestra en la tarjeta pública (por defecto se muestra)
 //   mostrarFanbase: boolean,  // true = la tarjeta pública muestra a qué fanbase pertenece (por defecto no)
 //   destacado: boolean,       // estrella: lo maneja un admin; los destacados salen primero
@@ -31,6 +32,7 @@
 // ============================================================
 
 import { db } from "./firebase-init.js";
+import { fechaDesdeInput } from "./util.js";
 import {
   collection,
   addDoc,
@@ -76,13 +78,14 @@ export async function listarPosts() {
   return ordenarPosts(snap.docs.map(d => ({ id: d.id, ...d.data() })));
 }
 
-export async function crearPost({ titulo, descripcion, link, categoria, uid, fechaEvento, fanbaseId, autorNombre, mostrarFecha = true, mostrarFanbase = false }) {
+export async function crearPost({ titulo, descripcion, link, categoria, uid, fechaEvento, horaEvento = "", fanbaseId, autorNombre, mostrarFecha = true, mostrarFanbase = false }) {
   return addDoc(collection(db, POSTS_COL), {
     titulo,
     descripcion,
     link,
     categoria: categoria || "otro",
-    fechaEvento: Timestamp.fromDate(new Date(fechaEvento)),
+    fechaEvento: Timestamp.fromDate(fechaDesdeInput(fechaEvento)),
+    horaEvento: horaEvento || "",
     mostrarFecha: mostrarFecha !== false,
     mostrarFanbase: mostrarFanbase === true,
     destacado: false,
@@ -94,13 +97,14 @@ export async function crearPost({ titulo, descripcion, link, categoria, uid, fec
   });
 }
 
-export async function editarPost(id, { titulo, descripcion, link, categoria, fechaEvento, mostrarFecha = true, mostrarFanbase = false }) {
+export async function editarPost(id, { titulo, descripcion, link, categoria, fechaEvento, horaEvento = "", mostrarFecha = true, mostrarFanbase = false }) {
   return updateDoc(doc(db, POSTS_COL, id), {
     titulo,
     descripcion,
     link,
     categoria: categoria || "otro",
-    fechaEvento: Timestamp.fromDate(new Date(fechaEvento)),
+    fechaEvento: Timestamp.fromDate(fechaDesdeInput(fechaEvento)),
+    horaEvento: horaEvento || "",
     mostrarFecha: mostrarFecha !== false,
     mostrarFanbase: mostrarFanbase === true,
     actualizadoEn: serverTimestamp()

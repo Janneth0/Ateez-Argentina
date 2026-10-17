@@ -43,8 +43,10 @@ function urlAbsolutaDeImagen(url) {
   return `${DOMINIO}/${String(url).replace(/^\.?\.?\//, "")}`;
 }
 
+// UTC a propósito: la fecha de una noticia se guarda a las 12:00 UTC (o a medianoche UTC en las
+// viejas) y así se ve el mismo día que eligió quien la cargó (ver util.js, "FECHAS SIN HORA").
 function fechaLarga(d) {
-  return d ? d.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "America/Argentina/Buenos_Aires" }) : "";
+  return d ? d.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) : "";
 }
 
 // ------------------------------------------------- Firestore (API REST pública)

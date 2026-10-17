@@ -28,7 +28,7 @@ import { normalizarUrlImagen } from "../assets/js/imagenes.js";
 import { completarFanbaseEnContenido } from "../assets/js/fanbase-contenido.js";
 import { generarSitemapXml, descargarSitemap } from "../assets/js/sitemap.js";
 import { paises } from "../assets/js/paises.js";
-import { formatearFechaCorta, eventoVencido, eventoPorVencer, escapeHtml, extraerIdYoutube } from "../assets/js/util.js";
+import { formatearFechaCorta, eventoVencido, eventoPorVencer, escapeHtml, extraerIdYoutube, fechaAInput, hoyParaInput } from "../assets/js/util.js";
 
 iniciarSitio({ base: "../" });
 
@@ -349,7 +349,7 @@ function cargarPublicaciones() {
                   <h5><span class="badge-categoria">${etiquetaCategoria(p.categoria)}</span>${escapeHtml(p.titulo)}
                       ${p.destacado ? '<i class="bi bi-star-fill estrella-evento" title="Evento destacado"></i>' : ''}
                       ${vencido ? '<span class="badge-estado vencido">Inactivo</span>' : ''}</h5>
-                  <p>${escapeHtml(p.descripcion)} \u00b7 ${formatearFechaCorta(p.fechaEvento)}${p.mostrarFecha === false ? ' <em class="nota-oculta">(fecha oculta al público)</em>' : ''}</p>
+                  <p>${escapeHtml(p.descripcion)} \u00b7 ${formatearFechaCorta(p.fechaEvento)}${p.horaEvento ? ` ${escapeHtml(p.horaEvento)} hs` : ''}${p.mostrarFecha === false ? ' <em class="nota-oculta">(fecha oculta al público)</em>' : ''}</p>
                   ${lineaResponsable(p)}
               </div>
               <div class="item-actions">
@@ -400,6 +400,7 @@ listaPublicacionesEl.addEventListener("click", async (e) => {
     document.getElementById("pub-link").value = post.link || "";
     document.getElementById("pub-categoria").value = post.categoria || "otro";
     document.getElementById("pub-fecha").value = fechaInputValue(post.fechaEvento);
+    document.getElementById("pub-hora").value = post.horaEvento || "";
     document.getElementById("pub-mostrar-fecha").checked = post.mostrarFecha !== false;
     prepararFilaFanbase(post.fanbaseId, post.mostrarFanbase === true);
     publicacionError.style.display = "none";
@@ -412,7 +413,8 @@ document.getElementById("btn-nueva-publicacion").addEventListener("click", () =>
   document.getElementById("modalPublicacionTitulo").textContent = "Nuevo evento";
   formPublicacion.reset();
   document.getElementById("pub-id").value = "";
-  document.getElementById("pub-fecha").value = new Date().toISOString().slice(0, 10);
+  document.getElementById("pub-fecha").value = hoyParaInput();
+  document.getElementById("pub-hora").value = "";
   document.getElementById("pub-mostrar-fecha").checked = true;
   prepararFilaFanbase(miFanbase(), false);
   publicacionError.style.display = "none";
@@ -438,6 +440,7 @@ formPublicacion.addEventListener("submit", async (e) => {
     link: document.getElementById("pub-link").value.trim(),
     categoria: document.getElementById("pub-categoria").value,
     fechaEvento: document.getElementById("pub-fecha").value,
+    horaEvento: document.getElementById("pub-hora").value,
     mostrarFecha: document.getElementById("pub-mostrar-fecha").checked,
     mostrarFanbase: document.getElementById("pub-fanbase-fila").style.display !== "none"
       && document.getElementById("pub-mostrar-fanbase").checked
@@ -453,9 +456,7 @@ formPublicacion.addEventListener("submit", async (e) => {
 });
 
 function fechaInputValue(fecha) {
-  if (!fecha) return new Date().toISOString().slice(0, 10);
-  const d = fecha.toDate ? fecha.toDate() : new Date(fecha);
-  return d.toISOString().slice(0, 10);
+  return fechaAInput(fecha);
 }
 
 // ==============================================================
@@ -544,7 +545,7 @@ document.getElementById("btn-nueva-noticia").addEventListener("click", () => {
   document.getElementById("modalNoticiaTitulo").textContent = "Nueva noticia";
   formNoticia.reset();
   document.getElementById("not-id").value = "";
-  document.getElementById("not-fecha").value = new Date().toISOString().slice(0, 10);
+  document.getElementById("not-fecha").value = hoyParaInput();
   editorContenido.innerHTML = "";
   tituloOriginalEdicion = "";
   noticiaError.style.display = "none";

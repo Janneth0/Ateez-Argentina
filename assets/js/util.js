@@ -15,18 +15,49 @@ export function slugify(texto = "") {
     .replace(/^-|-$/g, "");
 }
 
+// ------------------------------------------------------------
+// FECHAS SIN HORA (fecha de un evento, fecha de una noticia)
+//
+// El <input type="date"> entrega "2026-11-01". Si se hace new Date("2026-11-01")
+// JavaScript lo toma como medianoche UTC, que en Argentina (UTC-3) es el 31/10 a
+// las 21:00: al mostrarlo en hora local aparecía un día antes. Para evitarlo,
+// estas fechas se guardan a las 12:00 UTC y SIEMPRE se muestran en UTC, así
+// todo el mundo ve el mismo día, sin importar su zona horaria. (Las fechas ya
+// guardadas a medianoche UTC también se ven bien, sin migrar nada.)
+// ------------------------------------------------------------
+
+/** "2026-11-01" (del <input type="date">) -> Date a las 12:00 UTC de ese día. */
+export function fechaDesdeInput(texto = "") {
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(texto));
+  if (!m) return new Date(NaN);
+  return new Date(Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]), 12));
+}
+
+/** Fecha guardada -> "2026-11-01" para cargarla de nuevo en un <input type="date">. */
+export function fechaAInput(fecha) {
+  const d = aFechaJS(fecha);
+  return d ? d.toISOString().slice(0, 10) : hoyParaInput();
+}
+
+/** El día de HOY (en la zona horaria de quien usa el panel) como "yyyy-mm-dd". */
+export function hoyParaInput() {
+  const n = new Date();
+  const dos = (x) => String(x).padStart(2, "0");
+  return `${n.getFullYear()}-${dos(n.getMonth() + 1)}-${dos(n.getDate())}`;
+}
+
 /** Formatea una fecha (Date, Firestore Timestamp o string ISO) como "3 de septiembre de 2026". */
 export function formatearFecha(fecha) {
   const d = aFechaJS(fecha);
   if (!d) return "";
-  return d.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
+  return d.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 }
 
 /** Formatea corto: "03/09/2026" */
 export function formatearFechaCorta(fecha) {
   const d = aFechaJS(fecha);
   if (!d) return "";
-  return d.toLocaleDateString("es-AR");
+  return d.toLocaleDateString("es-AR", { timeZone: "UTC" });
 }
 
 /** Convierte Timestamp de Firestore, string o Date a un objeto Date de JS. */

@@ -514,9 +514,14 @@
                             <div class="form-text">La fecha en la que ocurrió el evento (no en la que lo cargás). Instagram no permite obtenerla automáticamente desde un link, así que hay que ponerla a mano — fijate la fecha del posteo original. Se usa para ordenar los eventos y para desactivarlos automáticamente al año.</div>
                             <div class="form-check mt-2">
                                 <input class="form-check-input" type="checkbox" id="pub-mostrar-fecha" checked>
-                                <label class="form-check-label" for="pub-mostrar-fecha">Mostrar la fecha en la tarjeta pública</label>
+                                <label class="form-check-label" for="pub-mostrar-fecha">Mostrar la fecha (y la hora) en la tarjeta pública</label>
                             </div>
                             <div class="form-text">Si lo desmarcás, la fecha se guarda igual (para ordenar y vencer el evento) pero no se ve en el sitio.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="pub-hora">Hora del evento <span class="text-muted1">(opcional)</span></label>
+                            <input type="time" class="form-control" id="pub-hora">
+                            <div class="form-text">Hora de Argentina. Si la completás, se muestra junto a la fecha, por ejemplo «1 de noviembre de 2026 · 18:30 hs».</div>
                         </div>
                         <div class="mb-3" id="pub-fanbase-fila" style="display:none;">
                             <div class="form-check">

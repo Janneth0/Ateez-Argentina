@@ -358,7 +358,7 @@ export function renderFanbaseCard({ id, nombre, descripcion, logoUrl, redes = []
 
 function fechaNoticiaTexto(fechaPublicacion) {
   const fecha = fechaPublicacion ? new Date(fechaPublicacion.toDate ? fechaPublicacion.toDate() : fechaPublicacion) : null;
-  return fecha ? fecha.toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" }) : "";
+  return fecha ? fecha.toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) : "";
 }
 
 /** Tarjeta de noticia para la grilla/listado. */
