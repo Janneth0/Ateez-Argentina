@@ -95,11 +95,15 @@ export function escucharNoticias(callback, onError) {
 /**
  * datos: { titulo, resumen, contenidoHtml, imagenUrl, fechaPublicacion (string yyyy-mm-dd), uid }
  */
-export async function crearNoticia(datos) {
+export async function crearNoticia(datosCompletos) {
+  // autorNombre y fanbaseId los pone el panel según el perfil de quien carga la noticia.
+  const { autorNombre, fanbaseId, ...datos } = datosCompletos;
   const slug = await generarSlugUnico(datos.titulo);
   return addDoc(collection(db, COL), {
     ...datos,
     slug,
+    creadoPorNombre: autorNombre || "",
+    fanbaseId: fanbaseId || null,
     destacada: false,
     fechaPublicacion: Timestamp.fromDate(new Date(datos.fechaPublicacion)),
     creadoPor: datos.uid,

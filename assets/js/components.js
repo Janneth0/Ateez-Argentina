@@ -8,7 +8,8 @@
 // hace falta llamarlas a mano.
 // ============================================================
 
-import { REDES_SOCIALES_POR_DEFECTO, CONFIG_POR_DEFECTO } from "./config-sitio.js";
+import { REDES_SOCIALES_POR_DEFECTO, CONFIG_POR_DEFECTO, logoDelSitio } from "./config-sitio.js";
+import { extraerIdYoutube } from "./util.js";
 
 export const ICONO_RED = {
   instagram: "bi-instagram",
@@ -302,7 +303,8 @@ export function escapeHtml(str = "") {
 
 /** Tarjeta de una fanbase/sede (usada en index.html, cargada desde Firestore). */
 export function renderFanbaseCard({ id, nombre, descripcion, logoUrl, redes = [], ciudad = "" } = {}) {
-  const logo = logoUrl || "assets/img/AteezArgentinaLogo.png";
+  const logo = logoUrl || logoDelSitio("");
+  const claseLogo = logoUrl ? "" : "logo-fallback"; // si no tiene logo propio, usa el del sitio y se actualiza solo
   const enlaces = redes.map(r => `
       <a href="${r.url}" target="_blank" rel="noopener" aria-label="${escapeHtml(r.red)}">
           <i class="bi ${ICONO_RED[r.red] || ICONO_RED.otro}"></i>
@@ -311,7 +313,7 @@ export function renderFanbaseCard({ id, nombre, descripcion, logoUrl, redes = []
   return `
   <div class="col-lg-3 col-md-4 col-6" data-fanbase-id="${id || ''}">
       <div class="fanbase-card" data-bs-toggle="modal" data-bs-target="#modalFanbase-${id}">
-          <img src="${logo}" alt="Logo de ${escapeHtml(nombre)}" loading="lazy">
+          <img src="${logo}" class="${claseLogo}" alt="Logo de ${escapeHtml(nombre)}" loading="lazy">
           <h4>${escapeHtml(nombre)}</h4>
           ${ciudad ? `<span class="fanbase-ciudad"><i class="bi bi-geo-alt"></i> ${escapeHtml(ciudad)}</span>` : ""}
       </div>
@@ -324,7 +326,7 @@ export function renderFanbaseCard({ id, nombre, descripcion, logoUrl, redes = []
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
               </div>
               <div class="modal-body text-center">
-                  <img src="${logo}" alt="Logo de ${escapeHtml(nombre)}" class="mb-3" style="width:96px;height:96px;object-fit:cover;border-radius:50%;">
+                  <img src="${logo}" alt="Logo de ${escapeHtml(nombre)}" class="mb-3 ${claseLogo}" style="width:96px;height:96px;object-fit:cover;border-radius:50%;">
                   <p>${escapeHtml(descripcion)}</p>
                   <div class="social-links justify-content-center">${enlaces}</div>
               </div>
@@ -340,12 +342,13 @@ function fechaNoticiaTexto(fechaPublicacion) {
 
 /** Tarjeta de noticia para la grilla/listado. */
 export function renderNoticiaCard({ slug, titulo, resumen, imagenUrl, fechaPublicacion, destacada, base = "" } = {}) {
-  const img = imagenUrl || `${base}assets/img/AteezArgentinaLogo.png`;
+  const img = imagenUrl || logoDelSitio(base);
+  const claseImg = imagenUrl ? "" : ' class="logo-fallback"';
   return `
   <article class="col-lg-4 col-md-6 noticia-item">
       <a href="${base}Noticias/${slug}" class="noticia-card" data-slug="${slug}">
           ${destacada ? '<span class="noticia-destacada"><i class="bi bi-star-fill"></i> Destacada</span>' : ""}
-          <div class="noticia-imagen"><img src="${img}" alt="${escapeHtml(titulo)}" loading="lazy"></div>
+          <div class="noticia-imagen"><img src="${img}"${claseImg} alt="${escapeHtml(titulo)}" loading="lazy"></div>
           <div class="noticia-contenido">
               <span class="noticia-fecha">${fechaNoticiaTexto(fechaPublicacion)}</span>
               <h3>${escapeHtml(titulo)}</h3>
@@ -357,11 +360,12 @@ export function renderNoticiaCard({ slug, titulo, resumen, imagenUrl, fechaPubli
 
 /** Bloque grande de la noticia principal (ver Noticias/noticias.html). */
 export function renderNoticiaDestacado({ slug, titulo, resumen, imagenUrl, fechaPublicacion, base = "" } = {}) {
-  const img = imagenUrl || `${base}assets/img/AteezArgentinaLogo.png`;
+  const img = imagenUrl || logoDelSitio(base);
+  const claseImg = imagenUrl ? "" : ' class="logo-fallback"';
   return `
   <div class="col-lg-6">
       <a href="${base}Noticias/${slug}" class="noticia-destacado" data-slug="${slug}">
-          <div class="noticia-destacado-imagen"><img src="${img}" alt="${escapeHtml(titulo)}" loading="lazy"></div>
+          <div class="noticia-destacado-imagen"><img src="${img}"${claseImg} alt="${escapeHtml(titulo)}" loading="lazy"></div>
           <span class="noticia-destacado-tag"><i class="bi bi-star-fill"></i> Destacada</span>
           <h2>${escapeHtml(titulo)}</h2>
           <p>${escapeHtml(resumen || "")}</p>
@@ -372,11 +376,12 @@ export function renderNoticiaDestacado({ slug, titulo, resumen, imagenUrl, fecha
 
 /** Tarjeta chica (se usan varias juntas al lado de la destacada). */
 export function renderNoticiaMini({ slug, titulo, imagenUrl, fechaPublicacion, base = "" } = {}) {
-  const img = imagenUrl || `${base}assets/img/AteezArgentinaLogo.png`;
+  const img = imagenUrl || logoDelSitio(base);
+  const claseImg = imagenUrl ? "" : ' class="logo-fallback"';
   return `
   <div class="col-6">
       <a href="${base}Noticias/${slug}" class="noticia-mini" data-slug="${slug}">
-          <div class="noticia-mini-imagen"><img src="${img}" alt="${escapeHtml(titulo)}" loading="lazy"></div>
+          <div class="noticia-mini-imagen"><img src="${img}"${claseImg} alt="${escapeHtml(titulo)}" loading="lazy"></div>
           <h3>${escapeHtml(titulo)}</h3>
           <span class="noticia-mini-fecha">${fechaNoticiaTexto(fechaPublicacion)}</span>
       </a>
@@ -401,7 +406,17 @@ const ES_LINK_IMAGEN = (url = "") => /\.(jpe?g|png|gif|webp|avif)(\?.*)?$/i.test
  */
 export function renderContenidoCard({ id, titulo, descripcion, link = "", adjunto = "" } = {}) {
   let media = "";
-  if (adjunto && esLinkRedSocial(adjunto)) {
+  // YouTube: si el video está en "Imagen o publicación" se usa ese; si ese campo
+  // está vacío y el "Link" es de YouTube, se embebe el del link. (Antes un link de
+  // YouTube en "adjunto" se intentaba mostrar como imagen, fallaba y se ocultaba.)
+  const videoId = extraerIdYoutube(adjunto) || (!adjunto ? extraerIdYoutube(link) : null);
+  if (videoId) {
+    media = `<div class="contenido-media contenido-youtube">
+        <iframe src="https://www.youtube.com/embed/${videoId}" title="${escapeHtml(titulo)}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+      </div>`;
+  } else if (adjunto && esLinkRedSocial(adjunto)) {
     media = `<div class="contenido-media">${renderEmbedRedSocial(adjunto)}</div>`;
   } else if (adjunto) {
     media = `<div class="contenido-media"><img src="${adjunto}" alt="${escapeHtml(titulo)}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>`;

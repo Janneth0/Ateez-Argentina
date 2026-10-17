@@ -7,7 +7,7 @@ import { renderFooter, ICONO_RED } from "../assets/js/components.js";
 import {
   registrarConEmail, loginConEmail, loginConGoogle, logout, obtenerPerfil,
   escucharAuth, traducirErrorAuth, listarUsuarios, asignarRol, recuperarContrasena, actualizarMiFanbase,
-  actualizarPermisoColores
+  actualizarPermisoColores, asignarFanbase
 } from "../assets/js/auth.js";
 import { escucharPosts, crearPost, editarPost, eliminarPost, CATEGORIAS } from "../assets/js/posts.js";
 import {
@@ -25,6 +25,7 @@ import {
   REDES_SOCIALES_POR_DEFECTO
 } from "../assets/js/config-sitio.js";
 import { normalizarUrlImagen } from "../assets/js/imagenes.js";
+import { completarFanbaseEnContenido } from "../assets/js/fanbase-contenido.js";
 import { generarSitemapXml, descargarSitemap } from "../assets/js/sitemap.js";
 import { paises } from "../assets/js/paises.js";
 import { formatearFechaCorta, eventoVencido, eventoPorVencer, escapeHtml, extraerIdYoutube } from "../assets/js/util.js";
@@ -207,11 +208,21 @@ async function iniciarDashboard() {
   // solo si el admin se lo habilitó desde la pestaña Usuarios.
   const puedeColores = esAdmin || usuarioActual.puedeEditarColores === true;
 
-  document.getElementById("saludo-usuario").textContent =
-    `Hola, ${usuarioActual.nombreCompleto || usuarioActual.email} \u00b7 Rol: ${esAdmin ? "Administrador" : "Colaborador"}` +
-    (!esAdmin && puedeColores ? " \u00b7 Colores habilitados" : "");
+  // Para mostrar el nombre de mi fanbase en el saludo (si ya las cargó el selector del registro, no se pide de nuevo).
+  if (cacheFanbasesRegistro.length === 0) cacheFanbasesRegistro = await listarFanbases().catch(() => []);
+
+  // La sección Fanbases la ve el admin (todas) y el colaborador que pertenece a una fanbase
+  // (solo la suya, como "Mi sede"). Un fan independiente no la ve.
+  const tieneSede = !esAdmin && !!usuarioActual.fanbase;
+  const puedeVerFanbases = esAdmin || tieneSede;
+
+  pintarSaludo(esAdmin, puedeColores);
   document.querySelectorAll(".admin-only").forEach(el => { el.style.display = esAdmin ? "" : "none"; });
   document.querySelectorAll(".colores-only").forEach(el => { el.style.display = puedeColores ? "" : "none"; });
+  document.getElementById("tab-fanbases-item").style.display = puedeVerFanbases ? "" : "none";
+  document.getElementById("tab-fanbases-btn").textContent = esAdmin ? "Fanbases" : "Mi sede";
+  document.getElementById("fanbases-titulo").textContent = esAdmin ? "Fanbases / Sedes" : "Mi sede";
+  document.getElementById("fanbases-aviso-colab").style.display = esAdmin ? "none" : "";
 
   if (esAdmin) {
     try {
@@ -226,9 +237,9 @@ async function iniciarDashboard() {
   cargarNoticias();
   cargarContenido();
   if (puedeColores) cargarApariencia(esAdmin);
+  if (puedeVerFanbases) cargarFanbases();
   if (esAdmin) {
     cargarUsuarios();
-    cargarFanbases();
     cargarGaleria();
   }
 }
@@ -236,6 +247,64 @@ async function iniciarDashboard() {
 function nombreResponsable(uid) {
   const u = mapaUsuarios[uid];
   return u ? (u.nombreCompleto || u.email || "Sin nombre") : "Usuario desconocido";
+}
+
+// ------------------------------------------------------------
+// Permisos y visibilidad por fanbase
+//  - Admin: ve y toca todo.
+//  - Colaborador con fanbase: VE lo que cargó cualquier persona de su fanbase
+//    (solo lectura), pero solo EDITA/BORRA lo que cargó él mismo.
+//  - Colaborador independiente (sin fanbase): ve solo lo suyo.
+// Las reglas de Firestore hacen cumplir lo de editar/borrar del lado del servidor.
+// ------------------------------------------------------------
+function esAdminActual() { return usuarioActual?.rol === "admin"; }
+function miFanbase() { return usuarioActual?.fanbase || null; }
+
+function puedeTocar(item) {
+  return esAdminActual() || item.creadoPor === usuarioActual.uid;
+}
+
+function esVisibleEnPanel(item) {
+  if (esAdminActual() || item.creadoPor === usuarioActual.uid) return true;
+  return !!miFanbase() && item.fanbaseId === miFanbase();
+}
+
+/** Los colaboradores no pueden leer perfiles ajenos, así que el nombre viaja guardado en el propio item. */
+function nombreResponsableDe(item) {
+  const u = mapaUsuarios[item.creadoPor];
+  return u ? (u.nombreCompleto || u.email || "Sin nombre") : (item.creadoPorNombre || "Usuario desconocido");
+}
+
+function lineaResponsable(item) {
+  if (!esAdminActual() && item.creadoPor === usuarioActual.uid) return "";
+  return `<p class="responsable">Cargado por: ${escapeHtml(nombreResponsableDe(item))}</p>`;
+}
+
+function accionesItem(item) {
+  if (!puedeTocar(item)) {
+    return `<span class="solo-lectura" title="Lo cargó otra persona de tu fanbase: solo la puede editar quien lo cargó"><i class="bi bi-eye"></i> Solo lectura</span>`;
+  }
+  return `<button type="button" class="editar" title="Editar" data-id="${item.id}"><i class="bi bi-pencil"></i></button>
+                  <button type="button" class="eliminar" title="Eliminar" data-id="${item.id}"><i class="bi bi-trash"></i></button>`;
+}
+
+/** Datos del autor que se guardan en cada evento/noticia/contenido nuevo. */
+function datosDeAutor() {
+  return {
+    uid: usuarioActual.uid,
+    fanbaseId: miFanbase(),
+    autorNombre: usuarioActual.nombreCompleto || usuarioActual.email || ""
+  };
+}
+
+function pintarSaludo(esAdmin, puedeColores) {
+  const nombreFb = usuarioActual.fanbase
+    ? (cacheFanbasesRegistro.find(f => f.id === usuarioActual.fanbase)?.nombre || "fanbase eliminada")
+    : "";
+  document.getElementById("saludo-usuario").textContent =
+    `Hola, ${usuarioActual.nombreCompleto || usuarioActual.email} \u00b7 Rol: ${esAdmin ? "Administrador" : "Colaborador"}` +
+    ` \u00b7 ${nombreFb ? "Fanbase: " + nombreFb : "Fan independiente"}` +
+    (!esAdmin && puedeColores ? " \u00b7 Colores habilitados" : "");
 }
 
 // ==============================================================
@@ -256,7 +325,7 @@ function cargarPublicaciones() {
   desuscribir.posts = escucharPosts(
     (posts) => {
       cachePosts = posts;
-      const visibles = usuarioActual.rol === "admin" ? posts : posts.filter(p => p.creadoPor === usuarioActual.uid);
+      const visibles = posts.filter(esVisibleEnPanel);
 
       if (visibles.length === 0) {
         listaPublicacionesEl.innerHTML = `<p class="text-muted">Todavía no hay eventos cargados.</p>`;
@@ -269,11 +338,10 @@ function cargarPublicaciones() {
                   <h5><span class="badge-categoria">${etiquetaCategoria(p.categoria)}</span>${escapeHtml(p.titulo)}
                       ${vencido ? '<span class="badge-estado vencido">Inactivo</span>' : ''}</h5>
                   <p>${escapeHtml(p.descripcion)} \u00b7 ${formatearFechaCorta(p.fechaEvento)}</p>
-                  ${usuarioActual.rol === 'admin' ? `<p class="responsable">Cargado por: ${escapeHtml(nombreResponsable(p.creadoPor))}</p>` : ''}
+                  ${lineaResponsable(p)}
               </div>
               <div class="item-actions">
-                  <button type="button" class="editar" title="Editar" data-id="${p.id}"><i class="bi bi-pencil"></i></button>
-                  <button type="button" class="eliminar" title="Eliminar" data-id="${p.id}"><i class="bi bi-trash"></i></button>
+                  ${accionesItem(p)}
               </div>
           </div>`;
         }).join("");
@@ -338,7 +406,7 @@ formPublicacion.addEventListener("submit", async (e) => {
     fechaEvento: document.getElementById("pub-fecha").value
   };
   try {
-    if (id) await editarPost(id, datos); else await crearPost({ ...datos, uid: usuarioActual.uid });
+    if (id) await editarPost(id, datos); else await crearPost({ ...datos, ...datosDeAutor() });
     modalPublicacion.hide();
   } catch (err) {
     console.error(err);
@@ -384,7 +452,7 @@ function cargarNoticias() {
   desuscribir.noticias = escucharNoticias(
     (noticias) => {
       cacheNoticias = noticias;
-      const visibles = usuarioActual.rol === "admin" ? noticias : noticias.filter(n => n.creadoPor === usuarioActual.uid);
+      const visibles = noticias.filter(esVisibleEnPanel);
 
       if (visibles.length === 0) {
         listaNoticiasEl.innerHTML = `<p class="text-muted">Todavía no hay noticias cargadas.</p>`;
@@ -395,12 +463,11 @@ function cargarNoticias() {
             <div class="item-info">
                 <h5>${escapeHtml(n.titulo)}</h5>
                 <p>${escapeHtml(n.resumen || "")} \u00b7 ${formatearFechaCorta(n.fechaPublicacion)}</p>
-                ${usuarioActual.rol === 'admin' ? `<p class="responsable">Cargado por: ${escapeHtml(nombreResponsable(n.creadoPor))}</p>` : ''}
+                ${lineaResponsable(n)}
             </div>
             <div class="item-actions">
                 ${usuarioActual.rol === 'admin' ? `<button type="button" class="destacar ${n.destacada ? 'activa' : ''}" title="Destacar" data-id="${n.id}"><i class="bi ${n.destacada ? 'bi-star-fill' : 'bi-star'}"></i></button>` : ''}
-                <button type="button" class="editar" title="Editar" data-id="${n.id}"><i class="bi bi-pencil"></i></button>
-                <button type="button" class="eliminar" title="Eliminar" data-id="${n.id}"><i class="bi bi-trash"></i></button>
+                ${accionesItem(n)}
             </div>
         </div>`).join("");
     },
@@ -499,7 +566,7 @@ formNoticia.addEventListener("submit", async (e) => {
     if (id) {
       await editarNoticia(id, datos, titulo !== tituloOriginalEdicion);
     } else {
-      await crearNoticia({ ...datos, uid: usuarioActual.uid });
+      await crearNoticia({ ...datos, ...datosDeAutor() });
     }
     modalNoticia.hide();
   } catch (err) {
@@ -526,10 +593,10 @@ function cargarContenido() {
   desuscribir.contenido = escucharContenido(
     (items) => {
       cacheContenido = items;
-      const visibles = usuarioActual.rol === "admin" ? items : items.filter(c => c.creadoPor === usuarioActual.uid);
+      const visibles = items.filter(esVisibleEnPanel);
 
       if (visibles.length === 0) {
-        listaContenidoEl.innerHTML = `<p class="text-muted">${usuarioActual.rol === "admin" ? "Todavía no hay contenido cargado." : "Todavía no cargaste ningún contenido."}</p>`;
+        listaContenidoEl.innerHTML = `<p class="text-muted">Todavía no hay contenido cargado.</p>`;
         return;
       }
       listaContenidoEl.innerHTML = visibles.map(c => `
@@ -538,11 +605,10 @@ function cargarContenido() {
                 <h5><span class="badge-categoria">${etiquetaCategoriaContenido(c.categoria)}</span>${escapeHtml(c.titulo)}
                     ${c.destacado ? '<span class="badge-destacado"><i class="bi bi-star-fill"></i> Destacado</span>' : ''}</h5>
                 <p>${escapeHtml(c.descripcion)}</p>
-                ${usuarioActual.rol === 'admin' ? `<p class="responsable">Cargado por: ${escapeHtml(nombreResponsable(c.creadoPor))}</p>` : ''}
+                ${lineaResponsable(c)}
             </div>
             <div class="item-actions">
-                <button type="button" class="editar" title="Editar" data-id="${c.id}"><i class="bi bi-pencil"></i></button>
-                <button type="button" class="eliminar" title="Eliminar" data-id="${c.id}"><i class="bi bi-trash"></i></button>
+                ${accionesItem(c)}
             </div>
         </div>`).join("");
     },
@@ -619,7 +685,7 @@ formContenido.addEventListener("submit", async (e) => {
   }
 
   try {
-    if (id) await editarContenido(id, datos); else await crearContenido({ ...datos, uid: usuarioActual.uid });
+    if (id) await editarContenido(id, datos); else await crearContenido({ ...datos, ...datosDeAutor() });
     modalContenido.hide();
   } catch (err) {
     console.error(err);
@@ -629,7 +695,7 @@ formContenido.addEventListener("submit", async (e) => {
 });
 
 // ==============================================================
-// FANBASES (solo admin)
+// FANBASES: el admin maneja todas; un colaborador solo edita su sede
 // ==============================================================
 const listaFanbasesEl = document.getElementById("lista-fanbases");
 const modalFanbase = document.getElementById("modalFanbaseAdmin") ? new bootstrap.Modal(document.getElementById("modalFanbaseAdmin")) : null;
@@ -640,10 +706,14 @@ let cacheFanbases = [];
 
 function cargarFanbases() {
   desuscribir.fanbases = escucharFanbases(
-    (fanbases) => {
+    (todas) => {
+      cacheFanbasesRegistro = todas;
+      if (esAdminActual()) dibujarUsuarios(); // por si se creó/renombró/borró una fanbase
+      // El admin ve todas las fanbases; un colaborador solo la suya.
+      const fanbases = esAdminActual() ? todas : todas.filter(f => f.id === miFanbase());
       cacheFanbases = fanbases;
       if (fanbases.length === 0) {
-        listaFanbasesEl.innerHTML = `<p class="text-muted">Todavía no hay fanbases cargadas.</p>`;
+        listaFanbasesEl.innerHTML = `<p class="text-muted">${esAdminActual() ? "Todavía no hay fanbases cargadas." : "Tu sede ya no existe. Avisale a un admin para que te asigne otra."}</p>`;
         return;
       }
       listaFanbasesEl.innerHTML = fanbases.map(f => `
@@ -653,13 +723,21 @@ function cargarFanbases() {
                 <p>${escapeHtml(f.ciudad || "")}</p>
             </div>
             <div class="item-actions">
-                <button type="button" class="editar" title="Editar" data-id="${f.id}"><i class="bi bi-pencil"></i></button>
-                <button type="button" class="eliminar" title="Eliminar" data-id="${f.id}"><i class="bi bi-trash"></i></button>
+                ${accionesFanbase(f)}
             </div>
         </div>`).join("");
     },
     (err) => { listaFanbasesEl.innerHTML = `<p class="text-muted">No se pudieron cargar las fanbases: ${escapeHtml(err.message || String(err))}</p>`; console.error(err); }
   );
+}
+
+function accionesFanbase(f) {
+  const editar = `<button type="button" class="editar" title="Editar" data-id="${f.id}"><i class="bi bi-pencil"></i></button>`;
+  // Eliminar sedes es solo del admin (las reglas de Firestore también lo exigen).
+  const eliminar = esAdminActual()
+    ? `<button type="button" class="eliminar" title="Eliminar" data-id="${f.id}"><i class="bi bi-trash"></i></button>`
+    : "";
+  return editar + eliminar;
 }
 
 function filaRed(red = "instagram", url = "") {
@@ -680,6 +758,7 @@ document.getElementById("btn-agregar-red")?.addEventListener("click", () => rede
 document.getElementById("btn-nueva-fanbase")?.addEventListener("click", () => {
   document.getElementById("modalFanbaseTitulo").textContent = "Nueva fanbase";
   formFanbase.reset();
+  document.getElementById("fb-nombre").disabled = false;
   document.getElementById("fb-id").value = "";
   redesLista.innerHTML = "";
   redesLista.appendChild(filaRed());
@@ -696,6 +775,7 @@ listaFanbasesEl?.addEventListener("click", (e) => {
     document.getElementById("modalFanbaseTitulo").textContent = "Editar fanbase";
     document.getElementById("fb-id").value = f.id;
     document.getElementById("fb-nombre").value = f.nombre || "";
+    document.getElementById("fb-nombre").disabled = !esAdminActual(); // renombrar es solo del admin
     document.getElementById("fb-descripcion").value = f.descripcion || "";
     document.getElementById("fb-ciudad").value = f.ciudad || "";
     document.getElementById("fb-logo-url").value = f.logoUrl || "";
@@ -705,7 +785,7 @@ listaFanbasesEl?.addEventListener("click", (e) => {
     fanbaseError.style.display = "none";
     modalFanbase.show();
   }
-  if (btnEliminar) abrirConfirmarEliminar("fanbase", btnEliminar.dataset.id, () => eliminarFanbase(btnEliminar.dataset.id));
+  if (btnEliminar && esAdminActual()) abrirConfirmarEliminar("fanbase", btnEliminar.dataset.id, () => eliminarFanbase(btnEliminar.dataset.id));
 });
 
 document.getElementById("fb-logo-url")?.addEventListener("blur", (e) => {
@@ -729,6 +809,10 @@ formFanbase?.addEventListener("submit", async (e) => {
     redes
   };
   try {
+    if (!esAdminActual()) {
+      if (!id) throw new Error("Solo un admin puede crear fanbases.");
+      delete datos.nombre; // un colaborador no puede renombrar su sede
+    }
     if (id) await editarFanbase(id, datos); else await crearFanbase({ ...datos, uid: usuarioActual.uid });
     modalFanbase.hide();
   } catch (err) {
@@ -1149,23 +1233,43 @@ document.getElementById("btn-generar-sitemap")?.addEventListener("click", () => 
 // ==============================================================
 const listaUsuariosEl = document.getElementById("lista-usuarios");
 
+let cacheUsuarios = [];
+let usuariosCargados = false;
+
 async function cargarUsuarios() {
   try {
-    const usuarios = await listarUsuarios();
-    mapaUsuarios = Object.fromEntries(usuarios.map(u => [u.id, u]));
-    if (cacheFanbasesRegistro.length === 0) cacheFanbasesRegistro = await listarFanbases().catch(() => []);
-    const nombreFanbase = (id) => cacheFanbasesRegistro.find(f => f.id === id)?.nombre;
+    cacheUsuarios = await listarUsuarios();
+    mapaUsuarios = Object.fromEntries(cacheUsuarios.map(u => [u.id, u]));
+    cacheFanbasesRegistro = await listarFanbases().catch(() => cacheFanbasesRegistro);
+    usuariosCargados = true;
+    dibujarUsuarios();
+  } catch (err) {
+    console.error(err);
+    listaUsuariosEl.innerHTML = `<p class="text-muted">No se pudieron cargar los usuarios: ${escapeHtml(err.message || String(err))}</p>`;
+  }
+}
 
-    if (usuarios.length === 0) {
-      listaUsuariosEl.innerHTML = `<p class="text-muted">No hay usuarios registrados todavía.</p>`;
-      return;
-    }
-    listaUsuariosEl.innerHTML = usuarios.map(u => `
+/** <option>s de fanbase para el selector de cada usuario (incluye "Fan independiente"). */
+function opcionesFanbase(seleccionada) {
+  const existe = cacheFanbasesRegistro.some(f => f.id === seleccionada);
+  return `<option value="" ${!seleccionada ? "selected" : ""}>Fan independiente</option>` +
+    cacheFanbasesRegistro.map(f => `<option value="${f.id}" ${f.id === seleccionada ? "selected" : ""}>${escapeHtml(f.nombre)}</option>`).join("") +
+    (seleccionada && !existe ? `<option value="${escapeHtml(seleccionada)}" selected>Fanbase eliminada</option>` : "");
+}
+
+function dibujarUsuarios() {
+  if (!usuariosCargados) return;
+  const usuarios = cacheUsuarios;
+
+  if (usuarios.length === 0) {
+    listaUsuariosEl.innerHTML = `<p class="text-muted">No hay usuarios registrados todavía.</p>`;
+    return;
+  }
+  listaUsuariosEl.innerHTML = usuarios.map(u => `
       <div class="admin-list-item" data-uid="${u.id}">
           <div class="item-info">
               <h5>${escapeHtml(u.nombreCompleto || u.email || "Sin nombre")}</h5>
-              <p>${escapeHtml(u.email || "")}${u.rol ? "" : " · Pendiente de rol"}
-                 ${u.fanbase ? ` · <span class="badge-categoria">${escapeHtml(nombreFanbase(u.fanbase) || "Fanbase eliminada")}</span>` : " · Fan independiente"}</p>
+              <p>${escapeHtml(u.email || "")}${u.rol ? "" : " · Pendiente de rol"}</p>
           </div>
           <div class="item-actions">
               ${u.rol === "colaborador" ? `
@@ -1173,17 +1277,16 @@ async function cargarUsuarios() {
                   <input class="form-check-input permiso-colores-check" type="checkbox" role="switch" id="pc-${u.id}" data-uid="${u.id}" ${u.puedeEditarColores ? "checked" : ""}>
                   <label class="form-check-label" for="pc-${u.id}">Puede editar colores</label>
               </div>` : ""}
-              <select class="form-select form-select-sm rol-select" data-uid="${u.id}">
+              <select class="form-select form-select-sm fanbase-select" data-uid="${u.id}" title="Fanbase a la que pertenece esta persona" aria-label="Fanbase">
+                  ${opcionesFanbase(u.fanbase)}
+              </select>
+              <select class="form-select form-select-sm rol-select" data-uid="${u.id}" aria-label="Rol">
                   <option value="" ${!u.rol ? "selected" : ""}>Sin rol</option>
                   <option value="colaborador" ${u.rol === "colaborador" ? "selected" : ""}>Colaborador</option>
                   <option value="admin" ${u.rol === "admin" ? "selected" : ""}>Admin</option>
               </select>
           </div>
       </div>`).join("");
-  } catch (err) {
-    console.error(err);
-    listaUsuariosEl.innerHTML = `<p class="text-muted">No se pudieron cargar los usuarios: ${escapeHtml(err.message || String(err))}</p>`;
-  }
 }
 
 listaUsuariosEl.addEventListener("change", async (e) => {
@@ -1201,10 +1304,47 @@ listaUsuariosEl.addEventListener("change", async (e) => {
     return;
   }
 
+  const selectFanbase = e.target.closest(".fanbase-select");
+  if (selectFanbase) {
+    const uid = selectFanbase.dataset.uid;
+    const anterior = mapaUsuarios[uid]?.fanbase || "";
+    const nueva = selectFanbase.value || null;
+    try {
+      await asignarFanbase(uid, nueva);
+      if (mapaUsuarios[uid]) mapaUsuarios[uid].fanbase = nueva; // es el mismo objeto que está en cacheUsuarios
+      if (uid === usuarioActual.uid) usuarioActual.fanbase = nueva;
+    } catch (err) {
+      console.error(err);
+      selectFanbase.value = anterior; // vuelve al valor anterior
+      alert("No se pudo cambiar la fanbase. Revisá que las reglas de Firestore estén publicadas. " + (err.message || err));
+    }
+    return;
+  }
+
   const select = e.target.closest(".rol-select");
   if (!select) return;
   try {
     await asignarRol(select.dataset.uid, select.value || null);
     cargarUsuarios(); // se vuelve a dibujar: el interruptor de colores solo aplica a colaboradores
   } catch (err) { console.error(err); alert("No se pudo actualizar el rol. Revisá los permisos en Firestore."); }
+});
+
+// Herramienta de uso único: le pone fanbase y nombre del autor a lo cargado antes de esta función.
+document.getElementById("btn-completar-fanbase")?.addEventListener("click", async (e) => {
+  const boton = e.currentTarget;
+  const resultadoEl = document.getElementById("completar-fanbase-resultado");
+  resultadoEl.style.display = "none";
+  boton.disabled = true;
+  try {
+    const { revisados, actualizados } = await completarFanbaseEnContenido(mapaUsuarios);
+    resultadoEl.className = "admin-alert admin-alert-ok";
+    resultadoEl.textContent = `Listo: se revisaron ${revisados} items y se actualizaron ${actualizados}.`;
+  } catch (err) {
+    console.error(err);
+    resultadoEl.className = "admin-alert admin-alert-error";
+    resultadoEl.textContent = `No se pudo completar: ${err.message || err}`;
+  } finally {
+    resultadoEl.style.display = "block";
+    boton.disabled = false;
+  }
 });

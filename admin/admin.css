@@ -272,6 +272,30 @@
   max-width: 170px;
 }
 
+/* --- selector de fanbase de cada usuario (pestaña Usuarios) --- */
+.admin-list-item select.fanbase-select {
+  max-width: 200px;
+}
+
+.admin-list-item .item-actions:has(.fanbase-select) {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* --- item cargado por otra persona de la misma fanbase: se ve, pero no se toca --- */
+.admin-list-item .item-actions .solo-lectura {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  opacity: .65;
+  white-space: nowrap;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 75%);
+}
+
 .admin-page .modal-content {
   background: var(--surface-color);
   color: var(--default-color);

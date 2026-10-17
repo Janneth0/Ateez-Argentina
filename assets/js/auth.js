@@ -128,6 +128,17 @@ export async function actualizarPermisoColores(uid, permitido) {
 }
 
 /**
+ * Cambia la fanbase a la que pertenece CUALQUIER usuario. Solo un admin puede
+ * hacerlo (las reglas de Firestore impiden que un colaborador/admin-no se la
+ * cambie a sí mismo una vez que ya tiene rol: ver firestore.rules).
+ * fanbase = id del documento en "fanbases", o null para "fan independiente".
+ */
+export async function asignarFanbase(uid, fanbase) {
+  const ref = doc(db, USUARIOS_COL, uid);
+  return updateDoc(ref, { fanbase: fanbase || null });
+}
+
+/**
  * Actualiza la fanbase del propio usuario logueado. Se usa desde la
  * pantalla de "esperando rol" para quienes entraron con Google (no pasan
  * por el formulario de registro y por eso no la cargaron todavía).

@@ -12,6 +12,8 @@
 //   categoria: "cumpleanos" | "comeback" | "especial" | "otro",
 //   fechaEvento: timestamp, // puede faltar en documentos viejos, ver nota abajo
 //   creadoPor: uid,
+//   creadoPorNombre: string, // nombre de quien lo cargó (para que su equipo lo vea en el panel)
+//   fanbaseId: string|null,  // fanbase de quien lo cargó (null = fan independiente)
 //   creadoEn: timestamp,
 //   actualizadoEn: timestamp
 // }
@@ -69,7 +71,7 @@ export async function listarPosts() {
   return ordenarPosts(snap.docs.map(d => ({ id: d.id, ...d.data() })));
 }
 
-export async function crearPost({ titulo, descripcion, link, categoria, uid, fechaEvento }) {
+export async function crearPost({ titulo, descripcion, link, categoria, uid, fechaEvento, fanbaseId, autorNombre }) {
   return addDoc(collection(db, POSTS_COL), {
     titulo,
     descripcion,
@@ -77,6 +79,8 @@ export async function crearPost({ titulo, descripcion, link, categoria, uid, fec
     categoria: categoria || "otro",
     fechaEvento: Timestamp.fromDate(new Date(fechaEvento)),
     creadoPor: uid,
+    creadoPorNombre: autorNombre || "",
+    fanbaseId: fanbaseId || null,
     creadoEn: serverTimestamp(),
     actualizadoEn: serverTimestamp()
   });

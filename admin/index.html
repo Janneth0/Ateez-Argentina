@@ -9,6 +9,7 @@
 
     <!-- Favicons -->
     <link href="../assets/img/AteezArgentinaLogo.png" rel="icon" class="logo">
+    <link href="../assets/img/AteezArgentinaLogo.png" rel="apple-touch-icon">
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -187,8 +188,8 @@
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-contenido"
                             type="button" role="tab">Contenido</button>
                     </li>
-                    <li class="nav-item admin-only" role="presentation" style="display:none;">
-                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-fanbases"
+                    <li class="nav-item" id="tab-fanbases-item" role="presentation" style="display:none;">
+                        <button class="nav-link" id="tab-fanbases-btn" data-bs-toggle="tab" data-bs-target="#panel-fanbases"
                             type="button" role="tab">Fanbases</button>
                     </li>
                     <li class="nav-item admin-only" role="presentation" style="display:none;">
@@ -250,14 +251,18 @@
                         </div>
                     </div>
 
-                    <!-- FANBASES (solo admin) -->
+                    <!-- FANBASES: el admin ve y maneja todas; un colaborador solo ve y edita la suya ("Mi sede") -->
                     <div class="tab-pane fade" id="panel-fanbases" role="tabpanel">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="m-0">Fanbases / Sedes</h4>
-                            <button id="btn-nueva-fanbase" class="btn btn-primary">
+                            <h4 class="m-0" id="fanbases-titulo">Fanbases / Sedes</h4>
+                            <button id="btn-nueva-fanbase" class="btn btn-primary admin-only" style="display:none;">
                                 <i class="bi bi-plus-lg"></i> Nueva fanbase
                             </button>
                         </div>
+                        <p id="fanbases-aviso-colab" class="text-muted1" style="display:none;">
+                            Esta es la sede a la que pertenecés. Podés actualizar su descripción, logo, ciudad y redes
+                            sociales (lo que se ve en la portada). El nombre y el alta o baja de sedes los maneja un admin.
+                        </p>
                         <div id="lista-fanbases" class="admin-list">
                             <p class="text-muted1">Cargando fanbases...</p>
                         </div>
@@ -452,7 +457,12 @@
                     <!-- USUARIOS (solo admin) -->
                     <div class="tab-pane fade" id="panel-usuarios" role="tabpanel">
                         <h4 class="mb-3">Usuarios registrados</h4>
-                        <p class="text-muted1">Asigná el rol de cada persona para que pueda usar el panel.</p>
+                        <p class="text-muted1">Asigná el rol y la fanbase de cada persona. Los colaboradores con fanbase ven en su panel lo que cargó el resto de su sede y pueden editar los datos de su sede; los fans independientes no ven la sección de fanbases.</p>
+                        <div class="admin-alert admin-alert-warning d-flex flex-wrap align-items-center justify-content-between gap-2" style="max-width:none;">
+                            <span><i class="bi bi-tools"></i> <strong>Una sola vez:</strong> eventos, noticias y contenido cargados antes de esta actualización no tienen fanbase asignada, así que sus compañeros de sede no los ven.</span>
+                            <button type="button" id="btn-completar-fanbase" class="btn btn-sm btn-outline-primary">Asignar fanbase a lo ya cargado</button>
+                        </div>
+                        <div id="completar-fanbase-resultado" class="admin-alert admin-alert-ok" style="display:none;"></div>
                         <div id="lista-usuarios" class="admin-list">
                             <p class="text-muted1">Cargando usuarios...</p>
                         </div>
@@ -636,8 +646,8 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="cont-adjunto">Imagen o publicación (opcional)</label>
-                            <input type="url" class="form-control" id="cont-adjunto" placeholder="Imagen, link de Drive, o post de Instagram/TikTok/Twitter/Facebook">
-                            <div class="form-text">Si pegás un post de una red social, se va a embeber igual que en los eventos. Si es un link de Drive, se convierte solo en imagen.</div>
+                            <input type="url" class="form-control" id="cont-adjunto" placeholder="Imagen, link de Drive, video de YouTube, o post de Instagram/TikTok/Twitter/Facebook">
+                            <div class="form-text">Si pegás un <strong>video de YouTube</strong> o un post de una red social, se va a embeber en la tarjeta. Si es un link de Drive, se convierte solo en imagen. Si dejás esto vacío y el «Link» de arriba es de YouTube, se embebe ese video.</div>
                         </div>
                         <div class="mb-3 admin-only" id="cont-destacado-wrap" style="display:none;">
                             <div class="form-check form-switch">

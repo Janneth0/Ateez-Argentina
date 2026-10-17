@@ -80,10 +80,24 @@ export const CONFIG_POR_DEFECTO = {
   mapa2Url: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d205.3607881219956!2d-58.44808776228413!3d-34.55931231975737!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bcb5001057febb%3A0x9c0919b207b923a!2sMURAL%20ARGENTINY!5e0!3m2!1ses-419!2sar!4v1755992312929!5m2!1ses-419!2sar"
 };
 
+// Último logo conocido (tal cual está guardado, sin resolver contra la ruta de
+// la página). Lo usan las tarjetas como imagen de respaldo cuando un item no
+// trae su propia imagen, así el logo que elige el admin se ve en TODO el sitio.
+let logoActual = CONFIG_POR_DEFECTO.logoUrl;
+function recordarLogo(config) {
+  if (config && config.logoUrl) logoActual = config.logoUrl;
+  return config;
+}
+
+/** Logo actual del sitio, ya resuelto para la página (base = "" o "../"). */
+export function logoDelSitio(base = "") {
+  return conLogoResuelto({ logoUrl: logoActual }, base).logoUrl;
+}
+
 export async function obtenerConfigSitio() {
   try {
     const snap = await getDoc(REF());
-    return snap.exists() ? { ...CONFIG_POR_DEFECTO, ...snap.data() } : CONFIG_POR_DEFECTO;
+    return recordarLogo(snap.exists() ? { ...CONFIG_POR_DEFECTO, ...snap.data() } : CONFIG_POR_DEFECTO);
   } catch (err) {
     console.warn("No se pudo leer la configuración del sitio, se usan los valores por defecto:", err);
     return CONFIG_POR_DEFECTO;
@@ -92,7 +106,7 @@ export async function obtenerConfigSitio() {
 
 export function escucharConfigSitio(callback) {
   return onSnapshot(REF(), (snap) => {
-    callback(snap.exists() ? { ...CONFIG_POR_DEFECTO, ...snap.data() } : CONFIG_POR_DEFECTO);
+    callback(recordarLogo(snap.exists() ? { ...CONFIG_POR_DEFECTO, ...snap.data() } : CONFIG_POR_DEFECTO));
   }, () => callback(CONFIG_POR_DEFECTO));
 }
 
@@ -158,7 +172,51 @@ export function aplicarTemaEnPagina(config) {
 
   document.body?.classList.toggle("tema-claro", config.modo === "claro");
 
-  document.querySelectorAll(".site-logo-img").forEach(img => {
-    if (config.logoUrl) img.src = config.logoUrl;
+  aplicarIdentidadEnPagina(config);
+}
+
+// ------------------------------------------------------------
+// IDENTIDAD DEL SITIO: el logo que carga el admin se usa en
+//  - el logo del header (.site-logo-img)
+//  - el ícono de la pestaña del navegador (favicon) y el ícono que se
+//    guarda al "agregar a pantalla de inicio" (apple-touch-icon)
+//  - la imagen de respaldo de tarjetas sin foto (.logo-fallback)
+//  - el color de la barra del navegador en el celular (theme-color)
+// ------------------------------------------------------------
+let ultimoIcono = null;
+
+function fijarIconosDePagina(url) {
+  if (!url || url === ultimoIcono) return;
+  ultimoIcono = url;
+  document.head.querySelectorAll('link[rel~="icon"], link[rel="apple-touch-icon"]').forEach(l => l.remove());
+  ["icon", "apple-touch-icon"].forEach(rel => {
+    const link = document.createElement("link");
+    link.rel = rel;
+    link.href = url;
+    document.head.appendChild(link);
   });
+}
+
+function fijarColorDelNavegador(color) {
+  if (!color) return;
+  let meta = document.head.querySelector('meta[name="theme-color"]');
+  if (!meta) {
+    meta = document.createElement("meta");
+    meta.name = "theme-color";
+    document.head.appendChild(meta);
+  }
+  meta.content = color;
+}
+
+export function aplicarIdentidadEnPagina(config) {
+  const logo = config.logoUrl;
+  if (logo) {
+    document.querySelectorAll(".site-logo-img, .logo-fallback").forEach(img => { img.src = logo; });
+    // Mientras el logo sea el de fábrica, los <link> estáticos de cada HTML ya
+    // apuntan a él y no hace falta tocarlos. Si el admin cambia el logo (o vuelve
+    // al original después de haberlo cambiado), se reemplazan los íconos.
+    const esElDeFabrica = logo.endsWith(CONFIG_POR_DEFECTO.logoUrl);
+    if (!esElDeFabrica || ultimoIcono) fijarIconosDePagina(logo);
+  }
+  fijarColorDelNavegador(config.fondoHF);
 }

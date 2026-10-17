@@ -18,6 +18,8 @@
 //   destacado: boolean,   // solo admin: si es un video de YouTube, se muestra
 //                         // arriba de todo en contenido.html (máximo 2)
 //   creadoPor: uid,
+//   creadoPorNombre: string, // nombre de quien lo cargó (para que su equipo lo vea en el panel)
+//   fanbaseId: string|null,  // fanbase de quien lo cargó (null = fan independiente)
 //   creadoEn: timestamp,
 //   actualizadoEn: timestamp
 // }
@@ -65,7 +67,7 @@ export function escucharContenido(callback, onError) {
   );
 }
 
-export async function crearContenido({ titulo, descripcion, link, adjunto, categoria, destacado, uid }) {
+export async function crearContenido({ titulo, descripcion, link, adjunto, categoria, destacado, uid, fanbaseId, autorNombre }) {
   return addDoc(collection(db, COL), {
     titulo,
     descripcion,
@@ -74,6 +76,8 @@ export async function crearContenido({ titulo, descripcion, link, adjunto, categ
     categoria: categoria || "otro",
     destacado: !!destacado,
     creadoPor: uid,
+    creadoPorNombre: autorNombre || "",
+    fanbaseId: fanbaseId || null,
     creadoEn: serverTimestamp(),
     actualizadoEn: serverTimestamp()
   });

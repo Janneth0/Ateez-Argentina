@@ -22,6 +22,7 @@
 import { escucharNoticias } from "../assets/js/noticias.js";
 import { renderNoticiaCard, renderNoticiaDestacado, renderNoticiaMini, escapeHtml } from "../assets/js/components.js";
 import { formatearFecha } from "../assets/js/util.js";
+import { logoDelSitio } from "../assets/js/config-sitio.js";
 
 let todasLasNoticias = [];
 let listaLista = false;
@@ -113,7 +114,7 @@ function renderDetalle(slug) {
 
   document.getElementById("detalle-titulo").textContent = noticia.titulo;
   document.getElementById("detalle-fecha").textContent = formatearFecha(noticia.fechaPublicacion);
-  document.getElementById("detalle-imagen").src = noticia.imagenUrl || "../assets/img/AteezArgentinaLogo.png";
+  document.getElementById("detalle-imagen").src = noticia.imagenUrl || logoDelSitio("../");
   document.getElementById("detalle-imagen").alt = noticia.titulo;
   document.getElementById("detalle-contenido").innerHTML = noticia.contenidoHtml || "";
   document.getElementById("detalle-destacada").style.display = noticia.destacada ? "inline-flex" : "none";
@@ -123,7 +124,7 @@ function renderDetalle(slug) {
   const asideEl = document.getElementById("aside-recomendadas");
   asideEl.innerHTML = recomendadas.map(n => `
     <a href="./${n.slug}" data-slug="${n.slug}" class="aside-noticia">
-        <img src="${n.imagenUrl || '../assets/img/AteezArgentinaLogo.png'}" alt="${escapeHtml(n.titulo)}" loading="lazy">
+        <img src="${n.imagenUrl || logoDelSitio('../')}" alt="${escapeHtml(n.titulo)}" loading="lazy">
         <div>
             <span>${formatearFecha(n.fechaPublicacion)}</span>
             <h6>${escapeHtml(n.titulo)}</h6>
@@ -159,7 +160,7 @@ function actualizarSeo(noticia) {
     "publisher": {
       "@type": "Organization",
       "name": "ATEEZ Argentina",
-      "logo": { "@type": "ImageObject", "url": "https://ateezargentina.com.ar/assets/img/AteezArgentinaLogo.png" }
+      "logo": { "@type": "ImageObject", "url": new URL(logoDelSitio("../"), window.location.href).href }
     },
     "mainEntityOfPage": { "@type": "WebPage", "@id": url }
   };
@@ -198,7 +199,9 @@ function enrutar() {
   const ultima = partes[partes.length - 1];
   const esArchivoIndex = !ultima || ultima === "noticias.html";
   if (!esArchivoIndex) {
-    renderDetalle(ultima);
+    // La página pre-generada para Google es Noticias/<slug>.html: si alguien la abre
+    // con la extensión, igual se trata como la noticia <slug>.
+    renderDetalle(ultima.replace(/\.html$/i, ""));
   } else {
     mostrarListado();
   }
