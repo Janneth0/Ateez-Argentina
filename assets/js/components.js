@@ -396,6 +396,22 @@ export function renderGaleriaItem({ imagenUrl, descripcion = "" } = {}) {
   </a>`;
 }
 
+// Al tocar la miniatura de un video de YouTube, se reemplaza por el reproductor real
+// (con reproducción automática, porque la persona acaba de tocar "play").
+if (typeof document !== "undefined") {
+  document.addEventListener("click", (e) => {
+    const fachada = e.target.closest?.(".yt-facade");
+    if (!fachada) return;
+    const iframe = document.createElement("iframe");
+    iframe.src = `https://www.youtube.com/embed/${fachada.dataset.videoId}?autoplay=1&rel=0`;
+    iframe.title = fachada.dataset.titulo || "Video de YouTube";
+    iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    iframe.referrerPolicy = "strict-origin-when-cross-origin";
+    iframe.allowFullscreen = true;
+    fachada.replaceWith(iframe);
+  });
+}
+
 const ES_LINK_IMAGEN = (url = "") => /\.(jpe?g|png|gif|webp|avif)(\?.*)?$/i.test(url) || /drive\.google\.com\/thumbnail/i.test(url);
 
 /**
@@ -411,10 +427,14 @@ export function renderContenidoCard({ id, titulo, descripcion, link = "", adjunt
   // YouTube en "adjunto" se intentaba mostrar como imagen, fallaba y se ocultaba.)
   const videoId = extraerIdYoutube(adjunto) || (!adjunto ? extraerIdYoutube(link) : null);
   if (videoId) {
+    // "Fachada": se muestra solo la miniatura y un botón de play. El reproductor de
+    // YouTube (que es pesado) se carga recién cuando la persona toca el video, así
+    // una grilla con muchos videos no hace lenta la página, sobre todo en celular.
     media = `<div class="contenido-media contenido-youtube">
-        <iframe src="https://www.youtube.com/embed/${videoId}" title="${escapeHtml(titulo)}"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen loading="lazy"></iframe>
+        <button type="button" class="yt-facade" data-video-id="${videoId}" data-titulo="${escapeHtml(titulo)}" aria-label="Reproducir: ${escapeHtml(titulo)}">
+            <img src="https://i.ytimg.com/vi/${videoId}/hqdefault.jpg" alt="" loading="lazy">
+            <i class="bi bi-play-circle-fill yt-play" aria-hidden="true"></i>
+        </button>
       </div>`;
   } else if (adjunto && esLinkRedSocial(adjunto)) {
     media = `<div class="contenido-media">${renderEmbedRedSocial(adjunto)}</div>`;
