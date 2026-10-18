@@ -823,12 +823,15 @@
   font-size: 10px;
 }
 
+/* Lápiz para editar la descripción (a la izquierda del tacho) */
+.admin-gallery-grid .foto-item button.editar-foto { right: 42px; }
+
 /* Admin: selector para asignar una foto a una fanbase */
 .admin-gallery-grid .foto-item .foto-fanbase {
   position: absolute;
   top: 6px;
   left: 6px;
-  max-width: calc(100% - 50px);
+  max-width: calc(100% - 88px);
   padding: 2px 4px;
   font-size: 11px;
   border: none;

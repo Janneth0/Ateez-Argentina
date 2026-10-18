@@ -19,7 +19,7 @@ import {
 import {
   escucharFanbases, crearFanbase, editarFanbase, eliminarFanbase, listarFanbases, REDES_DISPONIBLES
 } from "../assets/js/fanbases.js";
-import { escucharGaleria, agregarFotoGaleria, eliminarFotoGaleria, asignarFanbaseFoto } from "../assets/js/galeria.js";
+import { escucharGaleria, agregarFotoGaleria, eliminarFotoGaleria, asignarFanbaseFoto, editarDescripcionFoto } from "../assets/js/galeria.js";
 import {
   PALETAS_PREDEFINIDAS, obtenerConfigSitio, actualizarConfigSitio, aplicarTemaEnElemento, conLogoResuelto,
   REDES_SOCIALES_POR_DEFECTO
@@ -901,10 +901,13 @@ const modalFoto = document.getElementById("modalFoto") ? new bootstrap.Modal(doc
 const formFoto = document.getElementById("form-foto");
 const fotoError = document.getElementById("foto-error");
 
+let cacheGaleria = [];
+
 function cargarGaleria() {
   if (!listaGaleriaEl) return;
   desuscribir.galeria = escucharGaleria(
     (fotos) => {
+      cacheGaleria = fotos;
       const visibles = fotos.filter(esVisibleEnPanel);
       if (visibles.length === 0) {
         listaGaleriaEl.innerHTML = `<p class="text-muted">${esAdminActual() ? "Todavía no hay fotos en la galería." : "Todavía no hay fotos tuyas ni de tu fanbase."}</p>`;
@@ -913,7 +916,8 @@ function cargarGaleria() {
       listaGaleriaEl.innerHTML = visibles.map(f => `
         <div class="foto-item" data-id="${f.id}">
             <img src="${escapeHtml(f.imagenUrl)}" alt="${escapeHtml(f.descripcion || "")}" loading="lazy">
-            ${puedeTocar(f) ? `<button type="button" class="eliminar-foto" data-id="${f.id}" title="Eliminar"><i class="bi bi-trash"></i></button>` : ""}
+            ${puedeTocar(f) ? `<button type="button" class="eliminar-foto" data-id="${f.id}" title="Eliminar"><i class="bi bi-trash"></i></button>
+            <button type="button" class="editar-foto" data-id="${f.id}" title="Editar descripción"><i class="bi bi-pencil"></i></button>` : ""}
             ${esAdminActual() ? `<select class="foto-fanbase" data-id="${f.id}" title="Asignar esta foto a una fanbase" aria-label="Fanbase de la foto">${opcionesFanbase(f.fanbaseId)}</select>` : ""}
             <div class="foto-info">
                 ${f.descripcion ? `<span class="foto-desc">${escapeHtml(f.descripcion)}</span>` : ""}
@@ -931,7 +935,21 @@ document.getElementById("btn-nueva-foto")?.addEventListener("click", () => {
   modalFoto.show();
 });
 
-listaGaleriaEl?.addEventListener("click", (e) => {
+listaGaleriaEl?.addEventListener("click", async (e) => {
+  const btnEditar = e.target.closest(".editar-foto");
+  if (btnEditar) {
+    const foto = cacheGaleria.find(f => f.id === btnEditar.dataset.id);
+    if (!foto || !puedeTocar(foto)) return;
+    const nueva = window.prompt("Descripción de la foto (podés dejarla vacía):", foto.descripcion || "");
+    if (nueva === null || nueva.trim() === (foto.descripcion || "")) return; // canceló o no cambió nada
+    try {
+      await editarDescripcionFoto(foto.id, nueva);
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo guardar la descripción: " + (err.message || err));
+    }
+    return;
+  }
   const btn = e.target.closest(".eliminar-foto");
   if (!btn) return;
   abrirConfirmarEliminar("foto", btn.dataset.id, () => eliminarFotoGaleria(btn.dataset.id));

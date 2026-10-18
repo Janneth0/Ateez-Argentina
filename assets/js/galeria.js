@@ -45,3 +45,8 @@ export async function eliminarFotoGaleria(id) {
 export async function asignarFanbaseFoto(id, fanbaseId) {
   return updateDoc(doc(db, COL, id), { fanbaseId: fanbaseId || null });
 }
+
+/** Cambia la descripción de una foto (admin, o el colaborador que la subió). */
+export async function editarDescripcionFoto(id, descripcion) {
+  return updateDoc(doc(db, COL, id), { descripcion: (descripcion || "").trim() });
+}
