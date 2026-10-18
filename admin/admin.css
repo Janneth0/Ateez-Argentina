@@ -777,3 +777,23 @@
 .form-text {
   color: #a0aec0; /* Un gris claro o blanco (#ffffff) para que contraste bien */
 }
+
+/* --- pestaña "Comeback y metas" --- */
+.cb-seccion { background: var(--surface-color); border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.cb-seccion h5 { margin: 0 0 12px; }
+.cb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 10px; }
+.cb-grid label, .cb-seccion > label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.cb-check { flex-direction: row !important; align-items: center; gap: 8px !important; }
+.cb-fila { display: grid; grid-template-columns: 170px 1fr 1fr 1fr auto; gap: 8px; margin-bottom: 8px; align-items: center; }
+.cb-fila .quitar-red { justify-self: end; }
+.cb-meta { border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%); border-left: 4px solid var(--accent-color); border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+.cb-meta-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.cb-barra { background: color-mix(in srgb, var(--default-color), transparent 94%); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+.cb-barra .cb-grid { margin-bottom: 8px; }
+/* Campos que solo aplican a ciertos casos */
+.cb-fila:not([data-plat="otro"]) .solo-otro, .cb-meta:not([data-plat="otro"]) .solo-otro { display: none; }
+.cb-fila:not([data-plat="otro"]) { grid-template-columns: 170px 1fr 1fr auto; }
+.cb-meta:not([data-plat="youtube"]) .solo-yt { display: none; }
+.cb-barra[data-tipo="puesto"] .solo-cantidad, .cb-barra[data-tipo="puesto"] .solo-yt { display: none !important; }
+.cb-barra[data-tipo="cantidad"] .solo-puesto { display: none; }
+@media (max-width: 768px) { .cb-fila, .cb-fila:not([data-plat="otro"]) { grid-template-columns: 1fr; } .cb-fila .quitar-red { justify-self: start; } }

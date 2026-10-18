@@ -1,70 +1,71 @@
-/* Estilos Base / Dark Mode Theme ATINY */
-:root {
-    --bg-color: #0b0b0e;
-    --card-bg: #16161a;
-    --accent-color: #e6005c;
-    --accent-gradient: linear-gradient(90deg, #ff0055, #ff5500);
-    --text-color: #ffffff;
-    --text-muted: #a0a0ab;
-    --btn-spotify: #1db954;
-    --btn-youtube: #ff0000;
-    --btn-shazam: #0088ff;
+/* ============================================================
+   METAS / COMEBACK - usa SOLO las variables del tema del admin:
+   --background-color, --surface-color, --accent-color,
+   --default-color, --heading-color, --contrast-color
+   Así cambia con la paleta (oscura o clara) elegida en el panel.
+   ============================================================ */
+.metas-page {
+  --m-line: color-mix(in srgb, var(--default-color), transparent 85%);
+  --m-soft: color-mix(in srgb, var(--surface-color), var(--default-color) 7%);
+  --m-muted: color-mix(in srgb, var(--default-color), transparent 35%);
+  --m-grad: linear-gradient(90deg, var(--accent-color), color-mix(in srgb, var(--accent-color), #fff 35%));
 }
 
-/* body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-    } */
+/* ---------- Hero + contador ---------- */
+.cb-hero {
+  max-width: 720px; margin: 0 auto 28px; padding: 28px 20px; text-align: center;
+  background: var(--surface-color); border: 1px solid var(--m-line); border-radius: 16px;
+}
+.cb-hero .subtitle { color: var(--accent-color); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: .85rem; }
+.cb-hero h2 { color: var(--heading-color); margin: 6px 0 4px; }
+.cb-date { color: var(--m-muted); margin-bottom: 18px; }
+.cb-label { color: var(--default-color); font-weight: 600; margin-bottom: 12px; }
+.cb-boxes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 480px; margin: 0 auto; }
+.cb-box { background: var(--m-soft); border: 1px solid var(--m-line); border-radius: 12px; padding: 14px 4px; }
+.cb-box b { display: block; font-size: clamp(1.5rem, 6vw, 2.2rem); line-height: 1.1; color: var(--accent-color); font-variant-numeric: tabular-nums; }
+.cb-box small { color: var(--m-muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; }
+.cb-msg { margin: 14px 0 0; color: var(--m-muted); }
 
-/* .container {
-      max-width: 800px;
-      margin: 0 auto;
-    } */
+/* ---------- Resumen ---------- */
+.metas-resumen { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: center; margin-bottom: 20px; font-size: .9rem; color: var(--m-muted); }
+.metas-resumen strong { color: var(--accent-color); }
+.metas-resumen i { color: var(--accent-color); margin-right: 4px; }
 
-/* Estilos Header y Countdown */
-/* .header-card {
-      background: var(--card-bg);
-      border: 1px solid #23232a;
-      border-radius: 16px;
-      padding: 24px;
-      text-align: center;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    } */
+/* ---------- Grilla de metas ---------- */
+.metas-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 980px; margin: 0 auto; }
+.metas-grid > .meta-card:first-child { grid-column: 1 / -1; } /* la primera (YouTube) a todo el ancho */
+.metas-grid > .meta-card:last-child:nth-child(even) { grid-column: 1 / -1; } /* si queda una sola suelta, ocupa todo el ancho */
+@media (max-width: 768px) { .metas-grid { grid-template-columns: 1fr; } }
 
-/* .header-card h1 {
-      margin: 0 0 8px 0;
-      font-size: 1.8rem;
-      color: #fff;
-    } */
+.meta-card { background: var(--surface-color); border: 1px solid var(--m-line); border-top: 3px solid var(--plat, var(--accent-color)); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.meta-head h3 { margin: 8px 0 2px; font-size: 1.15rem; color: var(--heading-color); }
+.meta-head p { margin: 0; font-size: .85rem; color: var(--m-muted); }
+.meta-chip { display: inline-flex; align-items: center; gap: 6px; font-size: .75rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--plat, var(--accent-color)); color: var(--plat, var(--accent-color)); }
 
-/* .header-card p {
-      color: var(--text-muted);
-      margin: 0 0 16px 0;
-    } */
+.meta-barra-top, .meta-barra-bot { display: flex; justify-content: space-between; gap: 10px; font-size: .82rem; }
+.meta-etq { font-weight: 700; color: var(--heading-color); text-transform: uppercase; letter-spacing: .04em; font-size: .75rem; }
+.meta-obj, .meta-barra-bot { color: var(--m-muted); }
+.meta-barra-bot strong { color: var(--default-color); }
+.meta-pb { height: 14px; background: var(--m-soft); border: 1px solid var(--m-line); border-radius: 8px; overflow: hidden; margin: 6px 0; }
+.meta-pf { height: 100%; background: var(--m-grad); border-radius: 8px; transition: width 1s ease-in-out; min-width: 0; }
+.meta-pf.completa { background: var(--accent-color); }
 
-/* .countdown-timer {
-    font-size: 2rem;
-    font-weight: bold;
-    background: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 1px;
-} */
+.meta-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; }
+.meta-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--accent-color); background: var(--accent-color); color: var(--contrast-color); font-weight: 600; font-size: .85rem; text-decoration: none; cursor: pointer; transition: opacity .2s; }
+.meta-btn:hover { opacity: .85; color: var(--contrast-color); }
+.meta-check { margin-left: auto; background: transparent; color: var(--default-color); border-color: var(--m-line); }
+.meta-check:hover { color: var(--default-color); border-color: var(--accent-color); }
+.meta-check.on { background: var(--accent-color); color: var(--contrast-color); border-color: var(--accent-color); }
+.metas-error { text-align: center; color: var(--m-muted); grid-column: 1 / -1; }
 
-/* Estilos Metas
-    .section-title {
-      font-size: 1.4rem;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    } */
-
-
-
-
-
+/* ---------- Pre-save ---------- */
+.presave { max-width: 720px; margin: 0 auto 28px; padding: 22px 20px; text-align: center; background: var(--surface-color); border: 1px solid var(--m-line); border-radius: 16px; }
+.presave[hidden] { display: none; }
+.presave-titulo { margin: 0 0 6px; font-size: 1.15rem; color: var(--heading-color); }
+.presave-titulo i { color: var(--accent-color); margin-right: 6px; }
+.presave-sub { margin: 0 0 16px; font-size: .9rem; color: var(--m-muted); }
+.presave-botones { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.presave-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 10px; border: 1px solid var(--plat, var(--accent-color)); background: transparent; color: var(--default-color); font-weight: 600; font-size: .9rem; text-decoration: none; transition: background .2s, color .2s; }
+.presave-btn i { color: var(--plat, var(--accent-color)); font-size: 1.1rem; }
+.presave-btn:hover { background: var(--plat, var(--accent-color)); color: #fff; }
+.presave-btn:hover i { color: #fff; }

@@ -128,6 +128,16 @@ export async function actualizarPermisoColores(uid, permitido) {
 }
 
 /**
+ * Habilita (o quita) a un colaborador el permiso de usar la pestaña
+ * "Comeback y metas" del panel. Solo un admin puede hacerlo: las reglas de
+ * Firestore impiden que un usuario se modifique a sí mismo este campo.
+ */
+export async function actualizarPermisoMetas(uid, permitido) {
+  const ref = doc(db, USUARIOS_COL, uid);
+  return updateDoc(ref, { puedeEditarMetas: !!permitido });
+}
+
+/**
  * Cambia la fanbase a la que pertenece CUALQUIER usuario. Solo un admin puede
  * hacerlo (las reglas de Firestore impiden que un colaborador/admin-no se la
  * cambie a sí mismo una vez que ya tiene rol: ver firestore.rules).

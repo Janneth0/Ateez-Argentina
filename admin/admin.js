@@ -7,7 +7,7 @@ import { renderFooter, ICONO_RED } from "../assets/js/components.js";
 import {
   registrarConEmail, loginConEmail, loginConGoogle, logout, obtenerPerfil,
   escucharAuth, traducirErrorAuth, listarUsuarios, asignarRol, recuperarContrasena, actualizarMiFanbase,
-  actualizarPermisoColores, asignarFanbase
+  actualizarPermisoColores, actualizarPermisoMetas, asignarFanbase
 } from "../assets/js/auth.js";
 import { escucharPosts, crearPost, editarPost, eliminarPost, marcarPostDestacado, CATEGORIAS } from "../assets/js/posts.js";
 import {
@@ -28,6 +28,7 @@ import { normalizarUrlImagen } from "../assets/js/imagenes.js";
 import { completarFanbaseEnContenido } from "../assets/js/fanbase-contenido.js";
 import { generarSitemapXml, descargarSitemap } from "../assets/js/sitemap.js";
 import { paises } from "../assets/js/paises.js";
+import { iniciarPanelComeback } from "./comebacks-admin.js";
 import { formatearFechaCorta, eventoVencido, eventoPorVencer, escapeHtml, extraerIdYoutube, fechaAInput, hoyParaInput } from "../assets/js/util.js";
 
 iniciarSitio({ base: "../" });
@@ -207,6 +208,8 @@ async function iniciarDashboard() {
   // El admin siempre puede usar la pestaña Apariencia (colores). Un colaborador
   // solo si el admin se lo habilitó desde la pestaña Usuarios.
   const puedeColores = esAdmin || usuarioActual.puedeEditarColores === true;
+  // Igual con la pestaña "Comeback y metas": admin siempre; colaborador solo si un admin se lo habilitó.
+  const puedeMetas = esAdmin || usuarioActual.puedeEditarMetas === true;
 
   // Para mostrar el nombre de mi fanbase en el saludo (si ya las cargó el selector del registro, no se pide de nuevo).
   if (cacheFanbasesRegistro.length === 0) cacheFanbasesRegistro = await listarFanbases().catch(() => []);
@@ -216,9 +219,10 @@ async function iniciarDashboard() {
   const tieneSede = !esAdmin && !!usuarioActual.fanbase;
   const puedeVerFanbases = esAdmin || tieneSede;
 
-  pintarSaludo(esAdmin, puedeColores);
+  pintarSaludo(esAdmin, puedeColores, puedeMetas);
   document.querySelectorAll(".admin-only").forEach(el => { el.style.display = esAdmin ? "" : "none"; });
   document.querySelectorAll(".colores-only").forEach(el => { el.style.display = puedeColores ? "" : "none"; });
+  document.querySelectorAll(".metas-only").forEach(el => { el.style.display = puedeMetas ? "" : "none"; });
   document.getElementById("tab-fanbases-item").style.display = puedeVerFanbases ? "" : "none";
   document.getElementById("tab-fanbases-btn").textContent = esAdmin ? "Fanbases" : "Mi sede";
   document.getElementById("fanbases-titulo").textContent = esAdmin ? "Fanbases / Sedes" : "Mi sede";
@@ -237,6 +241,7 @@ async function iniciarDashboard() {
   cargarNoticias();
   cargarContenido();
   if (puedeColores) cargarApariencia(esAdmin);
+  if (puedeMetas) iniciarPanelComeback({ usuarioActual, esAdminActual: esAdmin });
   if (puedeVerFanbases) cargarFanbases();
   if (esAdmin) {
     cargarUsuarios();
@@ -318,14 +323,15 @@ function datosDeAutor(fanbaseId = miFanbase()) {
   };
 }
 
-function pintarSaludo(esAdmin, puedeColores) {
+function pintarSaludo(esAdmin, puedeColores, puedeMetas) {
   const nombreFb = usuarioActual.fanbase
     ? (cacheFanbasesRegistro.find(f => f.id === usuarioActual.fanbase)?.nombre || "fanbase eliminada")
     : "";
   document.getElementById("saludo-usuario").textContent =
     `Hola, ${usuarioActual.nombreCompleto || usuarioActual.email} \u00b7 Rol: ${esAdmin ? "Administrador" : "Colaborador"}` +
     ` \u00b7 ${nombreFb ? "Fanbase: " + nombreFb : "Fan independiente"}` +
-    (!esAdmin && puedeColores ? " \u00b7 Colores habilitados" : "");
+    (!esAdmin && puedeColores ? " \u00b7 Colores habilitados" : "") +
+    (!esAdmin && puedeMetas ? " \u00b7 Metas habilitadas" : "");
 }
 
 // ==============================================================
@@ -1338,6 +1344,10 @@ function dibujarUsuarios() {
               <div class="form-check form-switch permiso-colores" title="Permite que esta persona use la pestaña Apariencia (solo los colores)">
                   <input class="form-check-input permiso-colores-check" type="checkbox" role="switch" id="pc-${u.id}" data-uid="${u.id}" ${u.puedeEditarColores ? "checked" : ""}>
                   <label class="form-check-label" for="pc-${u.id}">Puede editar colores</label>
+              </div>
+              <div class="form-check form-switch permiso-colores" title="Permite que esta persona use la pestaña Comeback y metas (video, pre-save y metas de streaming)">
+                  <input class="form-check-input permiso-metas-check" type="checkbox" role="switch" id="pm-${u.id}" data-uid="${u.id}" ${u.puedeEditarMetas ? "checked" : ""}>
+                  <label class="form-check-label" for="pm-${u.id}">Puede editar metas</label>
               </div>` : ""}
               <select class="form-select form-select-sm fanbase-select" data-uid="${u.id}" title="Fanbase a la que pertenece esta persona" aria-label="Fanbase">
                   ${opcionesFanbase(u.fanbase)}
@@ -1361,6 +1371,20 @@ listaUsuariosEl.addEventListener("change", async (e) => {
     } catch (err) {
       console.error(err);
       permiso.checked = !permiso.checked; // vuelve al estado anterior
+      alert("No se pudo actualizar el permiso: " + (err.message || err));
+    }
+    return;
+  }
+
+  const permisoMetas = e.target.closest(".permiso-metas-check");
+  if (permisoMetas) {
+    const uid = permisoMetas.dataset.uid;
+    try {
+      await actualizarPermisoMetas(uid, permisoMetas.checked);
+      if (mapaUsuarios[uid]) mapaUsuarios[uid].puedeEditarMetas = permisoMetas.checked;
+    } catch (err) {
+      console.error(err);
+      permisoMetas.checked = !permisoMetas.checked; // vuelve al estado anterior
       alert("No se pudo actualizar el permiso: " + (err.message || err));
     }
     return;

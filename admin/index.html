@@ -199,6 +199,10 @@
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-contenido"
                             type="button" role="tab">Contenido</button>
                     </li>
+                    <li class="nav-item metas-only" role="presentation" style="display:none;">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#panel-comeback"
+                            type="button" role="tab">Comeback y metas</button>
+                    </li>
                     <li class="nav-item" id="tab-fanbases-item" role="presentation" style="display:none;">
                         <button class="nav-link" id="tab-fanbases-btn" data-bs-toggle="tab" data-bs-target="#panel-fanbases"
                             type="button" role="tab">Fanbases</button>
@@ -259,6 +263,81 @@
                         <p class="text-muted1">Series subtituladas, traducciones, dance covers y demás contenido de la comunidad (los MVs/WANTEEZ/LOG_LOGBOOK se traen solos desde YouTube, acá no hace falta cargarlos).</p>
                         <div id="lista-contenido" class="admin-list">
                             <p class="text-muted1">Cargando contenido...</p>
+                        </div>
+                    </div>
+
+                    <!-- COMEBACK Y METAS (admin, y colaboradores a los que el admin les habilitó este permiso) -->
+                    <div class="tab-pane fade" id="panel-comeback" role="tabpanel">
+
+                        <!-- Vista 1: lista de comebacks -->
+                        <div id="cb-lista-vista">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="m-0">Comeback y metas</h4>
+                                <button type="button" id="cb-nuevo" class="btn btn-primary">
+                                    <i class="bi bi-plus-lg"></i> Nuevo comeback
+                                </button>
+                            </div>
+                            <p class="text-muted1">
+                                Acá se carga todo lo de la página <strong>/metas</strong>: fecha del contador, video de YouTube,
+                                links de pre-save y las metas de cada plataforma. Solo un comeback está <strong>activo</strong>
+                                (el que se ve en la web). Para el próximo comeback usá el botón <i class="bi bi-files"></i> Duplicar:
+                                copia las metas y borra los valores, así solo cambiás fecha, video y links.
+                            </p>
+                            <div id="cb-import-aviso" class="admin-alert admin-alert-warning d-flex flex-wrap align-items-center justify-content-between gap-2" style="max-width:none; display:none;">
+                                <span><i class="bi bi-tools"></i> <strong>Una sola vez:</strong> importá el comeback actual (el que está en <code>metas/data/goals.json</code>) para seguir editándolo desde acá.</span>
+                                <button type="button" id="cb-import" class="btn btn-sm btn-outline-primary">Importar comeback actual</button>
+                            </div>
+                            <div id="cb-lista" class="admin-list">
+                                <p class="text-muted1">Cargando comebacks...</p>
+                            </div>
+                        </div>
+
+                        <!-- Vista 2: editor -->
+                        <div id="cb-editor-vista" style="display:none;">
+                            <form id="cb-form" novalidate>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="m-0" id="cb-editor-titulo">Editar comeback</h4>
+                                    <button type="button" id="cb-cancelar" class="btn btn-outline-secondary">Volver sin guardar</button>
+                                </div>
+
+                                <div class="cb-seccion">
+                                    <h5>1. Datos del comeback</h5>
+                                    <div class="cb-grid">
+                                        <label>Nombre interno (solo para vos)<input type="text" id="cb-nombre" class="form-control" placeholder="Ej: Golden Hour Pt.6"></label>
+                                        <label>Título que se ve en la web<input type="text" id="cb-titulo" class="form-control" placeholder="Ej: GOLDEN HOUR: PART.6"></label>
+                                        <label>Subtítulo<input type="text" id="cb-subtitulo" class="form-control" value="ATEEZ Comeback Countdown"></label>
+                                        <label>Fecha y hora de salida (hora de Argentina)<input type="datetime-local" id="cb-fecha" class="form-control"></label>
+                                    </div>
+                                    <label class="cb-check mt-2"><input type="checkbox" id="cb-activo" class="form-check-input"> Mostrar este comeback en la página de metas (los demás quedan archivados)</label>
+                                </div>
+
+                                <div class="cb-seccion">
+                                    <h5>2. Video de YouTube</h5>
+                                    <label>Link del video (cuando salga uno nuevo, pegalo acá)
+                                        <input type="url" id="cb-yt-url" class="form-control" placeholder="https://www.youtube.com/watch?v=..."></label>
+                                    <div class="form-text" id="cb-yt-aviso"></div>
+                                </div>
+
+                                <div class="cb-seccion">
+                                    <h5>3. Pre-save</h5>
+                                    <p class="text-muted1 mb-2">Links de pre-guardado (Spotify, Apple Music, etc.). Se muestran en la web hasta que sale el comeback y después se ocultan solos.</p>
+                                    <div id="cb-presave-lista"></div>
+                                    <button type="button" id="cb-agregar-presave" class="btn btn-sm btn-outline-secondary mt-2"><i class="bi bi-plus-lg"></i> Agregar link de pre-save</button>
+                                </div>
+
+                                <div class="cb-seccion">
+                                    <h5>4. Metas de streaming</h5>
+                                    <p class="text-muted1 mb-2">Cada meta es una tarjeta (YouTube, Spotify, iTunes...) con su link y una o más barras de progreso. Acá también se actualizan los valores actuales.</p>
+                                    <div id="cb-metas"></div>
+                                    <button type="button" id="cb-agregar-meta" class="btn btn-sm btn-outline-secondary mt-2"><i class="bi bi-plus-lg"></i> Agregar meta (plataforma)</button>
+                                </div>
+
+                                <div id="cb-error" class="admin-alert admin-alert-error" style="display:none;"></div>
+                                <div class="d-flex gap-2 mt-3">
+                                    <button type="submit" id="cb-guardar" class="btn btn-primary">Guardar</button>
+                                    <button type="button" class="btn btn-outline-secondary" id="cb-cancelar-2" onclick="document.getElementById('cb-cancelar').click()">Cancelar</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
 

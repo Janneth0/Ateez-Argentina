@@ -1,21 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Metas - ATEEZ Argentina</title>
+    <title>Comeback y metas - ATEEZ Argentina</title>
     <!-- Autor -->
     <meta name="author" content="ATEEZ Argentina">
     <meta name="description"
-        content="METAS por la comunidad Argentina de ATEEZ: cumpleaños, comebacks, especiales y juntadas de fans en todo el país.GOLDEN HOUR PT6">
+        content="Contador del comeback de ATEEZ, pre-save y metas de streaming de la comunidad argentina: YouTube, Spotify, iTunes y Shazam.">
     <meta name="keywords"
-        content="ateez, argentina, ateez argentina, ateez argentina 2027, ateez en argentina, atiny argentina, metas argentina Ateez, golden hour pt6">
-
+        content="ateez, argentina, ateez argentina, atiny argentina, metas ateez, comeback ateez, golden hour pt6, streaming ateez">
 
     <!-- Favicons -->
     <link href="../assets/img/AteezArgentinaLogo.png" rel="icon" class="logo">
-    <link href="../assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="../assets/img/AteezArgentinaLogo.png" rel="apple-touch-icon">
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -31,11 +30,10 @@
     <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
     <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
 
-    <!-- Main CSS File -->
+    <!-- Main CSS File + estilos de esta página (usan los colores del admin) -->
     <link href="../assets/css/main.css" rel="stylesheet">
-      <!-- <link href="style.css" rel="stylesheet"> -->
+    <link href="style.css" rel="stylesheet">
 
-   
     <!-- =======================================================
   * Template Name: LeadPage
   * Template URL: https://bootstrapmade.com/leadpage-bootstrap-landing-page-template/
@@ -49,28 +47,39 @@
 
     <div id="site-header"></div>
 
-    <!-- Page Title -->
-    <div class="page-title dark-background" data-aos="fade" style="background-image: url(assets/img/bg/bg-2.webp);">
-    </div>
+    <!-- Page Title (separador bajo el header fijo) -->
+    <div class="page-title dark-background"></div>
 
-    <!-- Portfolio Section -->
-    <section class="portfolio section container" id="publicaciones-seccion">
+    <main class="main metas-page">
+        <section id="comeback" class="section container">
 
-        <!-- Section Title -->
-        <div class=" section-title header-card" data-aos="fade-up">
-            <span class="subtitle">ATEEZ Comeback Countdown </span>
-            <h2>GOLDEN HOUR: PART.6</h2>
-            <p>13 de Noviembre - 02:00 AM (Hora Argentina)</p>
-            <div id="countdown" class="countdown-timer">Cargando reloj...</div>
-        </div><!-- End Section Title -->
-        <!-- Sección de Metas -->
-        <div class="container section-title">
-            <!-- SECCIÓN METAS DE STREAMING -->
-            <h2 class="subtitle">Metas de Streaming - Argentina</h2>
-            <div id="goals-container"></div>
-        </div>
+            <!-- Contador -->
+            <div class="cb-hero" data-aos="fade-up">
+                <span class="subtitle" id="cb-sub">ATEEZ Comeback Countdown</span>
+                <h2 id="cb-title">GOLDEN HOUR: PART.6</h2>
+                <p class="cb-date" id="cb-date"></p>
+                <p class="cb-label" id="cb-label">Cargando…</p>
+                <div id="cb-boxes" class="cb-boxes">
+                    <div class="cb-box"><b id="cb-d">0</b><small>días</small></div>
+                    <div class="cb-box"><b id="cb-h">00</b><small>horas</small></div>
+                    <div class="cb-box"><b id="cb-m">00</b><small>min</small></div>
+                    <div class="cb-box"><b id="cb-s">00</b><small>seg</small></div>
+                </div>
+                <p class="cb-msg" id="cb-msg"></p>
+            </div>
 
-    </section><!-- /Portfolio Section -->
+            <!-- Pre-save (se carga desde el panel de admin; se oculta solo cuando sale el comeback) -->
+            <div id="presave" class="presave" data-aos="fade-up" hidden></div>
+
+            <!-- Metas de streaming -->
+            <div class="section-title" data-aos="fade-up">
+                <h2>Metas de streaming · Argentina</h2>
+            </div>
+            <div id="metas-resumen" class="metas-resumen"></div>
+            <div id="metas-grid" class="metas-grid"></div>
+
+        </section>
+    </main>
 
     <div id="site-footer"></div>
 
@@ -79,7 +88,7 @@
             class="bi bi-arrow-up-short"></i></a>
 
     <!-- Preloader -->
-    <div id="preloader"></div>
+    <!-- <div id="preloader"></div> -->
 
     <!-- Vendor JS Files -->
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -91,7 +100,7 @@
     <script src="../assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
     <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
 
-    <!-- Componentes reutilizables (header / footer) -->
+    <!-- Arranque del sitio: header, footer y tema de colores del admin -->
     <script type="module">
         import { iniciarSitio } from "../assets/js/site-boot.js";
         iniciarSitio({ base: "../", activo: "metas" });
@@ -100,13 +109,7 @@
 
     <!-- Main JS File -->
     <script src="../assets/js/main.js"></script>
-    <script async src="//www.instagram.com/embed.js"></script>
-    <script async src="https://www.tiktok.com/embed.js"></script>
-    <script async src="https://platform.twitter.com/widgets.js"></script>
-
-    <!-- Publicaciones dinámicas cargadas desde el panel de administración (Firestore) -->
-    <script type="module" src="../assets/js/eventos-publicos.js"></script>
-    <script src="metas.js"></script>
+    <script type="module" src="metas.js"></script>
 </body>
 
 </html>
