@@ -23,7 +23,7 @@ window.TRIVIA_BANK = [
 ["¿Quién cumple años el 3 de abril?","Seonghwa","Yunho","Mingi","San"],
 ["¿Quién cumple años el 23 de marzo?","Yunho","Yeosang","Seonghwa","Wooyoung"],
 ["¿Quién cumple años el 15 de junio?","Yeosang","Jongho","San","Mingi"],
-["¿Quién cumple años el 10 de diciembre?","San","Wooyoung","Hongjoong","Yunho"],
+["¿Quién cumple años el 10 de febrero?","San","Wooyoung","Hongjoong","Yunho"],
 ["¿Quién cumple años el 9 de agosto?","Mingi","Yeosang","Jongho","Seonghwa"],
 ["¿Quién cumple años el 26 de noviembre?","Wooyoung","Hongjoong","San","Yunho"],
 ["¿Quién cumple años el 12 de octubre?","Jongho","Mingi","Yeosang","Seonghwa"],
@@ -161,7 +161,6 @@ window.TRIVIA_BANK = [
 ["¿En qué ciudad nació Yunho?","Gwangju","Seúl","Busan","Incheon"],
 ["¿En qué ciudad nació Yeosang?","Pohang","Daegu","Incheon","Gwangju"],
 ["¿En qué ciudad nació Mingi?","Incheon","Pohang","Gwangju","Daejeon"],
-["¿Quién es el rapero principal de ATEEZ?","Mingi","Hongjoong","San","Wooyoung"],
 ["¿Qué dos integrantes figuran como letristas de las cinco canciones de Golden Hour: Part.4?","Hongjoong y Mingi","San y Wooyoung","Yunho y Jongho","Seonghwa y Yeosang"],
 ["¿Qué pasó en 2025 con los contratos de los ocho integrantes con KQ?","Todos los renovaron","Dos no renovaron","Pasaron a otra agencia","Se pausaron"]
 ];
