@@ -797,3 +797,28 @@
 .cb-barra[data-tipo="puesto"] .solo-cantidad, .cb-barra[data-tipo="puesto"] .solo-yt { display: none !important; }
 .cb-barra[data-tipo="cantidad"] .solo-puesto { display: none; }
 @media (max-width: 768px) { .cb-fila, .cb-fila:not([data-plat="otro"]) { grid-template-columns: 1fr; } .cb-fila .quitar-red { justify-self: start; } }
+
+/* Datos de quién subió la foto (descripción, autor y fanbase) */
+.admin-gallery-grid .foto-item .foto-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 18px 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 11px;
+  line-height: 1.25;
+  color: #fff;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+}
+.admin-gallery-grid .foto-item .foto-desc { font-weight: 600; }
+.admin-gallery-grid .foto-item .foto-info .badge-fanbase {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 10px;
+}

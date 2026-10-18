@@ -240,12 +240,12 @@ async function iniciarDashboard() {
   cargarPublicaciones();
   cargarNoticias();
   cargarContenido();
+  cargarGaleria();
   if (puedeColores) cargarApariencia(esAdmin);
   if (puedeMetas) iniciarPanelComeback({ usuarioActual, esAdminActual: esAdmin });
   if (puedeVerFanbases) cargarFanbases();
   if (esAdmin) {
     cargarUsuarios();
-    cargarGaleria();
   }
 }
 
@@ -891,7 +891,10 @@ formFanbase?.addEventListener("submit", async (e) => {
 });
 
 // ==============================================================
-// GALERIA (solo admin)
+// GALERIA (admin y colaboradores)
+//  - Admin: ve y elimina todas las fotos.
+//  - Colaborador: ve las que subió él y las de su fanbase (solo lectura las ajenas);
+//    elimina solo las suyas. Las reglas de Firestore lo hacen cumplir.
 // ==============================================================
 const listaGaleriaEl = document.getElementById("lista-galeria");
 const modalFoto = document.getElementById("modalFoto") ? new bootstrap.Modal(document.getElementById("modalFoto")) : null;
@@ -899,16 +902,22 @@ const formFoto = document.getElementById("form-foto");
 const fotoError = document.getElementById("foto-error");
 
 function cargarGaleria() {
+  if (!listaGaleriaEl) return;
   desuscribir.galeria = escucharGaleria(
     (fotos) => {
-      if (fotos.length === 0) {
-        listaGaleriaEl.innerHTML = `<p class="text-muted">Todavía no subiste fotos.</p>`;
+      const visibles = fotos.filter(esVisibleEnPanel);
+      if (visibles.length === 0) {
+        listaGaleriaEl.innerHTML = `<p class="text-muted">${esAdminActual() ? "Todavía no hay fotos en la galería." : "Todavía no hay fotos tuyas ni de tu fanbase."}</p>`;
         return;
       }
-      listaGaleriaEl.innerHTML = fotos.map(f => `
+      listaGaleriaEl.innerHTML = visibles.map(f => `
         <div class="foto-item" data-id="${f.id}">
-            <img src="${f.imagenUrl}" alt="${escapeHtml(f.descripcion || "")}">
-            <button type="button" class="eliminar-foto" data-id="${f.id}" title="Eliminar"><i class="bi bi-trash"></i></button>
+            <img src="${escapeHtml(f.imagenUrl)}" alt="${escapeHtml(f.descripcion || "")}" loading="lazy">
+            ${puedeTocar(f) ? `<button type="button" class="eliminar-foto" data-id="${f.id}" title="Eliminar"><i class="bi bi-trash"></i></button>` : ""}
+            <div class="foto-info">
+                ${f.descripcion ? `<span class="foto-desc">${escapeHtml(f.descripcion)}</span>` : ""}
+                <span class="foto-autor">${puedeTocar(f) && !esAdminActual() ? "Subida por vos" : escapeHtml(nombreResponsableDe(f))}${esAdminActual() || miFanbase() ? " \u00b7 " + etiquetaFanbaseDe(f) : ""}</span>
+            </div>
         </div>`).join("");
     },
     (err) => { listaGaleriaEl.innerHTML = `<p class="text-muted">No se pudo cargar la galería.</p>`; console.error(err); }
@@ -940,7 +949,7 @@ formFoto?.addEventListener("submit", async (e) => {
   fotoError.style.display = "none";
   const imagenUrl = normalizarUrlImagen(document.getElementById("foto-url").value.trim());
   try {
-    await agregarFotoGaleria({ imagenUrl, descripcion: document.getElementById("foto-descripcion").value.trim(), uid: usuarioActual.uid });
+    await agregarFotoGaleria({ imagenUrl, descripcion: document.getElementById("foto-descripcion").value.trim(), ...datosDeAutor() });
     modalFoto.hide();
   } catch (err) {
     console.error(err);

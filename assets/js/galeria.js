@@ -1,6 +1,7 @@
 // ============================================================
 // GALERIA.JS - ATEEZ ARGENTINA
-// Colección "galeria". Admin y colaborador pueden subir fotos;
+// Colección "galeria". Admin y colaborador pueden subir fotos (cada foto guarda
+// quién la subió y de qué fanbase, igual que eventos, noticias y contenido);
 // en la home solo se muestran las últimas N (ver GALERIA_LIMITE
 // en index.html) para no saturar de imágenes — el resto se ve
 // completo en el lightbox al hacer click en "Ver toda la galería".
@@ -24,9 +25,16 @@ export function escucharGaleria(callback, onError) {
     (err) => onError && onError(err));
 }
 
-/** datos: { imagenUrl, descripcion, uid } */
-export async function agregarFotoGaleria(datos) {
-  return addDoc(collection(db, COL), { ...datos, creadoPor: datos.uid, creadoEn: serverTimestamp() });
+/** datos: { imagenUrl, descripcion, uid, fanbaseId, autorNombre } */
+export async function agregarFotoGaleria({ imagenUrl, descripcion = "", uid, fanbaseId = null, autorNombre = "" }) {
+  return addDoc(collection(db, COL), {
+    imagenUrl,
+    descripcion,
+    creadoPor: uid,
+    creadoPorNombre: autorNombre || "",
+    fanbaseId: fanbaseId || null,
+    creadoEn: serverTimestamp()
+  });
 }
 
 export async function eliminarFotoGaleria(id) {
