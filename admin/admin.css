@@ -822,3 +822,19 @@
   color: #fff;
   font-size: 10px;
 }
+
+/* Admin: selector para asignar una foto a una fanbase */
+.admin-gallery-grid .foto-item .foto-fanbase {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  max-width: calc(100% - 50px);
+  padding: 2px 4px;
+  font-size: 11px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  cursor: pointer;
+}
+.admin-gallery-grid .foto-item .foto-fanbase option { color: #000; }

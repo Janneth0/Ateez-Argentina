@@ -19,7 +19,7 @@ import {
 import {
   escucharFanbases, crearFanbase, editarFanbase, eliminarFanbase, listarFanbases, REDES_DISPONIBLES
 } from "../assets/js/fanbases.js";
-import { escucharGaleria, agregarFotoGaleria, eliminarFotoGaleria } from "../assets/js/galeria.js";
+import { escucharGaleria, agregarFotoGaleria, eliminarFotoGaleria, asignarFanbaseFoto } from "../assets/js/galeria.js";
 import {
   PALETAS_PREDEFINIDAS, obtenerConfigSitio, actualizarConfigSitio, aplicarTemaEnElemento, conLogoResuelto,
   REDES_SOCIALES_POR_DEFECTO
@@ -914,6 +914,7 @@ function cargarGaleria() {
         <div class="foto-item" data-id="${f.id}">
             <img src="${escapeHtml(f.imagenUrl)}" alt="${escapeHtml(f.descripcion || "")}" loading="lazy">
             ${puedeTocar(f) ? `<button type="button" class="eliminar-foto" data-id="${f.id}" title="Eliminar"><i class="bi bi-trash"></i></button>` : ""}
+            ${esAdminActual() ? `<select class="foto-fanbase" data-id="${f.id}" title="Asignar esta foto a una fanbase" aria-label="Fanbase de la foto">${opcionesFanbase(f.fanbaseId)}</select>` : ""}
             <div class="foto-info">
                 ${f.descripcion ? `<span class="foto-desc">${escapeHtml(f.descripcion)}</span>` : ""}
                 <span class="foto-autor">${puedeTocar(f) && !esAdminActual() ? "Subida por vos" : escapeHtml(nombreResponsableDe(f))}${esAdminActual() || miFanbase() ? " \u00b7 " + etiquetaFanbaseDe(f) : ""}</span>
@@ -934,6 +935,20 @@ listaGaleriaEl?.addEventListener("click", (e) => {
   const btn = e.target.closest(".eliminar-foto");
   if (!btn) return;
   abrirConfirmarEliminar("foto", btn.dataset.id, () => eliminarFotoGaleria(btn.dataset.id));
+});
+
+// Admin: cambiar la fanbase de una foto ya subida (así la ven los colaboradores de esa fanbase)
+listaGaleriaEl?.addEventListener("change", async (e) => {
+  const sel = e.target.closest(".foto-fanbase");
+  if (!sel || !esAdminActual()) return;
+  sel.disabled = true;
+  try {
+    await asignarFanbaseFoto(sel.dataset.id, sel.value || null);
+  } catch (err) {
+    console.error(err);
+    alert("No se pudo asignar la fanbase: " + (err.message || err));
+  }
+  sel.disabled = false;
 });
 
 document.getElementById("foto-url")?.addEventListener("blur", (e) => {

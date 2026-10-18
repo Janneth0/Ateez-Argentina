@@ -9,7 +9,7 @@
 
 import { db } from "./firebase-init.js";
 import {
-  collection, addDoc, deleteDoc, doc, getDocs, onSnapshot, query, orderBy, serverTimestamp
+  collection, addDoc, deleteDoc, updateDoc, doc, getDocs, onSnapshot, query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
 const COL = "galeria";
@@ -39,4 +39,9 @@ export async function agregarFotoGaleria({ imagenUrl, descripcion = "", uid, fan
 
 export async function eliminarFotoGaleria(id) {
   return deleteDoc(doc(db, COL, id));
+}
+
+/** Solo admin: asigna una foto a una fanbase (o la deja como "independiente" con null). */
+export async function asignarFanbaseFoto(id, fanbaseId) {
+  return updateDoc(doc(db, COL, id), { fanbaseId: fanbaseId || null });
 }
