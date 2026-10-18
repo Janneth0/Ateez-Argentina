@@ -1,29 +1,60 @@
-[
-  {
-    "id": "yt_24h_views",
-    "platform": "YouTube",
-    "category": "MV Oficial",
-    "title": "Vistas en las primeras 24 horas",
-    "target": "15.000.000",
-    "current": 45,
-    "link": "https://youtube.com"
+{
+  "_ayuda": "Este archivo se edita a mano para actualizar las metas. Las claves que empiezan con _ son notas y el sitio las ignora. 'actual' en null significa 'sin datos todavia'.",
+  "actualizado": "2026-10-17",
+  "comeback": {
+    "subtitulo": "ATEEZ Comeback Countdown",
+    "titulo": "GOLDEN HOUR: PART.6",
+    "fecha": "2026-11-13T02:00:00-03:00",
+    "fechaTexto": "13 de noviembre · 02:00 AM (hora Argentina)"
   },
-  {
-    "id": "spotify_ar_top50",
-    "platform": "Spotify",
-    "category": "Argentina Daily",
-    "title": "Entrar al Top 50 Daily Argentina",
-    "target": "Puesto #30",
-    "current": 70,
-    "link": "https://spotify.com"
-  },
-  {
-    "id": "shazam_ar_top100",
-    "platform": "Shazam",
-    "category": "Shazam Argentina",
-    "title": "10.000 Shazams en Argentina",
-    "target": "10.000",
-    "current": 20,
-    "link": "https://shazam.com"
-  }
-]
+  "youtubeVideoId": "tVJBWoof09Q",
+  "metas": [
+    {
+      "id": "yt_mv",
+      "plataforma": "youtube",
+      "titulo": "ATEEZ - 'NASA' Performance Video",
+      "detalle": "Vistas oficiales del video",
+      "link": "https://www.youtube.com/watch?v=tVJBWoof09Q",
+      "botonTexto": "Ver en YouTube",
+      "barras": [
+        { "id": "yt_24h", "etiqueta": "Primeras 24 hs", "tipo": "cantidad", "unidad": "vistas", "objetivo": 15000000, "actual": null, "fuente": "youtube", "ventana24h": true, "final24h": null },
+        { "id": "yt_mes", "etiqueta": "Primer mes", "tipo": "cantidad", "unidad": "vistas", "objetivo": 30000000, "actual": null, "fuente": "youtube" }
+      ]
+    },
+    {
+      "id": "spotify",
+      "plataforma": "spotify",
+      "titulo": "Spotify",
+      "detalle": "Ranking diario de Argentina y streams",
+      "link": "https://open.spotify.com/",
+      "botonTexto": "Escuchar en Spotify",
+      "barras": [
+        { "id": "sp_ar", "etiqueta": "Top diario Argentina", "tipo": "puesto", "objetivo": 30, "maximo": 200, "actual": null },
+        { "id": "sp_24h", "etiqueta": "Streams en 24 hs", "tipo": "cantidad", "unidad": "streams", "objetivo": 1000000, "actual": null, "_nota": "Objetivo de ejemplo: cambialo por el que decida la comunidad" }
+      ]
+    },
+    {
+      "id": "itunes",
+      "plataforma": "itunes",
+      "titulo": "iTunes / Apple Music",
+      "detalle": "Charts de iTunes Argentina",
+      "link": "https://music.apple.com/ar/",
+      "botonTexto": "Comprar en iTunes",
+      "barras": [
+        { "id": "it_songs", "etiqueta": "Top Canciones Argentina", "tipo": "puesto", "objetivo": 10, "maximo": 100, "actual": null },
+        { "id": "it_albums", "etiqueta": "Top Álbumes Argentina", "tipo": "puesto", "objetivo": 1, "maximo": 100, "actual": null }
+      ]
+    },
+    {
+      "id": "shazam",
+      "plataforma": "shazam",
+      "titulo": "Shazam Argentina",
+      "detalle": "Shazams de la canción principal desde Argentina",
+      "link": "https://www.shazam.com/",
+      "botonTexto": "Abrir Shazam",
+      "barras": [
+        { "id": "sh_ar", "etiqueta": "Shazams en Argentina", "tipo": "cantidad", "unidad": "shazams", "objetivo": 10000, "actual": null }
+      ]
+    }
+  ]
+}
