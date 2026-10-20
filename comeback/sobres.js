@@ -92,7 +92,7 @@ function render(nuevo = -1) {
         <span class="sobre-cuerpo"><b class="sobre-logo">ATEEZ</b><small class="sobre-sub">ARGENTINA</small><i class="bi ${lista ? "bi-stars" : "bi-lock-fill"} sobre-ico"></i><em class="sobre-pie">3 photocards</em></span>
       </button></div>
       <p class="sobres-sub">${lista ? "¡Tocá el sobre para abrirlo! Trae 3 photocards al azar." : 'Se habilita en <strong class="sobre-espera"></strong>'}</p></div>`;
-  } else prox = '<p class="sobres-sub">¡Abriste todos tus sobres! Volvé en el próximo comeback</p>';
+  } else prox = '<p class="sobres-sub">¡Abriste todos tus sobres! Volvé en el próximo comeback 🏴‍☠️</p>';
 
   box.innerHTML = `<h3 class="presave-titulo"><i class="bi bi-envelope-paper-heart"></i> Abrí tus sobres</h3>${bloques}${prox}${aviso ? `<p class="sobres-sub" role="status">${esc(aviso)}</p>` : ""}`;
   box.querySelectorAll(".pc-f img").forEach((img) => img.addEventListener("error", () => img.remove()));

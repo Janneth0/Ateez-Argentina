@@ -37,10 +37,10 @@
       const err = $('ft-err'), box = $('ft-box');
       err.textContent = '';
       box.innerHTML = '';
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(inp.value)) { err.textContent = 'Elegí la fecha en que te hiciste ATINY 📅'; return; }
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(inp.value)) { err.textContent = 'Elegí la fecha en que te hiciste ATINY'; return; }
       const join = ymd(inp.value), today = hoy();
-      if (join < debut) { err.textContent = 'ATEEZ debutó el 24/10/2018: elegí una fecha desde ahí 🏴‍☠️'; return; }
-      if (join > today) { err.textContent = 'Esa fecha todavía no llegó 😄 ¡Pero ya queremos que te sumes!'; return; }
+      if (join < debut) { err.textContent = 'ATEEZ debutó el 24/10/2018: elegí una fecha desde ahí'; return; }
+      if (join > today) { err.textContent = 'Esa fecha todavía no llegó ¡Pero ya queremos que te sumes!'; return; }
 
       const days = Math.round((today - join) / DAY);
       const total = Math.round((today - debut) / DAY);
@@ -88,7 +88,7 @@
         <p class="ft-tiempo">${days === 0 ? '¡Recién llegás! Bienvenida/o a bordo 🏴‍☠️' : tiempo}</p>
         <div class="ft-lines">
           <span>Llegaste en la era <b>${esc(era.n)}</b></span>
-          <span>${llegada === 0 ? 'Llegaste <b>el mismísimo día del debut</b> 🤯' : `ATEEZ ya llevaba <b>${num(llegada)}</b> ${pl(llegada, 'día', 'días')} de carrera`}</span>
+          <span>${llegada === 0 ? 'Llegaste <b>el mismísimo día del debut</b>' : `ATEEZ ya llevaba <b>${num(llegada)}</b> ${pl(llegada, 'día', 'días')} de carrera`}</span>
           <span>Estuviste en <b>${anivs}</b> ${pl(anivs, 'aniversario', 'aniversarios')} de ATEEZ como ATINY</span>
           <span>Viviste el <b>${pct}%</b> de su historia</span>
           <span>${lineaProx}</span>
@@ -148,19 +148,19 @@
 
     function end() {
       const s = em.s, n = em.qs.length;
-      const r = s >= 9 ? ['Descifrador/a supremo/a', '🔮']
-        : s >= 7 ? ['Detective ATINY', '🕵️']
-        : s >= 4 ? ['Curioso/a de Treasure', '🐣']
-        : ['Con ganas de repasar', '🎧'];
+      const r = s >= 9 ? ['Descifrador/a supremo/a', '']
+        : s >= 7 ? ['Detective ATINY', '']
+        : s >= 4 ? ['Curioso/a de Treasure', '']
+        : ['Con ganas de repasar', ''];
       box.innerHTML = `<div id="em-card" class="res-card"><div class="res-top">ATEEZ ${A.th} ANNIVERSARY · EMOJIS ATINY</div>
         <div class="res-emoji">${r[1]}</div><h3>${r[0]}</h3>
         <p class="res-score">${s}/${n} canciones</p>
         <div class="res-foot">ATEEZARGENTINA.COM.AR</div></div>`;
       if (s >= 7) boom();
       addShare(box, 'em-card',
-        `¡Soy ${r[0]} ${r[1]}! Adiviné ${s}/${n} canciones de ATEEZ solo con emojis por su ${A.ord} aniversario 🏴‍☠️ ${TAGS}`,
+        `¡Soy ${r[0]} ${r[1]}! Adiviné ${s}/${n} canciones de ATEEZ solo con emojis por su ${A.ord} aniversario ${TAGS}`,
         'ATINY_Emojis_' + A.n + 'th.png');
-      againBtn(box, 'Jugar de nuevo 🔁', start);
+      againBtn(box, 'Jugar de nuevo', start);
     }
 
     box.addEventListener('click', (e) => { const b = e.target.closest('.opt-btn'); if (b) answer(b); });
@@ -271,16 +271,16 @@
       ws.done = true;
       clearInterval(ws.timer);
       const s = ws.secs;
-      const r = s <= 120 ? ['Ojo de halcón', '🦅'] : s <= 240 ? ['Navegante atento', '⚓'] : ['Tripulante paciente', '🏴‍☠️'];
+      const r = s <= 120 ? ['Ojo de halcón', ''] : s <= 240 ? ['Navegante atento', ''] : ['Tripulante paciente', ''];
       box.insertAdjacentHTML('beforeend', `<div id="ws-card" class="res-card" style="margin-top:16px"><div class="res-top">ATEEZ ${A.th} ANNIVERSARY · SOPA DE LETRAS</div>
         <div class="res-emoji">${r[1]}</div><h3>${r[0]}</h3>
         <p class="res-score">${TOTAL}/${TOTAL} palabras en ${fmt(s)}</p>
         <div class="res-foot">ATEEZARGENTINA.COM.AR</div></div>`);
       boom();
       addShare(box, 'ws-card',
-        `¡Soy ${r[0]} ${r[1]}! Encontré las ${TOTAL} palabras de la sopa de letras de ATEEZ en ${fmt(s)} 🏴‍☠️ ${TAGS}`,
+        `¡Soy ${r[0]} ${r[1]}! Encontré las ${TOTAL} palabras de la sopa de letras de ATEEZ en ${fmt(s)} ${TAGS}`,
         'ATINY_Sopa_' + A.n + 'th.png');
-      againBtn(box, 'Nueva sopa 🔁', start);
+      againBtn(box, 'Nueva sopa', start);
     }
 
     box.addEventListener('click', (e) => { const c = e.target.closest('.ws-cell'); if (c) pick(c); });

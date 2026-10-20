@@ -2,7 +2,7 @@
 // COMEBACKS.JS - ATEEZ ARGENTINA
 // Colección "comebacks" en Firestore. Cada documento es UN comeback
 // (fecha, video de YouTube, links de pre-save y metas de streaming).
-// Solo uno tiene activo:true: ese es el que muestra /metas/.
+// Solo uno tiene activo:true: ese es el que muestra /comeback/.
 // Para un próximo comeback se duplica el actual desde el panel
 // (pestaña "Comeback y metas") y se lo marca como activo.
 //
@@ -177,10 +177,10 @@ export function duplicarParaNuevoComeback(c) {
   };
 }
 
-/** Importa metas/data/goals.json como primer comeback (queda activo). Pensado para usarse una sola vez. */
+/** Importa comeback/data/goals.json como primer comeback (queda activo). Pensado para usarse una sola vez. */
 export async function importarDesdeGoalsJson(uid) {
-  const r = await fetch("../metas/data/goals.json", { cache: "no-store" });
-  if (!r.ok) throw new Error("No se encontró metas/data/goals.json");
+  const r = await fetch("../comeback/data/goals.json", { cache: "no-store" });
+  if (!r.ok) throw new Error("No se encontró comeback/data/goals.json");
   const j = await r.json();
   const n = normalizarComeback(j);
   const id = await crearComeback({

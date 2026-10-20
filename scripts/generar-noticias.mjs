@@ -184,7 +184,8 @@ function paginaDeNoticia(plantilla, n, todas) {
 // ---------------------------------------------------------------------- sitemap
 function sitemapXml(noticias) {
   const fijas = [
-    ["/", "weekly", "1.0"], ["/evento/", "weekly", "0.9"], ["/Noticias/noticias.html", "daily", "0.9"], ["/contenido.html", "weekly", "0.7"]
+    ["/", "weekly", "1.0"], ["/evento/", "weekly", "0.9"], ["/Noticias/noticias.html", "daily", "0.9"], ["/contenido.html", "weekly", "0.7"],
+    ["/comeback/", "weekly", "0.8"], ["/aniversario/", "monthly", "0.7"]
   ].map(([loc, freq, prio]) => `  <url>\n    <loc>${DOMINIO}${loc}</loc>\n    <changefreq>${freq}</changefreq>\n    <priority>${prio}</priority>\n  </url>`);
 
   const items = noticias.map(n => {

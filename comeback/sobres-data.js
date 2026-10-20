@@ -6,7 +6,7 @@
 // Si la imagen no existe, se muestra una carta de color con la inicial del integrante.
 // ============================================================
 export const SOBRES_MAX = 3;
-export const SOBRES_ESPERA_HS = 0;
+export const SOBRES_ESPERA_HS = 24;
 
 // Probabilidad de cada rareza (suman 100)
 export const RAREZAS = {

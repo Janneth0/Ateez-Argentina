@@ -26,8 +26,8 @@
   }
   function addShare(box, cardId, text, fname) {
     const w = document.createElement('div');
-    w.innerHTML = `<button class="abtn" data-a="share">Compartir resultado 📲</button>
-      <button class="abtn ghost" data-a="dl">Descargar imagen 💾</button>
+    w.innerHTML = `<button class="abtn" data-a="share">Compartir resultado</button>
+      <button class="abtn ghost" data-a="dl">Descargar imagen</button>
       <div class="share-links">
         <a target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(text + ' ' + SITE)}">WhatsApp</a>
         <a target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(SITE)}">X</a>
@@ -46,7 +46,7 @@
           console.log(e);
           let m = w.querySelector('.share-err');
           if (!m) { m = document.createElement('p'); m.className = 'share-err'; m.setAttribute('role', 'alert'); w.appendChild(m); }
-          m.textContent = 'No pudimos generar la imagen. Probá de nuevo o sacale captura de pantalla 📸';
+          m.textContent = 'No pudimos generar la imagen. Probá de nuevo o sacale captura de pantalla';
         }
       }
       b.disabled = false; b.textContent = old;
@@ -64,7 +64,7 @@
       if (diff <= 0) {
         $('cd-wrap').style.display = 'none';
         const days = Math.floor((new Date() - debut) / 864e5);
-        msg.textContent = `🎉 ¡Feliz ${A.ord} aniversario, ATEEZ! Ya son ${days.toLocaleString('es-AR')} días juntos.`;
+        msg.textContent = `¡Feliz ${A.ord} aniversario, ATEEZ! Ya son ${days.toLocaleString('es-AR')} días juntos.`;
         if (!fired) { fired = true; boom(); }
         return;
       }
@@ -117,7 +117,7 @@
     box.innerHTML = `<div id="tv-card" class="res-card"><div class="res-top">ATEEZ ${A.th} ANNIVERSARY · TRIVIA ATINY</div>
       <div class="res-emoji">${r[2]}</div><h3>${r[1]}</h3><p class="res-score">${tv.s}/${tv.N}</p><p>${r[3]}</p>
       <div class="res-foot">ATEEZARGENTINA.COM.AR</div></div>`;
-    againBtn(box, 'Jugar de nuevo 🔁', tvStart);
+    againBtn(box, 'Jugar de nuevo', tvStart);
     addShare(box, 'tv-card', `¡Soy ${r[1]} ${r[2]}! Hice ${tv.s}/${tv.N} en la trivia de ATEEZ por su ${A.ord} aniversario 🏴‍☠️ ${TAGS}`, 'ATINY_Trivia_' + A.n + 'th.png');
     if (tv.s >= tv.N * 10 / 16) boom();
   }
@@ -153,8 +153,8 @@
       <h3>${m.n}</h3><p class="res-score">${pct}% de afinidad</p><p>${m.t}</p>
       ${second ? `<p><small>Tu segunda vibra: ${window.QUIZ_MEMBERS[second[0]].n}</small></p>` : ''}
       <div class="res-foot">ATEEZARGENTINA.COM.AR</div></div>`;
-    againBtn(box, 'Repetir test 🔁', qzStart);
-    addShare(box, 'qz-card', `¡Me salió ${m.n} (${pct}% de afinidad) en el test de ATEEZ por su ${A.ord} aniversario! 🏴‍☠️ ${TAGS}`, 'ATINY_Integrante_' + A.n + 'th.png');
+    againBtn(box, 'Repetir test', qzStart);
+    addShare(box, 'qz-card', `¡Me salió ${m.n} (${pct}% de afinidad) en el test de ATEEZ por su ${A.ord} aniversario! ${TAGS}`, 'ATINY_Integrante_' + A.n + 'th.png');
     boom();
   }
 
@@ -186,7 +186,7 @@
     const n = LINES.filter((l) => l.every((x) => bg.on[x])).length;
     if (n > bg.lines) boom(); // solo festeja cuando se suma una línea nueva
     bg.lines = n;
-    $('bg-msg').textContent = n ? `🎉 ¡BINGO! ${n} línea${n > 1 ? 's' : ''} completa${n > 1 ? 's' : ''}` : '';
+    $('bg-msg').textContent = n ? `¡BINGO! ${n} línea${n > 1 ? 's' : ''} completa${n > 1 ? 's' : ''}` : '';
   }
 
   // ---------- Memorama con las fotos de los integrantes ----------
@@ -225,7 +225,7 @@
   function mmEnd() {
     clearInterval(mm.timer);
     mm.secs = Math.floor((Date.now() - mm.t0) / 1000);
-    const r = mm.moves <= 10 ? ['Memoria de Pirate King/Queen', '👑'] : mm.moves <= 14 ? ['Navegante experto', '⚓'] : mm.moves <= 20 ? ['Tripulante', '🏴‍☠️'] : ['Grumete en práctica', '🐣'];
+    const r = mm.moves <= 10 ? ['Memoria de Pirate King/Queen', ''] : mm.moves <= 14 ? ['Navegante experto', ''] : mm.moves <= 20 ? ['Tripulante', ''] : ['Grumete en práctica', ''];
     let best = '';
     try {
       const prev = JSON.parse(localStorage.getItem('atiny_memo_best_n') || 'null');
@@ -235,7 +235,7 @@
     box.innerHTML = `<div id="mm-card" class="res-card"><div class="res-top">MEMORAMA ATINY · ATEEZ ${A.th}</div>
       <div class="res-emoji">${r[1]}</div><h3>${r[0]}</h3><p class="res-score">${mm.moves} intentos</p><p>Tiempo: ${mmFmt(mm.secs)}${best}</p>
       <div class="res-foot">ATEEZARGENTINA.COM.AR</div></div>`;
-    againBtn(box, 'Jugar de nuevo 🔁', mmStart);
+    againBtn(box, 'Jugar de nuevo', mmStart);
     addShare(box, 'mm-card', `Completé el memorama de ATEEZ en ${mm.moves} intentos y soy "${r[0]}" ${r[1]} ${TAGS}`, 'ATINY_Memorama_' + A.n + 'th.png');
     boom();
   }
@@ -260,13 +260,13 @@
     }).join('');
     box.innerHTML = `<p class="hg-hint">💡 ${hg.h}</p><div class="hg-lives" aria-label="Vidas">${vidas}</div><div class="hg-word">${shown}</div>` +
       (msg ? `<p class="act-result">${msg}</p>` : '') + `<div class="hg-keys">${keys}</div>`;
-    if (hg.end) againBtn(box, 'Otra palabra 🔁', hgStart);
+    if (hg.end) againBtn(box, 'Otra palabra', hgStart);
   }
   function hgGuess(k) {
     if (hg.end || hg.ok.has(k) || hg.bad.has(k)) return;
     if (hg.p.includes(k)) hg.ok.add(k); else hg.bad.add(k);
     const win = [...hg.p].every((c) => c === ' ' || hg.ok.has(c));
-    if (win) { hg.end = true; hgRender('🎉 ¡Lo lograste!'); boom(); }
+    if (win) { hg.end = true; hgRender('¡Lo lograste!'); boom(); }
     else if (hg.bad.size >= MAXV) { hg.end = true; hgRender('¡Casi! Era: <b>' + hg.p + '</b>'); }
     else hgRender();
   }

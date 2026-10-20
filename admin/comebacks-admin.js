@@ -32,7 +32,7 @@ function dibujarLista() {
   if (!cont) return;
   $("cb-import-aviso").style.display = lista.length === 0 ? "" : "none";
   if (lista.length === 0) {
-    cont.innerHTML = `<p class="text-muted1">Todavía no hay comebacks cargados. La página pública está usando el archivo metas/data/goals.json.</p>`;
+    cont.innerHTML = `<p class="text-muted1">Todavía no hay comebacks cargados. La página pública está usando el archivo comeback/data/goals.json.</p>`;
     return;
   }
   cont.innerHTML = lista.map(c => `

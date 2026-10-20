@@ -11,6 +11,9 @@
   --m-grad: linear-gradient(90deg, var(--accent-color), color-mix(in srgb, var(--accent-color), #fff 35%));
 }
 
+/* Los links del menu (comeback/#comeback, comeback/#metas) quedan debajo del header fijo */
+.metas-page section { scroll-margin-top: 130px; }
+
 /* ---------- Hero + contador ---------- */
 .cb-hero {
   max-width: 720px; margin: 0 auto 28px; padding: 28px 20px; text-align: center;

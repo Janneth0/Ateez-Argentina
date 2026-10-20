@@ -4,13 +4,24 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Comeback y metas - ATEEZ Argentina</title>
+    <title>Comeback de ATEEZ: cuenta regresiva y metas de streaming - ATEEZ Argentina</title>
+    <link rel="canonical" href="https://ateezargentina.com.ar/comeback/">
     <!-- Autor -->
     <meta name="author" content="ATEEZ Argentina">
     <meta name="description"
-        content="Contador del comeback de ATEEZ, pre-save y metas de streaming de la comunidad argentina: YouTube, Spotify, iTunes y Shazam.">
+        content="Comeback de ATEEZ, pre-save y metas de streaming de la comunidad argentina: YouTube, Spotify, iTunes y Shazam.">
     <meta name="keywords"
-        content="ateez, argentina, ateez argentina, atiny argentina, metas ateez, comeback ateez, golden hour pt6, streaming ateez">
+        content="ateez, argentina, ateez argentina, atiny argentina, comeback ateez, metas ateez, golden hour pt6, streaming ateez, cuenta regresiva ateez">
+
+    <!-- Al compartir el link (WhatsApp, X, Instagram, Facebook) -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_AR">
+    <meta property="og:site_name" content="ATEEZ Argentina">
+    <meta property="og:url" content="https://ateezargentina.com.ar/comeback/">
+    <meta property="og:title" content="Comeback de ATEEZ: cuenta regresiva y metas de streaming">
+    <meta property="og:description" content="Contador del comeback, pre-save y metas de streaming de la comunidad argentina: YouTube, Spotify, iTunes y Shazam.">
+    <meta property="og:image" content="https://ateezargentina.com.ar/assets/img/AteezArgentinaLogo.png">
+    <meta name="twitter:card" content="summary">
 
     <!-- Favicons -->
     <link href="../assets/img/AteezArgentinaLogo.png" rel="icon" class="logo">
@@ -72,15 +83,17 @@
             <div id="presave" class="presave" data-aos="fade-up" hidden></div>
 
             <!-- Actividad: sobres con photocards (ver sobres.js) -->
-            <div id="sobres" class="presave sobres" data-aos="fade-up" hidden></div>
+            <!-- <div id="sobres" class="presave sobres" data-aos="fade-up" hidden></div> -->
 
-            <!-- Metas de streaming -->
+        </section>
+
+        <!-- Metas de streaming: se llega con comeback/#metas (menu Comeback > Metas de streaming) -->
+        <section id="metas" class="section container">
             <div class="section-title" data-aos="fade-up">
                 <h2>Metas de streaming · Argentina</h2>
             </div>
             <div id="metas-resumen" class="metas-resumen"></div>
             <div id="metas-grid" class="metas-grid"></div>
-
         </section>
     </main>
 
@@ -106,7 +119,7 @@
     <!-- Arranque del sitio: header, footer y tema de colores del admin -->
     <script type="module">
         import { iniciarSitio } from "../assets/js/site-boot.js";
-        iniciarSitio({ base: "../", activo: "metas" });
+        iniciarSitio({ base: "../", activo: "comeback" });
     </script>
     <script type="module" src="../assets/js/cookies.js"></script>
 

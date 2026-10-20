@@ -25,10 +25,10 @@
 window.EXTRAS = {
   // ---- "Mi fecha ATINY": eras (desde = fecha del primer lanzamiento de cada una) ----
   ERAS: [
-    { desde: '2018-10-24', n: 'Treasure', e: '🏴‍☠️', rango: 'Tripulación original', t: 'Llegaste cuando ATEEZ recién empezaba a buscar el tesoro. ¡Sos parte de la historia desde el principio!' },
-    { desde: '2020-07-29', n: 'Zero: Fever', e: '🔥', rango: 'Veterano/a de Zero: Fever', t: 'Subiste al barco en plena fiebre. Viste cómo ATEEZ se hacía gigante.' },
-    { desde: '2022-07-29', n: 'The World', e: '🌍', rango: 'Explorador/a de The World', t: 'Llegaste cuando ATEEZ salió a conquistar el mundo. ¡Y acá seguís!' },
-    { desde: '2024-05-31', n: 'Golden Hour', e: '✨', rango: 'ATINY de la Golden Hour', t: 'Llegaste en la hora dorada. Todavía queda un montón de camino para recorrer juntos.' }
+    { desde: '2018-10-24', n: 'Treasure', e: '', rango: 'Tripulación original', t: 'Llegaste cuando ATEEZ recién empezaba a buscar el tesoro. ¡Sos parte de la historia desde el principio!' },
+    { desde: '2020-07-29', n: 'Zero: Fever', e: '', rango: 'Veterano/a de Zero: Fever', t: 'Subiste al barco en plena fiebre. Viste cómo ATEEZ se hacía gigante.' },
+    { desde: '2022-07-29', n: 'The World', e: '', rango: 'Explorador/a de The World', t: 'Llegaste cuando ATEEZ salió a conquistar el mundo. ¡Y acá seguís!' },
+    { desde: '2024-05-31', n: 'Golden Hour', e: '', rango: 'ATINY de la Golden Hour', t: 'Llegaste en la hora dorada. Todavía queda un montón de camino para recorrer juntos.' }
   ],
   // ---- Adiviná la canción con emojis: [emojis, título] ----
   // Los distractores salen solos de esta misma lista, así que solo agregá pares nuevos.

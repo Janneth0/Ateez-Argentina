@@ -73,7 +73,7 @@
   async function accion(btn, textoOriginal, compartir) {
     aviso('');
     btn.disabled = true;
-    btn.textContent = 'Verificando… ✍️';
+    btn.textContent = 'Verificando…';
     try {
       const canvas = await estampar();
       if (!compartir) { descargar(canvas); return; }
@@ -81,7 +81,7 @@
       const file = new File([blob], 'ATINY_Passport_' + A.n + 'th.png', { type: 'image/png' });
       const data = {
         title: 'ATINY Passport - ' + A.th + ' Anniversary ATEEZ',
-        text: '¡Obtuve mi credencial oficial verificada para celebrar los ' + A.n + ' años de ATEEZ en ateezargentina.com.ar! 🏴‍☠️🇦🇷 ' + A.hashtag + ' #ATEEZ #ATINY',
+        text: '¡Obtuve mi credencial oficial verificada para celebrar los ' + A.n + ' años de ATEEZ en ateezargentina.com.ar! ' + A.hashtag + ' #ATEEZ #ATINY',
         files: [file]
       };
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -98,7 +98,7 @@
     }
   }
 
-  $('btn-dl').addEventListener('click', () => accion($('btn-dl'), 'Descargar PNG 💾', false));
+  $('btn-dl').addEventListener('click', () => accion($('btn-dl'), 'Descargar PNG', false));
   $('btn-share-native').addEventListener('click', () => accion($('btn-share-native'), 'Compartir credencial 📲', true));
   update();
 })();

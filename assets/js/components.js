@@ -51,9 +51,15 @@ export function renderHeader({ base = "", activo = "", config = {} } = {}) {
               <nav id="navmenu" class="navmenu">
                   <ul>
                       <li><a href="${base}index.html" class="${activa('inicio')}">Inicio</a></li>
+                      <li><a href="${base}aniversario/" class="${activa('aniversario')}">Aniversario</a></li>
                       <li><a href="${base}evento/" class="${activa('eventos')}">Eventos</a></li>
                       <li><a href="${base}Noticias/noticias.html" class="${activa('noticias')}">Noticias</a></li>
-                      <!--li><a href="${base}metas/" class="${activa('metas')}">Metas</a></li-->
+                      <li class="dropdown"><a href="${base}comeback/" class="${activa('comeback')}"><span>Comeback</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                          <ul>
+                              <li><a href="${base}comeback/#comeback">Cuenta regresiva</a></li>
+                              <li><a href="${base}comeback/#metas">Metas de streaming</a></li>
+                          </ul>
+                      </li>
                       <li class="dropdown"><a href="${base}contenido.html" class="${activa('contenido')}"><span>Contenido</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                           <ul>
                               <li><a href="${base}contenido.html#mvs">Últimos Comebacks</a></li>
