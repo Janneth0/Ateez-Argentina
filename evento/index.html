@@ -62,7 +62,7 @@
                 de ATEEZ, desde festejos de cumpleaños, hasta eventos en celebración de Comebacks</p>
         </div><!-- End Section Title -->
 
-        <div data-aos="fade-up" data-aos-delay="100">
+        <div>
 
             <div class="isotope-layout" data-default-filter="*" data-layout="fitRows" data-sort="original-order">
 
@@ -76,7 +76,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="row" id="publicaciones-comunidad" data-aos="fade-up" data-aos-delay="150"></div>
+            <div class="row" id="publicaciones-comunidad"></div>
 
                 <p id="publicaciones-vacio" style="display:none;">Todavía no hay publicaciones cargadas por el equipo.
                     ¡Pronto
@@ -114,9 +114,8 @@
 
     <!-- Main JS File -->
     <script src="../assets/js/main.js"></script>
-    <script async src="//www.instagram.com/embed.js"></script>
-    <script async src="https://www.tiktok.com/embed.js"></script>
-    <script async src="https://platform.twitter.com/widgets.js"></script>
+    <!-- Los scripts de embeds (Instagram / TikTok / X) se cargan solos, bajo demanda, desde components.js:
+         antes estaban aca y retrasaban el evento "load" (y con el, el preloader y las animaciones). -->
 
     <!-- Publicaciones dinámicas cargadas desde el panel de administración (Firestore) -->
     <script type="module" src="../assets/js/eventos-publicos.js"></script>

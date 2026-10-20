@@ -396,13 +396,13 @@
         <section>
     <div class="container">
         <div class="header-title">
-            <h1>🏴‍☠️ ATINY Official ID Card</h1>
+            <h1>ATINY Official ID Card</h1>
             <p>Generá tu credencial personalizada para festejar los 8 años de ATEEZ</p>
             <div class="act-nav">
                 <!-- <a href="#act-countdown">⏳ Cuenta regresiva</a> -->
-                <a href="#act-trivia">🧠 Trivia</a>
-                <a href="#act-quiz">🏴‍☠️ ¿Qué integrante sos?</a>
-                <a href="#act-bingo">🎯 Bingo ATINY</a>
+                <a href="#act-trivia">Trivia</a>
+                <a href="#act-quiz">¿Qué integrante sos?</a>
+                <a href="#act-bingo">Bingo ATINY</a>
             </div>
         </div>
 
@@ -529,23 +529,23 @@
     </div></div></section>
 
     <section id="act-trivia" class="act-section"><div class="container"><div class="act-card">
-        <h2>🧠 Trivia ATINY</h2>
+        <h2>Trivia ATINY</h2>
         <p class="act-sub">¿Cuánto sabés de ATEEZ?</p>
         <div id="tv-box"></div>
     </div></div></section>
 
     <section id="act-quiz" class="act-section"><div class="container"><div class="act-card">
-        <h2>🏴‍☠️ ¿Qué integrante sos?</h2>
+        <h2>¿Qué integrante sos?</h2>
         <p class="act-sub">Test hecho en Argentina: respondé 8 preguntas y descubrí con quién compartís vibra</p>
         <div id="qz-box"></div>
     </div></div></section>
 
     <section id="act-bingo" class="act-section"><div class="container"><div class="act-card">
-        <h2>🎯 Bingo ATINY</h2>
+        <h2>Bingo ATINY</h2>
         <p class="act-sub">Tocá las casillas que te representan. ¡Completá una línea para ganar!</p>
         <div id="bg-grid" class="bingo-grid"></div>
         <p id="bg-msg" class="act-result"></p>
-        <button class="btn" onclick="bingoInit()">Mezclar 🔀</button>
+        <button class="btn" onclick="bingoInit()">Mezclar</button>
     </div></div></section>
     </main>
 
@@ -675,7 +675,7 @@
                     // link.click();
 
                     btnDl.disabled = false;
-                    btnDl.innerText = 'Proximamente💾';
+                    btnDl.innerText = 'Proximamente';
 
                     if (callback) callback();
                 });
@@ -688,7 +688,7 @@
             const btnShare = document.getElementById('btn-share-native');
 
             btnShare.disabled = true;
-            btnShare.innerText = 'Estampando credencial... ✍️';
+            btnShare.innerText = 'Estampando credencial...';
 
             // Disparar animación del sello
             stamp.classList.add('active');

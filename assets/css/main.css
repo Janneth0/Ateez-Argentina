@@ -5744,3 +5744,103 @@ section,
   --bs-btn-disabled-color: var(--default-color);
   --bs-btn-disabled-border-color: color-mix(in srgb, var(--default-color), transparent 70%);
 }
+
+
+/* ============================================================
+   CARGA RAPIDA DE EVENTOS / CONTENIDO (embeds diferidos + esqueletos)
+   ============================================================ */
+
+/* Caja que reserva el lugar del embed hasta que se activa (ver components.js) */
+.embed-diferido {
+  position: relative;
+  width: 100%;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+.embed-diferido .embed-cargando {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: color-mix(in srgb, var(--default-color), transparent 40%);
+  background: linear-gradient(100deg,
+      color-mix(in srgb, var(--surface-color), var(--default-color) 4%) 30%,
+      color-mix(in srgb, var(--surface-color), var(--default-color) 12%) 50%,
+      color-mix(in srgb, var(--surface-color), var(--default-color) 4%) 70%);
+  background-size: 200% 100%;
+  animation: esq-brillo 1.4s linear infinite;
+}
+/* Cuando el embed ya esta puesto, queda por encima del "cargando" */
+.embed-diferido > :not(.embed-cargando) { position: relative; z-index: 1; width: 100%; }
+
+@keyframes esq-brillo { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+
+/* Esqueletos de las tarjetas de Eventos mientras llega la lista */
+.portfolio .portfolio-card.card-esqueleto { pointer-events: none; }
+.portfolio .portfolio-card.card-esqueleto .image-container {
+  background: linear-gradient(100deg,
+      color-mix(in srgb, var(--surface-color), var(--default-color) 4%) 30%,
+      color-mix(in srgb, var(--surface-color), var(--default-color) 12%) 50%,
+      color-mix(in srgb, var(--surface-color), var(--default-color) 4%) 70%);
+  background-size: 200% 100%;
+  animation: esq-brillo 1.4s linear infinite;
+}
+.esq-linea { height: 12px; border-radius: 6px; margin-bottom: 10px; background: color-mix(in srgb, var(--default-color), transparent 88%); }
+.esq-titulo { height: 18px; width: 70%; }
+.esq-corta { width: 45%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .embed-diferido .embed-cargando,
+  .portfolio .portfolio-card.card-esqueleto .image-container { animation: none; }
+}
+
+/* ============================================================
+   CONTENIDO: videos (grilla 16:9) y publicaciones (muro de posts)
+   ============================================================ */
+.contenido-grupo { margin-bottom: 36px; }
+.contenido-grupo-titulo {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 1.15rem; margin: 0 0 18px; padding-bottom: 10px;
+  color: var(--heading-color);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-color), transparent 75%);
+}
+.contenido-grupo-titulo i { color: var(--accent-color); }
+
+/* Los videos mantienen su grilla de siempre; solo se separa un poco cada fila */
+.contenido-grupo .row > .contenido-item { margin-bottom: 24px; }
+
+/* Muro: cada publicacion tiene un alto distinto, asi que van en columnas que se acomodan solas */
+.contenido-muro { column-width: 330px; column-gap: 22px; }
+.contenido-post-item { break-inside: avoid; margin-bottom: 22px; }
+.contenido-card-post { height: auto; }
+.contenido-card-post:hover { transform: none; }
+
+.contenido-post-embed { background: color-mix(in srgb, var(--surface-color), #000 8%); }
+.contenido-post-embed .embed-diferido { min-height: 420px; }
+
+/* Los embeds de Instagram traen estilos inline con ancho minimo fijo: se pisan para que
+   entren en la columna en el celular y no se corten. */
+.contenido-post-embed .instagram-media,
+.contenido-post-embed iframe.instagram-media {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+.contenido-post-embed .twitter-tweet,
+.contenido-post-embed .tiktok-embed { margin: 0 auto !important; max-width: 100% !important; min-width: 0 !important; }
+
+.contenido-post-imagen img { display: block; width: 100%; height: auto; }
+.contenido-post-imagen.contenido-sin-imagen { aspect-ratio: 16 / 9; display: grid; place-items: center; background: color-mix(in srgb, var(--surface-color), #000 10%); }
+.contenido-post-imagen.contenido-sin-imagen img { width: 40%; height: auto; opacity: .6; }
+
+@media (max-width: 576px) {
+  .contenido-muro { column-width: 100%; column-count: 1; }
+}

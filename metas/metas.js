@@ -231,6 +231,7 @@ import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } fro
     $('cb-sub').textContent = DATA.comeback.subtitulo;
     $('cb-title').textContent = DATA.comeback.titulo;
     $('cb-date').textContent = DATA.comeback.fechaTexto;
+    document.dispatchEvent(new CustomEvent('comeback-listo', { detail: { id: DATA.id } }));
     renderPresave();
     tick(); setInterval(tick, 1000);
     render();

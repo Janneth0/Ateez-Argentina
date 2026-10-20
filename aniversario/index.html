@@ -70,13 +70,12 @@
 
     <main class="main aniv">
 
-        <!-- ===== CREDENCIAL ===== -->
-        <section id="credencial" class="act-section">
+        <!-- ===== MENU DE ACTIVIDADES =====
+             Al tocar una opcion se muestra SOLO esa actividad (ver assets/js/aniversario/nav.js).
+             Tambien funciona con links directos: aniversario/#act-trivia -->
+        <div class="act-nav-wrap" id="act-nav-wrap">
             <div class="container">
-                <div class="header-title">
-                    <h1>🏴‍☠️ ATINY Official ID Card</h1>
-                    <p>Generá tu credencial personalizada para festejar los <span data-aniv="n">8</span> años de ATEEZ</p>
-                    <nav class="act-nav" aria-label="Actividades">
+                <nav class="act-nav" id="act-nav" aria-label="Actividades">
                         <a href="#credencial">🪪 Credencial</a>
                         <a href="#act-countdown">⏳ Cuenta regresiva</a>
                         <a href="#act-trivia">🧠 Trivia</a>
@@ -90,6 +89,15 @@
                         <a href="#act-bday">🎂 Cumpleaños</a>
                         <a href="#act-tour">🌎 Tour</a>
                     </nav>
+            </div>
+        </div>
+
+        <!-- ===== CREDENCIAL ===== -->
+        <section id="credencial" class="act-section">
+            <div class="container">
+                <div class="header-title">
+                    <h1>🏴‍☠️ ATINY Official ID Card</h1>
+                    <p>Generá tu credencial personalizada para festejar los <span data-aniv="n">8</span> años de ATEEZ</p>
                 </div>
 
                 <div class="generator-grid">
@@ -301,6 +309,8 @@
     <script src="assets/js/aniversario/credencial.js"></script>
     <script src="assets/js/aniversario/actividades.js"></script>
     <script src="assets/js/aniversario/nuevas.js"></script>
+    <!-- Menu: muestra una sola actividad a la vez (se carga al final, cuando todas las secciones ya existen) -->
+    <script src="assets/js/aniversario/nav.js"></script>
 </body>
 
 </html>

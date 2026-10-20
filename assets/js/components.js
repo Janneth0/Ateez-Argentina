@@ -223,7 +223,15 @@ export function montarModalTerminos() {
  * panel. Reconoce Instagram, TikTok, Twitter/X y Facebook (posts publicos);
  * si no reconoce la red, muestra una tarjeta generica de "Ver publicacion".
  */
-export function renderEmbedRedSocial(link = "") {
+export function renderEmbedRedSocial(link = "", diferido = false) {
+  // Modo diferido: en vez de cargar el embed (pesado) apenas se pinta la lista, se deja una
+  // caja con un "cargando" y el embed real se arma recien cuando la tarjeta esta por verse
+  // (ver activarEmbedsDiferidos). Asi la pagina muestra las tarjetas al instante.
+  if (diferido && esLinkRedSocial(link)) {
+    return `<div class="embed-diferido" data-url="${escapeHtml(link)}">
+              <span class="embed-cargando"><i class="bi bi-hourglass-split"></i> Cargando publicación…</span>
+            </div>`;
+  }
   if (/instagram\.com/i.test(link)) {
     return `<blockquote class="instagram-media" data-instgrm-permalink="${link}" data-instgrm-version="14"></blockquote>`;
   }
@@ -249,28 +257,90 @@ export function esLinkRedSocial(url = "") {
   return /instagram\.com|tiktok\.com|(twitter\.com|x\.com)\/\w+\/status|facebook\.com/i.test(url);
 }
 
+// Los scripts de Instagram / TikTok / X ya NO estan en el <head> de las paginas: bloqueaban el
+// evento "load" (y con el, el preloader y las animaciones AOS) hasta que terminaban de bajar,
+// que era lo que hacia que las tarjetas tardaran ~7 segundos en verse. Ahora se piden recien
+// cuando hay un embed para mostrar, una sola vez.
+const SCRIPTS_RED = {
+  instagram: "https://www.instagram.com/embed.js",
+  tiktok: "https://www.tiktok.com/embed.js",
+  twitter: "https://platform.twitter.com/widgets.js"
+};
+const scriptsRed = {};
+
+function cargarScriptRed(clave) {
+  if (!scriptsRed[clave]) {
+    scriptsRed[clave] = new Promise((resolve) => {
+      const s = document.createElement("script");
+      s.src = SCRIPTS_RED[clave];
+      s.async = true;
+      s.onload = () => resolve(true);
+      s.onerror = () => resolve(false);
+      document.head.appendChild(s);
+    });
+  }
+  return scriptsRed[clave];
+}
+
+let reprocesoPendiente = null;
+
 /**
- * Vuelve a pedirle a cada red que procese los embeds nuevos insertados
- * dinámicamente. Instagram y Twitter/X exponen una función para esto;
- * TikTok NO tiene ninguna API documentada para reprocesar (confirmado:
- * no existe "window.tiktokEmbed.lib.render" ni nada parecido), así que
- * la única forma que funciona es volver a insertar su script con un
- * parámetro distinto en la URL para forzar que el navegador lo cargue
- * de nuevo y escanee la página otra vez.
+ * Le pide a cada red que procese los embeds nuevos insertados dinamicamente.
+ * Instagram y X exponen una funcion para esto; TikTok NO tiene ninguna API para
+ * reprocesar, asi que se vuelve a insertar su script con un parametro distinto.
+ * Se agrupan los pedidos (varias tarjetas que se activan juntas = un solo proceso).
  */
 export function reprocesarEmbedsRedes() {
-  if (window.instgrm?.Embeds) window.instgrm.Embeds.process();
-  if (window.twttr?.widgets) window.twttr.widgets.load();
+  clearTimeout(reprocesoPendiente);
+  reprocesoPendiente = setTimeout(() => {
+    if (document.querySelector(".instagram-media")) {
+      cargarScriptRed("instagram").then(() => window.instgrm?.Embeds?.process());
+    }
+    if (document.querySelector(".twitter-tweet")) {
+      cargarScriptRed("twitter").then(() => window.twttr?.widgets?.load());
+    }
+    if (document.querySelector(".tiktok-embed")) {
+      const primera = !scriptsRed.tiktok;
+      cargarScriptRed("tiktok").then(() => {
+        if (primera) return; // la primera carga ya escanea la pagina sola
+        document.getElementById("tiktok-embed-script")?.remove();
+        const script = document.createElement("script");
+        script.id = "tiktok-embed-script";
+        script.src = `${SCRIPTS_RED.tiktok}?t=${Date.now()}`;
+        script.async = true;
+        document.body.appendChild(script);
+      });
+    }
+  }, 120);
+}
 
-  if (document.querySelector(".tiktok-embed")) {
-    const anterior = document.getElementById("tiktok-embed-script");
-    if (anterior) anterior.remove();
-    const script = document.createElement("script");
-    script.id = "tiktok-embed-script";
-    script.src = `https://www.tiktok.com/embed.js?t=${Date.now()}`;
-    script.async = true;
-    document.body.appendChild(script);
+let observadorEmbeds = null;
+
+/**
+ * Convierte las cajas ".embed-diferido" en el embed real cuando estan cerca de entrar en
+ * pantalla (600px antes), asi no se cargan 20 publicaciones de golpe.
+ */
+export function activarEmbedsDiferidos(raiz = document) {
+  const pendientes = raiz.querySelectorAll(".embed-diferido:not([data-activo])");
+  if (!pendientes.length) return;
+
+  const activar = (el) => {
+    el.dataset.activo = "1";
+    el.insertAdjacentHTML("beforeend", renderEmbedRedSocial(el.dataset.url));
+    reprocesarEmbedsRedes();
+  };
+
+  if (!("IntersectionObserver" in window)) { pendientes.forEach(activar); return; }
+  if (!observadorEmbeds) {
+    observadorEmbeds = new IntersectionObserver((entradas) => {
+      entradas.forEach((e) => {
+        if (!e.isIntersecting) return;
+        observadorEmbeds.unobserve(e.target);
+        activar(e.target);
+      });
+    }, { rootMargin: "600px 0px" });
   }
+  pendientes.forEach((el) => observadorEmbeds.observe(el));
 }
 
 /** @deprecated usar reprocesarEmbedsRedes(). Se mantiene como alias por compatibilidad. */
@@ -308,7 +378,7 @@ export function renderPostCard({ id, titulo, descripcion, link = "", categoria =
   <div class="col-lg-4 col-md-6 portfolio-item isotope-item ${claveFiltro}" data-post-id="${id || ''}">
       <div class="portfolio-card${destacado ? " es-destacado" : ""}">
           ${destacado ? `<span class="evento-estrella"><i class="bi bi-star-fill"></i> Destacado</span>` : ""}
-          <div class="image-container">${renderEmbedRedSocial(link)}</div>
+          <div class="image-container">${renderEmbedRedSocial(link, true)}</div>
           <div class="content">
               <h3 class="texto-2-lineas" title="${escapeHtml(titulo)}">${escapeHtml(titulo)}</h3>
               <p class="texto-3-lineas" title="${escapeHtml(descripcion)}">${escapeHtml(descripcion)}</p>
@@ -528,6 +598,65 @@ export function renderContenidoCard({ id, titulo, descripcion, link = "", adjunt
               <h4 class="texto-2-lineas" title="${escapeHtml(titulo)}">${escapeHtml(titulo)}</h4>
               <p class="texto-3-lineas" title="${escapeHtml(descripcion)}">${escapeHtml(descripcion)}</p>
               ${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener" class="contenido-card-link">Ver <i class="bi bi-box-arrow-up-right"></i></a>` : ""}
+          </div>
+      </div>
+  </div>`;
+}
+
+/** ID de YouTube de un item de contenido (del campo "adjunto" o, si esta vacio, del "link"), o null. */
+export function videoIdDeContenido({ adjunto = "", link = "" } = {}) {
+  return extraerIdYoutube(adjunto) || (!adjunto ? extraerIdYoutube(link) : null);
+}
+
+/**
+ * Tarjeta de VIDEO de YouTube (Dance Covers, Otros): caja 16:9 con miniatura y play;
+ * al tocarla se reemplaza por el reproductor en el mismo lugar (ver listener .yt-facade).
+ */
+export function renderContenidoVideo({ id, titulo, descripcion, link = "", adjunto = "" } = {}) {
+  const videoId = videoIdDeContenido({ adjunto, link });
+  return `
+  <div class="col-lg-4 col-md-6 contenido-item" data-contenido-id="${id || ''}">
+      <div class="contenido-card">
+          <div class="contenido-media contenido-youtube">
+              <button type="button" class="yt-facade" data-video-id="${videoId}" data-titulo="${escapeHtml(titulo)}" aria-label="Reproducir: ${escapeHtml(titulo)}">
+                  <img src="https://i.ytimg.com/vi/${videoId}/hqdefault.jpg" alt="" loading="lazy">
+                  <i class="bi bi-play-circle-fill yt-play" aria-hidden="true"></i>
+              </button>
+          </div>
+          <div class="contenido-card-body">
+              <h4 class="texto-2-lineas" title="${escapeHtml(titulo)}">${escapeHtml(titulo)}</h4>
+              <p class="texto-3-lineas" title="${escapeHtml(descripcion)}">${escapeHtml(descripcion)}</p>
+              ${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener" class="contenido-card-link">Ver <i class="bi bi-box-arrow-up-right"></i></a>` : ""}
+          </div>
+      </div>
+  </div>`;
+}
+
+/**
+ * Tarjeta de PUBLICACION (Series, Traducciones): la publicacion de Instagram / TikTok / X se ve
+ * directamente en la tarjeta (embed real, cargado cuando esta por entrar en pantalla), con el
+ * titulo y la descripcion debajo. Si el adjunto es una imagen, se muestra la imagen.
+ */
+export function renderContenidoPost({ id, titulo, descripcion, link = "", adjunto = "" } = {}) {
+  const fuente = esLinkRedSocial(adjunto) ? adjunto : (esLinkRedSocial(link) ? link : "");
+  let media;
+  if (fuente) {
+    media = `<div class="contenido-post-embed">${renderEmbedRedSocial(fuente, true)}</div>`;
+  } else if (adjunto) {
+    media = `<div class="contenido-post-imagen"><img src="${escapeHtml(adjunto)}" alt="${escapeHtml(titulo)}" loading="lazy"></div>`;
+  } else {
+    media = `<div class="contenido-post-imagen contenido-sin-imagen"><img class="contenido-img-respaldo logo-fallback" src="${logoDelSitio("")}" alt="" loading="lazy"></div>`;
+  }
+  // El boton "Ver" no se repite si el link es el mismo post que ya se ve embebido.
+  const mostrarLink = link && link !== fuente;
+  return `
+  <div class="contenido-post-item" data-contenido-id="${id || ''}">
+      <div class="contenido-card contenido-card-post">
+          ${media}
+          <div class="contenido-card-body">
+              <h4 class="texto-2-lineas" title="${escapeHtml(titulo)}">${escapeHtml(titulo)}</h4>
+              <p class="texto-3-lineas" title="${escapeHtml(descripcion)}">${escapeHtml(descripcion)}</p>
+              ${mostrarLink ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener" class="contenido-card-link">Ver <i class="bi bi-box-arrow-up-right"></i></a>` : ""}
           </div>
       </div>
   </div>`;

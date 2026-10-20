@@ -94,11 +94,16 @@
   /**
    * Preloader
    */
+  // Antes se quitaba en "load", que espera a TODO (imagenes, iframes, scripts de redes sociales)
+  // y por eso en paginas con embeds la pantalla quedaba tapada varios segundos. Ahora se quita
+  // apenas el HTML esta listo; "load" y un tope de 2,5 s quedan como respaldo.
   const preloader = document.querySelector('#preloader');
   if (preloader) {
-    window.addEventListener('load', () => {
-      preloader.remove();
-    });
+    const quitarPreloader = () => preloader.remove();
+    if (document.readyState !== 'loading') quitarPreloader();
+    else document.addEventListener('DOMContentLoaded', quitarPreloader);
+    window.addEventListener('load', quitarPreloader);
+    setTimeout(quitarPreloader, 2500);
   }
 
   /**
@@ -135,7 +140,11 @@
       mirror: false
     });
   }
-  window.addEventListener('load', aosInit);
+  // Se inicia apenas el HTML esta listo (antes esperaba a "load", y los elementos con data-aos
+  // quedaban invisibles hasta que terminaba de cargar todo). En "load" solo se recalcula.
+  if (document.readyState !== 'loading') aosInit();
+  else document.addEventListener('DOMContentLoaded', aosInit);
+  window.addEventListener('load', () => { if (typeof AOS !== 'undefined') AOS.refresh(); });
 
   /**
    * Initiate Pure Counter
@@ -185,9 +194,14 @@
     let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
     let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
 
+    // Si esta pagina no tiene ".isotope-container" (ej: Eventos, que filtra por JS propio),
+    // imagesLoaded(null) tiraba un error que cortaba el resto de main.js. Ahora se saltea.
+    const isotopeContainer = isotopeItem.querySelector('.isotope-container');
+    if (!isotopeContainer) return;
+
     let initIsotope;
-    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function () {
-      initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
+    imagesLoaded(isotopeContainer, function () {
+      initIsotope = new Isotope(isotopeContainer, {
         itemSelector: '.isotope-item',
         layoutMode: layout,
         filter: filter,
