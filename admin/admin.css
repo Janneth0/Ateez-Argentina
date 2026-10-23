@@ -790,6 +790,7 @@
 .cb-meta-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .cb-barra { background: color-mix(in srgb, var(--default-color), transparent 94%); border-radius: 8px; padding: 12px; margin-bottom: 10px; }
 .cb-barra .cb-grid { margin-bottom: 8px; }
+.cb-barra > .cb-completada { display: flex; font-size: 13px; margin: 0 0 4px; }
 /* Campos que solo aplican a ciertos casos */
 .cb-fila:not([data-plat="otro"]) .solo-otro, .cb-meta:not([data-plat="otro"]) .solo-otro { display: none; }
 .cb-fila:not([data-plat="otro"]) { grid-template-columns: 170px 1fr 1fr auto; }

@@ -1,5 +1,5 @@
 {
-  "_ayuda": "Este archivo se edita a mano para actualizar las metas. Las claves que empiezan con _ son notas y el sitio las ignora. 'actual' en null significa 'sin datos todavia'.",
+  "_ayuda": "Respaldo (se usa solo si Firestore no tiene un comeback activo). Las claves que empiezan con _ son notas. 'actual' en null = sin datos todavia. meta.destacada=true ocupa toda la fila; barra.completada=true marca la meta como cumplida a mano; barra.tipo='puesto' muestra la posicion en vez de una barra.",
   "actualizado": "2026-10-17",
   "comeback": {
     "subtitulo": "ATEEZ Comeback Countdown",
@@ -17,9 +17,30 @@
       "link": "https://www.youtube.com/watch?v=tVJBWoof09Q",
       "botonTexto": "Ver en YouTube",
       "barras": [
-        { "id": "yt_24h", "etiqueta": "Primeras 24 hs", "tipo": "cantidad", "unidad": "vistas", "objetivo": 15000000, "actual": null, "fuente": "youtube", "ventana24h": true, "final24h": null },
-        { "id": "yt_mes", "etiqueta": "Primer mes", "tipo": "cantidad", "unidad": "vistas", "objetivo": 30000000, "actual": null, "fuente": "youtube" }
-      ]
+        {
+          "id": "yt_24h",
+          "etiqueta": "Primeras 24 hs",
+          "tipo": "cantidad",
+          "unidad": "vistas",
+          "objetivo": 15000000,
+          "actual": null,
+          "fuente": "youtube",
+          "ventana24h": true,
+          "final24h": null,
+          "completada": false
+        },
+        {
+          "id": "yt_mes",
+          "etiqueta": "Primer mes",
+          "tipo": "cantidad",
+          "unidad": "vistas",
+          "objetivo": 30000000,
+          "actual": null,
+          "fuente": "youtube",
+          "completada": false
+        }
+      ],
+      "destacada": true
     },
     {
       "id": "spotify",
@@ -29,9 +50,27 @@
       "link": "https://open.spotify.com/",
       "botonTexto": "Escuchar en Spotify",
       "barras": [
-        { "id": "sp_ar", "etiqueta": "Top diario Argentina", "tipo": "puesto", "objetivo": 30, "maximo": 200, "actual": null },
-        { "id": "sp_24h", "etiqueta": "Streams en 24 hs", "tipo": "cantidad", "unidad": "streams", "objetivo": 1000000, "actual": null, "_nota": "Objetivo de ejemplo: cambialo por el que decida la comunidad" }
-      ]
+        {
+          "id": "sp_ar",
+          "etiqueta": "Top diario Argentina",
+          "tipo": "puesto",
+          "objetivo": 30,
+          "maximo": 200,
+          "actual": null,
+          "completada": false
+        },
+        {
+          "id": "sp_24h",
+          "etiqueta": "Streams en 24 hs",
+          "tipo": "cantidad",
+          "unidad": "streams",
+          "objetivo": 1000000,
+          "actual": null,
+          "_nota": "Objetivo de ejemplo: cambialo por el que decida la comunidad",
+          "completada": false
+        }
+      ],
+      "destacada": false
     },
     {
       "id": "itunes",
@@ -41,9 +80,26 @@
       "link": "https://music.apple.com/ar/",
       "botonTexto": "Comprar en iTunes",
       "barras": [
-        { "id": "it_songs", "etiqueta": "Top Canciones Argentina", "tipo": "puesto", "objetivo": 10, "maximo": 100, "actual": null },
-        { "id": "it_albums", "etiqueta": "Top Álbumes Argentina", "tipo": "puesto", "objetivo": 1, "maximo": 100, "actual": null }
-      ]
+        {
+          "id": "it_songs",
+          "etiqueta": "Top Canciones Argentina",
+          "tipo": "puesto",
+          "objetivo": 10,
+          "maximo": 100,
+          "actual": null,
+          "completada": false
+        },
+        {
+          "id": "it_albums",
+          "etiqueta": "Top Álbumes Argentina",
+          "tipo": "puesto",
+          "objetivo": 1,
+          "maximo": 100,
+          "actual": null,
+          "completada": false
+        }
+      ],
+      "destacada": false
     },
     {
       "id": "shazam",
@@ -53,8 +109,18 @@
       "link": "https://www.shazam.com/",
       "botonTexto": "Abrir Shazam",
       "barras": [
-        { "id": "sh_ar", "etiqueta": "Shazams en Argentina", "tipo": "cantidad", "unidad": "shazams", "objetivo": 10000, "actual": null }
-      ]
+        {
+          "id": "sh_ar",
+          "etiqueta": "Shazams en Argentina",
+          "tipo": "cantidad",
+          "unidad": "shazams",
+          "objetivo": 10000,
+          "actual": null,
+          "completada": false
+        }
+      ],
+      "destacada": false
     }
-  ]
+  ],
+  "presave": []
 }

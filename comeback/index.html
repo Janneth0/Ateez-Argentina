@@ -64,23 +64,30 @@
     <main class="main metas-page">
         <section id="comeback" class="section container">
 
-            <!-- Contador -->
-            <div class="cb-hero" data-aos="fade-up">
-                <span class="subtitle" id="cb-sub">ATEEZ Comeback Countdown</span>
-                <h2 id="cb-title">GOLDEN HOUR: PART.6</h2>
-                <p class="cb-date" id="cb-date"></p>
-                <p class="cb-label" id="cb-label">Cargando…</p>
-                <div id="cb-boxes" class="cb-boxes">
-                    <div class="cb-box"><b id="cb-d">0</b><small>días</small></div>
-                    <div class="cb-box"><b id="cb-h">00</b><small>horas</small></div>
-                    <div class="cb-box"><b id="cb-m">00</b><small>min</small></div>
-                    <div class="cb-box"><b id="cb-s">00</b><small>seg</small></div>
+            <!-- Arriba: contador (izquierda) + video del comeback y pre-save (derecha) -->
+            <div id="cb-top" class="cb-top">
+                <!-- Contador -->
+                <div class="cb-hero" data-aos="fade-up">
+                    <span class="subtitle" id="cb-sub">ATEEZ Comeback Countdown</span>
+                    <h2 id="cb-title">GOLDEN HOUR: PART.6</h2>
+                    <p class="cb-date" id="cb-date"></p>
+                    <p class="cb-label" id="cb-label">Cargando…</p>
+                    <div id="cb-boxes" class="cb-boxes">
+                        <div class="cb-box"><b id="cb-d">0</b><small>días</small></div>
+                        <div class="cb-box"><b id="cb-h">00</b><small>horas</small></div>
+                        <div class="cb-box"><b id="cb-m">00</b><small>min</small></div>
+                        <div class="cb-box"><b id="cb-s">00</b><small>seg</small></div>
+                    </div>
+                    <p class="cb-msg" id="cb-msg"></p>
                 </div>
-                <p class="cb-msg" id="cb-msg"></p>
-            </div>
 
-            <!-- Pre-save (se carga desde el panel de admin; se oculta solo cuando sale el comeback) -->
-            <div id="presave" class="presave" data-aos="fade-up" hidden></div>
+                <!-- Derecha: video que se está contando (se carga desde el admin) y, justo debajo, el pre-save
+                     (el pre-save se oculta solo cuando sale el comeback). Sin data-aos: se llenan por JS. -->
+                <aside id="cb-side" class="cb-side" hidden>
+                    <div id="cb-video" class="cb-video" hidden></div>
+                    <div id="presave" class="presave" hidden></div>
+                </aside>
+            </div>
 
             <!-- Actividad: sobres con photocards (ver sobres.js) -->
             <!-- <div id="sobres" class="presave sobres" data-aos="fade-up" hidden></div> -->

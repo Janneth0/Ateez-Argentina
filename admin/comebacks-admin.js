@@ -83,10 +83,11 @@ function filaBarra(b = {}) {
       <label><span class="solo-cantidad">Meta (número a alcanzar)</span><span class="solo-puesto">Meta: puesto # o mejor</span>
         <input type="number" min="0" step="any" class="form-control b-obj" value="${b.objetivo ?? ""}"></label>
       <label class="solo-cantidad">Unidad<input type="text" class="form-control b-unidad" placeholder="vistas, streams..." value="${e(b.unidad || "")}"></label>
-      <label class="solo-puesto">Puesto máximo del ranking<input type="number" min="1" class="form-control b-max" placeholder="Ej: 200" value="${b.maximo ?? ""}"></label>
       <label><span class="solo-cantidad">Valor actual</span><span class="solo-puesto">Puesto actual</span>
         <input type="number" min="0" step="any" class="form-control b-actual" placeholder="vacío = sin datos" value="${b.actual ?? ""}"></label>
     </div>
+    <label class="cb-check cb-completada"><input type="checkbox" class="form-check-input b-completada" ${b.completada ? "checked" : ""}> Meta cumplida (marcar a mano)</label>
+    <div class="form-text mb-2">Para metas que la web no puede verificar sola (Spotify, Shazam…). YouTube y los puestos se marcan solos al llegar a la meta.</div>
     <div class="cb-grid solo-yt">
       <label>Fuente del valor
         <select class="form-select b-fuente">
@@ -118,6 +119,7 @@ function bloqueMeta(m = {}) {
       <label>Detalle (opcional)<input type="text" class="form-control m-detalle" placeholder="Ej: Ranking diario de Argentina" value="${e(m.detalle || "")}"></label>
       <label>Link del botón<input type="url" class="form-control m-link" placeholder="https://..." value="${e(m.link || "")}"></label>
       <label>Texto del botón<input type="text" class="form-control m-boton" placeholder="Ej: Escuchar en Spotify" value="${e(m.botonTexto || "")}"></label>
+      <label class="cb-check"><input type="checkbox" class="form-check-input m-destacada" ${m.destacada ? "checked" : ""}> Destacada (ocupa toda la fila)</label>
     </div>
     <div class="cb-barras"></div>
     <button type="button" class="btn btn-sm btn-outline-secondary cb-agregar-barra"><i class="bi bi-plus-lg"></i> Agregar barra de progreso</button>`;
@@ -147,7 +149,8 @@ function abrirEditor(c) {
 
   const ms = $("cb-metas");
   ms.innerHTML = "";
-  (c.metas || []).forEach(m => ms.appendChild(bloqueMeta(m)));
+  const sinCampo = !(c.metas || []).some(m => m.destacada !== undefined); // comeback guardado antes de existir "Destacada"
+  (c.metas || []).forEach((m, i) => ms.appendChild(bloqueMeta(sinCampo && i === 0 ? { ...m, destacada: true } : m)));
   renumerarMetas();
 
   $("cb-error").style.display = "none";
@@ -201,16 +204,12 @@ function leerFormulario() {
         etiqueta: b.querySelector(".b-etq").value.trim(),
         tipo,
         objetivo: num(b.querySelector(".b-obj")),
-        actual: num(b.querySelector(".b-actual"))
+        actual: num(b.querySelector(".b-actual")),
+        completada: b.querySelector(".b-completada").checked
       };
       if (!barra.etiqueta) errores.push(`Meta ${i + 1}: una barra no tiene nombre.`);
       if (barra.objetivo == null || barra.objetivo <= 0) errores.push(`Meta ${i + 1}: la barra "${barra.etiqueta || "sin nombre"}" necesita una meta mayor a 0.`);
-      if (tipo === "puesto") {
-        barra.maximo = num(b.querySelector(".b-max")) || 100;
-        if (barra.objetivo != null && barra.objetivo >= barra.maximo) errores.push(`Meta ${i + 1}: en "${barra.etiqueta}" el puesto meta tiene que ser menor al puesto máximo.`);
-      } else {
-        barra.unidad = b.querySelector(".b-unidad").value.trim() || null;
-      }
+      if (tipo !== "puesto") barra.unidad = b.querySelector(".b-unidad").value.trim() || null;
       if (plataforma === "youtube" && tipo === "cantidad") {
         barra.fuente = b.querySelector(".b-fuente").value;
         barra.ventana24h = b.querySelector(".b-24h").checked;
@@ -226,6 +225,7 @@ function leerFormulario() {
       detalle: bloque.querySelector(".m-detalle").value.trim() || null,
       link,
       botonTexto: bloque.querySelector(".m-boton").value.trim() || null,
+      destacada: bloque.querySelector(".m-destacada").checked,
       barras
     };
   });
@@ -281,7 +281,7 @@ async function guardar(ev) {
 function conectarEventos() {
   $("cb-nuevo").addEventListener("click", () => abrirEditor({
     ...comebackVacio(),
-    metas: [{ id: idCorto("meta"), plataforma: "youtube", titulo: "YouTube", botonTexto: "Ver en YouTube", barras: [] }]
+    metas: [{ id: idCorto("meta"), plataforma: "youtube", titulo: "YouTube", botonTexto: "Ver en YouTube", destacada: true, barras: [] }]
   }));
   $("cb-cancelar").addEventListener("click", cerrarEditor);
   $("cb-form").addEventListener("submit", guardar);
@@ -301,7 +301,11 @@ function conectarEventos() {
     if (!c) return;
     try {
       if (b.classList.contains("cb-editar")) abrirEditor(c);
-      else if (b.classList.contains("cb-duplicar")) abrirEditor(duplicarParaNuevoComeback(c));
+      else if (b.classList.contains("cb-duplicar")) {
+        const copia = duplicarParaNuevoComeback(c);
+        (copia.metas || []).forEach(m => (m.barras || []).forEach(br => { br.completada = false; }));
+        abrirEditor(copia);
+      }
       else if (b.classList.contains("cb-activar")) {
         if (confirm(`¿Mostrar "${c.nombre || c.titulo}" en la página de metas? El comeback activo hoy pasa a archivado.`)) await activarComeback(c.id);
       } else if (b.classList.contains("cb-eliminar") && esAdmin) {

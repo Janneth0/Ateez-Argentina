@@ -11,19 +11,34 @@
   --m-grad: linear-gradient(90deg, var(--accent-color), color-mix(in srgb, var(--accent-color), #fff 35%));
 }
 
+/* .section de main.css pisa el padding lateral del .container: en celular las tarjetas quedaban pegadas al borde */
+.metas-page section.container { padding-left: 14px; padding-right: 14px; }
+
 /* Los links del menu (comeback/#comeback, comeback/#metas) quedan debajo del header fijo */
 .metas-page section { scroll-margin-top: 130px; }
 
 /* ---------- Hero + contador ---------- */
+.cb-top { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: stretch; margin-bottom: 28px; }
+.cb-top--solo { grid-template-columns: minmax(0, 720px); justify-content: center; } /* sin video ni pre-save: contador centrado, como antes */
+@media (max-width: 991px) { .cb-top { grid-template-columns: minmax(0, 1fr); } }
+
 .cb-hero {
-  max-width: 720px; margin: 0 auto 28px; padding: 28px 20px; text-align: center;
+  margin: 0; padding: 28px 20px; text-align: center;
+  display: flex; flex-direction: column; justify-content: center; /* centrado vertical cuando la columna derecha es más alta */
   background: var(--surface-color); border: 1px solid var(--m-line); border-radius: 16px;
 }
+
+/* ---------- Columna derecha: video + pre-save debajo ---------- */
+.cb-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.cb-side[hidden] { display: none; }
+.cb-video[hidden] { display: none; }
+.cb-video-frame { position: relative; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; border: 1px solid var(--m-line); background: #000; }
+.cb-video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .cb-hero .subtitle { color: var(--accent-color); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: .85rem; }
 .cb-hero h2 { color: var(--heading-color); margin: 6px 0 4px; }
 .cb-date { color: var(--m-muted); margin-bottom: 18px; }
 .cb-label { color: var(--default-color); font-weight: 600; margin-bottom: 12px; }
-.cb-boxes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 480px; margin: 0 auto; }
+.cb-boxes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; max-width: 480px; margin: 0 auto; }
 .cb-box { background: var(--m-soft); border: 1px solid var(--m-line); border-radius: 12px; padding: 14px 4px; }
 .cb-box b { display: block; font-size: clamp(1.5rem, 6vw, 2.2rem); line-height: 1.1; color: var(--accent-color); font-variant-numeric: tabular-nums; }
 .cb-box small { color: var(--m-muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; }
@@ -36,11 +51,32 @@
 
 /* ---------- Grilla de metas ---------- */
 .metas-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 980px; margin: 0 auto; }
-.metas-grid > .meta-card:first-child { grid-column: 1 / -1; } /* la primera (YouTube) a todo el ancho */
-.metas-grid > .meta-card:last-child:nth-child(even) { grid-column: 1 / -1; } /* si queda una sola suelta, ocupa todo el ancho */
+.metas-grid { align-items: stretch; }
+.metas-grid > .meta-card.destacada { grid-column: 1 / -1; } /* "destacada" en el admin: ocupa TODA la fila */
+.metas-grid > .meta-card.sola { grid-column: 1 / -1; }      /* una común que queda sola en su fila: también ocupa todo el ancho (borrá esta regla si preferís que quede a la mitad) */
 @media (max-width: 768px) { .metas-grid { grid-template-columns: 1fr; } }
 
 .meta-card { background: var(--surface-color); border: 1px solid var(--m-line); border-top: 3px solid var(--plat, var(--accent-color)); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.meta-barras, .meta-ranks { display: flex; flex-direction: column; gap: 14px; }
+.meta-card.destacada .meta-barras { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px 28px; } /* en una destacada, las barras van lado a lado */
+.meta-card.lograda { border-color: var(--accent-color); }
+.meta-lograda { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; font-size: .75rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--accent-color); color: var(--contrast-color); }
+
+/* ---------- Posiciones (rankings): se muestra el puesto, no una barra ---------- */
+.meta-ranks { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.meta-rank { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; padding: 14px 10px; background: var(--m-soft); border: 1px solid var(--m-line); border-radius: 12px; }
+.meta-rank .meta-etq { margin-bottom: 4px; }
+.meta-rank-num { font-size: 2.6rem; font-weight: 800; line-height: 1; color: var(--heading-color); font-variant-numeric: tabular-nums; }
+.meta-rank-num small { font-size: 1.3rem; font-weight: 700; color: var(--accent-color); margin-right: 2px; }
+.meta-rank-sub { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--m-muted); }
+.meta-rank-meta { margin-top: 8px; font-size: .8rem; color: var(--default-color); }
+.meta-rank-meta i { color: var(--accent-color); margin-right: 3px; }
+.meta-rank-estado { margin-top: 6px; font-size: .75rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: var(--surface-color); border: 1px solid var(--m-line); color: var(--m-muted); }
+.meta-rank-estado.ok { background: var(--accent-color); border-color: var(--accent-color); color: var(--contrast-color); }
+.meta-rank.cumplida { border-color: var(--accent-color); }
+.meta-rank.cumplida .meta-rank-num { color: var(--accent-color); }
+.meta-barra.cumplida .meta-barra-bot span { color: var(--accent-color); font-weight: 700; }
+
 .meta-head h3 { margin: 8px 0 2px; font-size: 1.15rem; color: var(--heading-color); }
 .meta-head p { margin: 0; font-size: .85rem; color: var(--m-muted); }
 .meta-chip { display: inline-flex; align-items: center; gap: 6px; font-size: .75rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--plat, var(--accent-color)); color: var(--plat, var(--accent-color)); }
@@ -62,7 +98,7 @@
 .metas-error { text-align: center; color: var(--m-muted); grid-column: 1 / -1; }
 
 /* ---------- Pre-save ---------- */
-.presave { max-width: 720px; margin: 0 auto 28px; padding: 22px 20px; text-align: center; background: var(--surface-color); border: 1px solid var(--m-line); border-radius: 16px; }
+.presave { margin: 0; padding: 22px 20px; text-align: center; background: var(--surface-color); border: 1px solid var(--m-line); border-radius: 16px; }
 .presave[hidden] { display: none; }
 .presave-titulo { margin: 0 0 6px; font-size: 1.15rem; color: var(--heading-color); }
 .presave-titulo i { color: var(--accent-color); margin-right: 6px; }

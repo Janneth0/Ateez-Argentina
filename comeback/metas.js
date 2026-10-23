@@ -6,6 +6,13 @@
 // Si Firestore todavía no tiene nada cargado (o falla), se usa data/goals.json
 // como respaldo.
 // Solo YouTube se actualiza solo (API); el resto se carga a mano desde el panel.
+//
+// Campos que lee esta página (además de los de siempre):
+//   meta.destacada   (true/false)  -> la tarjeta ocupa TODA la fila. Si ninguna meta trae este campo,
+//                                     la primera sigue ocupando la fila completa (comportamiento anterior).
+//   barra.completada (true/false)  -> el equipo marca la meta como cumplida a mano (para plataformas que
+//                                     no se pueden verificar solas). YouTube se cumple solo al llegar al objetivo.
+//   barra.tipo "puesto"            -> se muestra la POSICIÓN actual (no una barra de progreso).
 // ============================================================
 import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } from '../assets/js/comebacks.js';
 
@@ -30,6 +37,35 @@ import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } fro
   let DATA = null;
   let releaseMs = 0;
 
+  const truthy = (v) => v === true || v === 'true' || v === 1 || v === '1';
+
+  // ID de un video de YouTube a partir de cualquier link (watch, youtu.be, shorts, embed) o del ID suelto
+  function ytId(v) {
+    const t = String(v || '').trim();
+    if (/^[\w-]{11}$/.test(t)) return t;
+    const m = t.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([\w-]{11})/);
+    return m ? m[1] : '';
+  }
+
+  // ---------- Video del comeback (derecha del contador) ----------
+  function renderVideo() {
+    const box = $('cb-video');
+    if (!box || !DATA) return;
+    const id = ytId(DATA.youtubeVideoId) || ytId(DATA.youtubeUrl);
+    if (!id) { box.hidden = true; box.innerHTML = ''; return; }
+    box.innerHTML = `<div class="cb-video-frame"><iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0" title="Video del comeback" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`;
+    box.hidden = false;
+  }
+
+  // La columna derecha aparece solo si hay algo para mostrar (video y/o pre-save visible)
+  function layoutTop() {
+    const side = $('cb-side'), top = $('cb-top');
+    if (!side || !top) return;
+    const hayAlgo = ['cb-video', 'presave'].some((id) => { const el = $(id); return el && !el.hidden && el.innerHTML.trim(); });
+    side.hidden = !hayAlgo;
+    top.classList.toggle('cb-top--solo', !hayAlgo);
+  }
+
   // Link del botón principal de una meta. En la de YouTube, si no se cargó uno, usa el del video.
   function linkMeta(m) {
     const propio = urlSegura(m.link);
@@ -44,7 +80,7 @@ import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } fro
     const box = $('presave');
     if (!box || !DATA) return;
     const items = (DATA.presave || []).filter((p) => urlSegura(p.url));
-    if (!items.length) { box.hidden = true; box.innerHTML = ''; return; }
+    if (!items.length) { box.hidden = true; box.innerHTML = ''; layoutTop(); return; }
     box.innerHTML = '<h3 class="presave-titulo"><i class="bi bi-bookmark-heart"></i> Pre-save</h3>' +
       '<p class="presave-sub">Guardá la canción antes del lanzamiento para que llegue directo a tu biblioteca y sume desde el minuto cero.</p>' +
       '<div class="presave-botones">' + items.map((p) => {
@@ -53,6 +89,7 @@ import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } fro
         return `<a class="presave-btn" style="--plat:${pl.color}" href="${esc(urlSegura(p.url))}" target="_blank" rel="noopener"><i class="bi ${pl.icon}"></i> ${esc(p.texto || 'Pre-guardar en ' + nombre)}</a>`;
       }).join('') + '</div>';
     box.hidden = Date.now() >= releaseMs;
+    layoutTop();
   }
 
   // ---------- Contador ----------
@@ -67,7 +104,8 @@ import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } fro
     else if (now < fin24) { target = fin24; text = '¡Ya salió! Se cierran las 24 hs en'; }
     else { show = false; text = '¡El comeback ya está acá! 🔥 Las metas de 24 hs están cerradas.'; }
 
-    const ps = $('presave'); if (ps && ps.innerHTML) ps.hidden = now >= releaseMs;
+    const ps = $('presave');
+    if (ps && ps.innerHTML && ps.hidden !== (now >= releaseMs)) { ps.hidden = now >= releaseMs; layoutTop(); }
     boxes.style.display = show ? '' : 'none';
     label.textContent = text;
     if (!show) { msg.textContent = ''; return; }
@@ -100,7 +138,7 @@ import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } fro
   }
 
   // ---------- Progreso de una barra ----------
-  // Devuelve { pct, actualTxt, objetivoTxt, manual }
+  // Devuelve un objeto con todo lo necesario para dibujar la barra o el puesto.
   function calcBarra(b, ytViews) {
     let actual = b.actual;
     let manual = true;
@@ -110,24 +148,67 @@ import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } fro
       // Pasadas las 24 hs, la meta de 24 hs queda congelada en el valor final cargado a mano.
       if (b.ventana24h && Date.now() > releaseMs + DAY && b.final24h != null) { actual = b.final24h; manual = true; }
     }
+    const forzada = truthy(b.completada); // el equipo la marcó como cumplida desde el admin
     const unidad = b.unidad ? ' ' + b.unidad : '';
 
+    // --- POSICIÓN en un ranking: se muestra el puesto, no una barra ---
     if (b.tipo === 'puesto') {
-      const max = b.maximo || 100;
-      const pct = actual == null ? 0 : clamp(((max - actual) / (max - b.objetivo)) * 100);
+      const cumple = forzada || (actual != null && actual <= b.objetivo);
       return {
-        pct,
-        actualTxt: actual == null ? 'Todavía sin datos' : `Puesto actual: #${nf.format(actual)}`,
-        objetivoTxt: `Meta: puesto #${nf.format(b.objetivo)} o mejor`,
-        manual
+        tipo: 'puesto', cumple, forzada, actual, objetivo: b.objetivo,
+        faltan: actual != null && actual > b.objetivo ? actual - b.objetivo : 0
       };
     }
-    const pct = actual == null ? 0 : clamp((actual / b.objetivo) * 100);
+
+    // --- CANTIDAD: barra de progreso ---
+    const pct = forzada ? 100 : (actual == null ? 0 : clamp((actual / b.objetivo) * 100));
     return {
-      pct,
-      actualTxt: actual == null ? 'Todavía sin datos' : `${nf.format(actual)}${unidad}`,
+      tipo: 'cantidad', pct, cumple: pct >= 100, forzada,
+      actualTxt: forzada ? '✔ Meta cumplida' : (actual == null ? 'Todavía sin datos' : `${nf.format(actual)}${unidad}`),
       objetivoTxt: `Meta: ${nf.format(b.objetivo)}${unidad}`,
       manual
+    };
+  }
+
+  const barraHTML = (b, c) => `
+    <div class="meta-barra${c.cumple ? ' cumplida' : ''}">
+      <div class="meta-barra-top"><span class="meta-etq">${esc(b.etiqueta)}</span><span class="meta-obj">${esc(c.objetivoTxt)}</span></div>
+      <div class="meta-pb" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${c.pct.toFixed(0)}" aria-label="${esc(b.etiqueta)}">
+        <div class="meta-pf${c.cumple ? ' completa' : ''}" style="width:${c.pct.toFixed(1)}%"></div>
+      </div>
+      <div class="meta-barra-bot"><span>${esc(c.actualTxt)}</span><strong>${c.pct.toFixed(c.pct >= 100 ? 0 : 1)}%</strong></div>
+    </div>`;
+
+  const puestoHTML = (b, c) => {
+    let estado;
+    if (c.cumple) estado = '<span class="meta-rank-estado ok"><i class="bi bi-check-circle-fill"></i> ¡Meta cumplida!</span>';
+    else if (c.actual == null) estado = '<span class="meta-rank-estado">Todavía sin datos</span>';
+    else estado = `<span class="meta-rank-estado">Faltan ${nf.format(c.faltan)} puesto${c.faltan === 1 ? '' : 's'}</span>`;
+    return `
+    <div class="meta-rank${c.cumple ? ' cumplida' : ''}">
+      <span class="meta-etq">${esc(b.etiqueta)}</span>
+      <div class="meta-rank-num" aria-label="${c.actual == null ? 'Sin posición' : 'Puesto ' + c.actual}">${c.actual == null ? '–' : `<small>#</small>${nf.format(c.actual)}`}</div>
+      <span class="meta-rank-sub">Puesto actual</span>
+      <span class="meta-rank-meta"><i class="bi bi-bullseye"></i> Meta: #${nf.format(c.objetivo)} o mejor</span>
+      ${estado}
+    </div>`;
+  };
+
+  // Agrupa barras consecutivas del mismo tipo: los puestos van en una grilla de "tiles",
+  // las cantidades en una columna de barras (cada grupo respeta el orden del admin).
+  function barrasHTML(m, ytViews, acc) {
+    const calc = m.barras.map((b) => ({ b, c: calcBarra(b, ytViews) }));
+    calc.forEach(({ c }) => { acc.total++; if (c.cumple) acc.logradas++; });
+    const grupos = [];
+    calc.forEach((x) => {
+      const ult = grupos[grupos.length - 1];
+      if (ult && ult.tipo === x.c.tipo) ult.items.push(x); else grupos.push({ tipo: x.c.tipo, items: [x] });
+    });
+    return {
+      todas: calc.length > 0 && calc.every(({ c }) => c.cumple),
+      html: grupos.map((g) => g.tipo === 'puesto'
+        ? `<div class="meta-ranks">${g.items.map(({ b, c }) => puestoHTML(b, c)).join('')}</div>`
+        : `<div class="meta-barras">${g.items.map(({ b, c }) => barraHTML(b, c)).join('')}</div>`).join('')
     };
   }
 
@@ -136,38 +217,42 @@ import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } fro
     const grid = $('metas-grid');
     if (!grid || !DATA) return;
     const hayYT = DATA.metas.some((m) => m.barras.some((b) => b.fuente === 'youtube'));
-    const ytViews = hayYT ? await fetchYouTubeViews(DATA.youtubeVideoId) : null;
+    const ytViews = hayYT ? await fetchYouTubeViews(ytId(DATA.youtubeVideoId) || ytId(DATA.youtubeUrl)) : null;
     const done = lsGet();
-    let logradas = 0, total = 0;
+    const acc = { logradas: 0, total: 0 };
 
-    grid.innerHTML = DATA.metas.map((m) => {
+    // Cuáles ocupan la fila completa: las "destacadas". Si el admin todavía no tiene ese campo en
+    // ninguna meta, la primera sigue siendo destacada (como antes).
+    const hayFlag = DATA.metas.some((m) => m.destacada !== undefined);
+    const destacadas = DATA.metas.map((m, i) => (hayFlag ? truthy(m.destacada) : i === 0));
+    // Si una tarjeta común queda sola al final de una fila, ocupa todo el ancho (así no queda un hueco).
+    const solas = new Set();
+    let col = 0, pend = -1;
+    destacadas.forEach((d, i) => {
+      if (d) { if (col === 1) solas.add(pend); col = 0; } // una destacada corta la fila: la común anterior quedó sola
+      else if (col === 0) { col = 1; pend = i; } else { col = 0; }
+    });
+    if (col === 1) solas.add(pend);
+
+    grid.innerHTML = DATA.metas.map((m, i) => {
       const p = PLAT[m.plataforma] || { icon: 'bi-music-note-beamed', nombre: m.plataforma, color: 'var(--accent-color)' };
       const hecho = done.includes(m.id);
-      const barras = m.barras.map((b) => {
-        const c = calcBarra(b, ytViews);
-        total++; if (c.pct >= 100) logradas++;
-        return `
-          <div class="meta-barra">
-            <div class="meta-barra-top"><span class="meta-etq">${esc(b.etiqueta)}</span><span class="meta-obj">${esc(c.objetivoTxt)}</span></div>
-            <div class="meta-pb" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${c.pct.toFixed(0)}" aria-label="${esc(b.etiqueta)}">
-              <div class="meta-pf${c.pct >= 100 ? ' completa' : ''}" style="width:${c.pct.toFixed(1)}%"></div>
-            </div>
-            <div class="meta-barra-bot"><span>${esc(c.actualTxt)}</span><strong>${c.pct.toFixed(1)}%</strong></div>
-          </div>`;
-      }).join('');
+      const { html: barras, todas } = barrasHTML(m, ytViews, acc);
+      const clases = ['meta-card', destacadas[i] ? 'destacada' : '', solas.has(i) ? 'sola' : '', todas ? 'lograda' : ''].filter(Boolean).join(' ');
 
       return `
-        <article class="meta-card" style="--plat:${p.color}">
+        <article class="${clases}" style="--plat:${p.color}">
           <header class="meta-head">
             <span class="meta-chip"><i class="bi ${p.icon}"></i> ${esc(m.nombrePlataforma || p.nombre)}</span>
+            ${todas ? '<span class="meta-lograda"><i class="bi bi-trophy-fill"></i> Meta cumplida</span>' : ''}
             <h3>${esc(m.titulo)}</h3>
             ${m.detalle ? `<p>${esc(m.detalle)}</p>` : ''}
           </header>
           ${barras}
           <footer class="meta-actions">
             ${linkMeta(m) ? `<a class="meta-btn" href="${esc(linkMeta(m))}" target="_blank" rel="noopener">${esc(m.botonTexto || 'Abrir')} <i class="bi bi-box-arrow-up-right"></i></a>` : ''}
-            <button type="button" class="meta-btn meta-check${hecho ? ' on' : ''}" data-id="${esc(m.id)}" aria-pressed="${hecho}">
-              <i class="bi ${hecho ? 'bi-check2-circle' : 'bi-circle'}"></i> ${hecho ? '¡Ya lo hice!' : 'Marcar como hecho'}
+            <button type="button" class="meta-btn meta-check${hecho ? ' on' : ''}" data-id="${esc(m.id)}" aria-pressed="${hecho}" title="Marcá lo que ya hiciste vos (se guarda solo en tu dispositivo)">
+              <i class="bi ${hecho ? 'bi-check2-circle' : 'bi-circle'}"></i> ${hecho ? '¡Hice mi parte!' : 'Ya hice mi parte'}
             </button>
           </footer>
         </article>`;
@@ -176,7 +261,7 @@ import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } fro
     const res = $('metas-resumen');
     if (res) {
       const fecha = DATA.actualizadoDate ? DATA.actualizadoDate.toLocaleDateString('es-AR') : '';
-      res.innerHTML = `<span><i class="bi bi-trophy"></i> Metas logradas: <strong>${logradas}</strong> de ${total}</span>` +
+      res.innerHTML = `<span><i class="bi bi-trophy"></i> Metas logradas: <strong>${acc.logradas}</strong> de ${acc.total}</span>` +
         (fecha ? `<span><i class="bi bi-clock-history"></i> Datos manuales actualizados: ${esc(fecha)}</span>` : '') +
         (ytViews != null ? '<span><i class="bi bi-broadcast"></i> YouTube en vivo</span>' : '');
     }
@@ -191,7 +276,7 @@ import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } fro
     lsSet(list);
     b.classList.toggle('on', list.includes(b.dataset.id));
     b.setAttribute('aria-pressed', list.includes(b.dataset.id));
-    b.innerHTML = list.includes(b.dataset.id) ? '<i class="bi bi-check2-circle"></i> ¡Ya lo hice!' : '<i class="bi bi-circle"></i> Marcar como hecho';
+    b.innerHTML = list.includes(b.dataset.id) ? '<i class="bi bi-check2-circle"></i> ¡Hice mi parte!' : '<i class="bi bi-circle"></i> Ya hice mi parte';
   });
 
   function mostrarAviso(html) {
@@ -199,6 +284,7 @@ import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } fro
     if (g) g.innerHTML = `<p class="metas-error">${html}</p>`;
     const hero = document.querySelector('.cb-hero');
     if (hero) hero.style.display = 'none';
+    const top = $('cb-top'); if (top) top.style.display = 'none';
   }
 
   async function cargarDatos() {
@@ -232,7 +318,9 @@ import { obtenerComebackActivo, normalizarComeback, PLATAFORMAS, urlSegura } fro
     $('cb-title').textContent = DATA.comeback.titulo;
     $('cb-date').textContent = DATA.comeback.fechaTexto;
     document.dispatchEvent(new CustomEvent('comeback-listo', { detail: { id: DATA.id } }));
+    renderVideo();
     renderPresave();
+    layoutTop();
     tick(); setInterval(tick, 1000);
     render();
   }
